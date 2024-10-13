@@ -1,11 +1,14 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import databaseConfig from '@shared/configs/database.config';
 import generalConfig from '@shared/configs/general.config';
+import { TransformInterceptor } from '@shared/interceptors/transform.interceptor';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { RestaurantModule } from './modules/restaurant/restaurant.module';
+import { GlobalExceptionFilter } from '@shared/filters/global-exception.filter';
 
 @Module({
     imports: [
@@ -18,8 +21,7 @@ import { RestaurantModule } from './modules/restaurant/restaurant.module';
             inject: [ConfigService],
             useFactory: (configService: ConfigService) => {
                 const config = configService.get('database');
-                const environment =
-                    configService.get('general').environment || 'local';
+                const environment = configService.get('general').environment || 'local';
 
                 if (!config) {
                     throw new Error('Database configuration not found');
@@ -34,6 +36,16 @@ import { RestaurantModule } from './modules/restaurant/restaurant.module';
         RestaurantModule,
     ],
     controllers: [AppController],
-    providers: [AppService],
+    providers: [
+        AppService,
+        {
+            provide: APP_INTERCEPTOR,
+            useClass: TransformInterceptor,
+        },
+        {
+            provide: APP_FILTER,
+            useClass: GlobalExceptionFilter,
+        },
+    ],
 })
 export class AppModule {}
