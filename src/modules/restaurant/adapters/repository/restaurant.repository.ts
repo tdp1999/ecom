@@ -63,7 +63,6 @@ export class RestaurantRepository implements IRestaurantRepository {
     }
 
     async update(id: UUID, data: RestaurantUpdateDto): Promise<boolean> {
-        console.log('----> Here: ', data);
         await this.repository.update(id, data);
         return true;
     }
