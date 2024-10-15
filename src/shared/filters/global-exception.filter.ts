@@ -1,5 +1,6 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
-import { Response } from 'express';
+import { HttpAdapterHost } from '@nestjs/core';
+import { DomainError } from '../errors/domain-error';
 
 export interface FormattedResponse {
     statusCode: number;
@@ -10,42 +11,62 @@ export interface FormattedResponse {
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
-    catch(exception: unknown, host: ArgumentsHost) {
-        const ctx = host.switchToHttp();
-        const response = ctx.getResponse<Response>();
-        const [status, responseContent] = this._defineErrorContent(exception);
+    constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
 
-        response.status(status).json(responseContent);
+    catch(exception: unknown, host: ArgumentsHost) {
+        const { httpAdapter } = this.httpAdapterHost;
+        const ctx = host.switchToHttp();
+
+        if (exception instanceof DomainError) {
+            const [status, responseContent] = this._domainExceptionContent(exception);
+            httpAdapter.reply(ctx.getResponse(), responseContent, status);
+            return;
+        }
+
+        if (exception instanceof HttpException) {
+            const [status, responseContent] = this._httpExceptionContent(exception);
+            httpAdapter.reply(ctx.getResponse(), responseContent, status);
+            return;
+        }
+
+        const [status, responseContent] = this._unknownExceptionContent(exception);
+
+        httpAdapter.reply(ctx.getResponse(), responseContent, status);
     }
 
-    private _defineErrorContent(exception: unknown): [number, FormattedResponse] {
-        if (exception instanceof HttpException) {
-            const status = exception.getStatus();
-            const errorResponse: Record<string, any> | string = exception.getResponse();
+    private _domainExceptionContent(exception: DomainError): [number, FormattedResponse] {
+        const { statusCode, error, message, errorCode = null } = exception;
+        return [statusCode, { statusCode, error, message, errorCode }];
+    }
 
-            if (typeof errorResponse === 'string') {
-                return [
-                    status,
-                    {
-                        statusCode: status,
-                        error: 'Error',
-                        message: errorResponse,
-                        errorCode: null,
-                    },
-                ];
-            }
+    private _httpExceptionContent(exception: HttpException): [number, FormattedResponse] {
+        const status = exception.getStatus();
+        const errorResponse: Record<string, any> | string = exception.getResponse();
 
+        if (typeof errorResponse === 'string') {
             return [
                 status,
                 {
                     statusCode: status,
-                    error: errorResponse['error'] || 'Error',
-                    message: errorResponse['message'] || exception.message,
-                    errorCode: errorResponse['errorCode'] || null,
+                    error: 'Error',
+                    message: errorResponse,
+                    errorCode: null,
                 },
             ];
         }
 
+        return [
+            status,
+            {
+                statusCode: status,
+                error: errorResponse['error'] || 'Error',
+                message: errorResponse['message'] || exception.message,
+                errorCode: errorResponse['errorCode'] || null,
+            },
+        ];
+    }
+
+    private _unknownExceptionContent(exception: unknown): [number, FormattedResponse] {
         const unknownErrorMessage = 'An unknown error occurred. Please try again later.';
         const errorMessage = exception instanceof Error ? exception.message : unknownErrorMessage;
 

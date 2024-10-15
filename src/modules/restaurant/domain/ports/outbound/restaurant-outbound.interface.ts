@@ -1,10 +1,11 @@
 import { UUID } from '@shared/types/general.type';
 import { RestaurantSearchDto, RestaurantUpdateDto } from '../../model/restaurant.dto';
 import { Restaurant } from '../../model/restaurant.model';
+import { Pagination } from '@shared/types/pagination.type';
 
 export interface IRestaurantRepositoryQuery {
     get(id: string): Promise<Restaurant | null>;
-    list(query?: RestaurantSearchDto): Promise<Restaurant[]>;
+    list(query?: RestaurantSearchDto): Promise<Pagination<Restaurant>>;
 }
 
 export interface IRestaurantRepositoryCommand {

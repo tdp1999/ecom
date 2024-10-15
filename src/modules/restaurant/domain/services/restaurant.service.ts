@@ -1,10 +1,17 @@
 import { Inject } from '@nestjs/common';
-import { DomainError } from '@shared/errors/domain-error';
+import { STATUS } from '@shared/enums/status.enum';
+import { BadRequestError, NotFoundError } from '@shared/errors/common-errors';
 import { formatZodError } from '@shared/errors/error-formatter';
 import { UUID } from '@shared/types/general.type';
+import { Pagination } from '@shared/types/pagination.type';
 import { v7 } from 'uuid';
-import { RESTAURANT_ERROR_CODES } from '../errors/restaurant.error';
-import { RestaurantCreateDto, RestaurantCreateSchema, RestaurantUpdateDto } from '../model/restaurant.dto';
+import {
+    RestaurantCreateDto,
+    RestaurantCreateSchema,
+    RestaurantSearchDto,
+    RestaurantSearchSchema,
+    RestaurantUpdateDto,
+} from '../model/restaurant.dto';
 import { Restaurant } from '../model/restaurant.model';
 import { IRestaurantService } from '../ports/inbound/restaurant-inbound.interface';
 import { IRestaurantRepository, RESTAURANT_REPOSITORY_TOKEN } from '../ports/outbound/restaurant-outbound.interface';
@@ -16,11 +23,7 @@ export class RestaurantService implements IRestaurantService {
         const { success, error, data } = RestaurantCreateSchema.safeParse(payload);
 
         if (!success) {
-            throw new DomainError({
-                errorCode: RESTAURANT_ERROR_CODES.E_RESTAURANT_01,
-                error: 'Bad Request',
-                message: formatZodError(error),
-            });
+            throw BadRequestError(formatZodError(error));
         }
 
         const id = v7();
@@ -32,18 +35,36 @@ export class RestaurantService implements IRestaurantService {
     }
 
     get(id: UUID): Promise<Restaurant | null> {
-        return this.repository.get(id);
+        return this.getValidRestaurant(id);
     }
 
-    list(): Promise<Restaurant[]> {
-        return this.repository.list();
+    list(query?: RestaurantSearchDto): Promise<Pagination<Restaurant>> {
+        const { success, error, data } = RestaurantSearchSchema.safeParse(query);
+
+        if (!success) {
+            throw BadRequestError(formatZodError(error));
+        }
+
+        return this.repository.list(data);
     }
 
-    update(id: UUID, payload: RestaurantUpdateDto): Promise<boolean> {
+    async update(id: UUID, payload: RestaurantUpdateDto): Promise<boolean> {
+        await this.getValidRestaurant(id);
         return this.repository.update(id, payload);
     }
 
-    delete(id: UUID): Promise<boolean> {
+    async delete(id: UUID): Promise<boolean> {
+        await this.getValidRestaurant(id);
         return this.repository.delete(id);
+    }
+
+    private async getValidRestaurant(id: UUID): Promise<Restaurant> {
+        const restaurant = await this.repository.get(id);
+
+        if (!restaurant || restaurant.status === STATUS.DELETED) {
+            throw NotFoundError(`Restaurant with id ${id} not found`);
+        }
+
+        return restaurant;
     }
 }

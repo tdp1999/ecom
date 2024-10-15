@@ -1,18 +1,4 @@
-import {
-    BadRequestException,
-    Body,
-    Controller,
-    Delete,
-    Get,
-    ImATeapotException,
-    Inject,
-    InternalServerErrorException,
-    Param,
-    Patch,
-    Post,
-    Query,
-} from '@nestjs/common';
-import { DomainError } from '@shared/errors/domain-error';
+import { Body, Controller, Delete, Get, Inject, Param, Patch, Post, Query } from '@nestjs/common';
 import { RestaurantCreateDto, RestaurantSearchDto, RestaurantUpdateDto } from '../../domain/model/restaurant.dto';
 import { IRestaurantService, RESTAURANT_SERVICE_TOKEN } from '../../domain/ports/inbound/restaurant-inbound.interface';
 
@@ -21,16 +7,8 @@ export class RestaurantController {
     constructor(@Inject(RESTAURANT_SERVICE_TOKEN) private readonly service: IRestaurantService) {}
 
     @Post()
-    async create(@Body() payload: RestaurantCreateDto) {
-        try {
-            return await this.service.create(payload);
-        } catch (error) {
-            if (error instanceof DomainError) {
-                throw new BadRequestException({ ...error });
-            }
-
-            throw new ImATeapotException();
-        }
+    create(@Body() payload: RestaurantCreateDto) {
+        return this.service.create(payload);
     }
 
     @Get()
