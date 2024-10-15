@@ -1,3 +1,5 @@
+import { HTTP_ERROR_STATUS } from './http-error-status';
+
 export class DomainError extends Error {
     statusCode: number;
     errorCode?: string | null;
@@ -10,3 +12,19 @@ export class DomainError extends Error {
         Object.setPrototypeOf(this, DomainError.prototype);
     }
 }
+
+export const BadRequestError = (message: any = 'Data is invalid') => {
+    return new DomainError({
+        statusCode: HTTP_ERROR_STATUS.BAD_REQUEST,
+        error: 'Bad Request',
+        message: message,
+    });
+};
+
+export const NotFoundError = (message: any = 'Not Found') => {
+    return new DomainError({
+        statusCode: HTTP_ERROR_STATUS.NOT_FOUND,
+        error: 'Not Found',
+        message: message,
+    });
+};

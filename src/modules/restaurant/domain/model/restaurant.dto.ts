@@ -1,6 +1,7 @@
-import { z } from 'zod';
-import { STATUS } from '@shared/enums/status.enum';
 import { SearchSchema } from '@shared/dtos/seach.dto';
+import { STATUS } from '@shared/enums/status.enum';
+import { z } from 'zod';
+import { ERR_COMMON_EMPTY_PAYLOAD } from '@shared/errors/common-errors';
 
 export const RestaurantCreateSchema = z.object({
     name: z.string(),
@@ -23,7 +24,14 @@ export const RestaurantCreateSchema = z.object({
     status: z.nativeEnum(STATUS).optional().default(STATUS.ACTIVE),
 });
 
-export const RestaurantUpdateSchema = RestaurantCreateSchema.partial();
+export const RestaurantUpdateSchema = z
+    .object({
+        isDeleted: z.boolean().optional().default(false),
+    })
+    .merge(RestaurantCreateSchema.partial())
+    .refine((data) => Object.keys(data).length > 0, {
+        message: ERR_COMMON_EMPTY_PAYLOAD.message,
+    });
 
 export const RestaurantSearchSchema = SearchSchema.merge(
     RestaurantCreateSchema.pick({

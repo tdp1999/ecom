@@ -1,4 +1,4 @@
-import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 import { DomainError } from '../errors/domain-error';
 
@@ -11,11 +11,14 @@ export interface FormattedResponse {
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
+    private readonly logger = new Logger(GlobalExceptionFilter.name);
+
     constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
 
     catch(exception: unknown, host: ArgumentsHost) {
         const { httpAdapter } = this.httpAdapterHost;
         const ctx = host.switchToHttp();
+        const request = ctx.getRequest();
 
         if (exception instanceof DomainError) {
             const [status, responseContent] = this._domainExceptionContent(exception);
@@ -29,7 +32,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
             return;
         }
 
-        const [status, responseContent] = this._unknownExceptionContent(exception);
+        const [status, responseContent] = this._unknownExceptionContent(exception, request, this.logger);
 
         httpAdapter.reply(ctx.getResponse(), responseContent, status);
     }
@@ -66,9 +69,15 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         ];
     }
 
-    private _unknownExceptionContent(exception: unknown): [number, FormattedResponse] {
+    private _unknownExceptionContent(exception: unknown, request: any, logger: Logger): [number, FormattedResponse] {
         const unknownErrorMessage = 'An unknown error occurred. Please try again later.';
         const errorMessage = exception instanceof Error ? exception.message : unknownErrorMessage;
+        const stack =
+            exception && typeof exception === 'object' && 'stack' in exception
+                ? exception['stack']
+                : 'No stacktrace available';
+
+        logger.error(`Error occurred for ${request.method} ${request.url}: ${errorMessage}`, stack);
 
         return [
             HttpStatus.INTERNAL_SERVER_ERROR,

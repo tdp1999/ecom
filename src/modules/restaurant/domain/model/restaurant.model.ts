@@ -21,6 +21,10 @@ export const RestaurantSchema = z.object({
     categories: z.array(z.string()).min(1).optional(),
     specifications: z.array(z.string()).min(1).optional(),
     status: z.nativeEnum(STATUS),
+
+    // For soft delete
+    isDeleted: z.boolean().default(false),
+
     createdAt: z.bigint(),
     updatedAt: z.bigint(),
 });

@@ -49,6 +49,9 @@ export class RestaurantEntity extends BaseEntity implements Restaurant {
     @Column({ type: 'enum', enum: STATUS, default: STATUS.ACTIVE })
     status: STATUS;
 
+    @Column({ type: 'boolean', name: 'is_deleted', default: false })
+    isDeleted: boolean;
+
     @Column({ type: 'bigint', name: 'created_at' })
     createdAt: bigint;
 

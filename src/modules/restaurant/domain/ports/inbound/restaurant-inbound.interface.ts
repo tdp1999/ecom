@@ -6,9 +6,10 @@ import { Pagination } from '@shared/types/pagination.type';
 export interface IRestaurantService {
     create(payload: RestaurantCreateDto): Promise<UUID>;
     get(id: UUID): Promise<Restaurant | null>;
-    list(query?: RestaurantSearchDto): Promise<Pagination<Restaurant>>;
+    paginatedList(query?: RestaurantSearchDto): Promise<Pagination<Restaurant>>;
+    list(query?: RestaurantSearchDto): Promise<Restaurant[]>;
     update(id: UUID, payload: RestaurantUpdateDto): Promise<boolean>;
-    delete(id: UUID): Promise<boolean>;
+    delete(id: UUID, isHardDelete?: boolean): Promise<boolean>;
 }
 
 export const RESTAURANT_SERVICE_TOKEN = Symbol('IRestaurantService');

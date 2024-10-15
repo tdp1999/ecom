@@ -4,8 +4,9 @@ import { Restaurant } from '../../model/restaurant.model';
 import { Pagination } from '@shared/types/pagination.type';
 
 export interface IRestaurantRepositoryQuery {
-    get(id: string): Promise<Restaurant | null>;
-    list(query?: RestaurantSearchDto): Promise<Pagination<Restaurant>>;
+    get(id: UUID): Promise<Restaurant | null>;
+    paginatedList(query?: RestaurantSearchDto): Promise<Pagination<Restaurant>>;
+    list(query?: RestaurantSearchDto): Promise<Restaurant[]>;
 }
 
 export interface IRestaurantRepositoryCommand {
