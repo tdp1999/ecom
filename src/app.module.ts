@@ -5,13 +5,13 @@ import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import databaseConfig from '@shared/configs/database.config';
 import generalConfig from '@shared/configs/general.config';
-import { TransactionManager } from '@shared/decorators/transactional.decorator';
 import { GlobalExceptionFilter } from '@shared/filters/global-exception.filter';
 import { TransformInterceptor } from '@shared/interceptors/transform.interceptor';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { BrandModule } from './modules/brand/brand.module';
 
-const modules = [CategoryModule];
+const modules = [CategoryModule, BrandModule];
 
 @Module({
     imports: [

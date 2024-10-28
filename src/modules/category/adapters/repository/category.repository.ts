@@ -4,25 +4,21 @@ import { Transactional, TransactionManager } from '@shared/decorators/transactio
 import { UUID } from '@shared/types/general.type';
 import { Pagination } from '@shared/types/pagination.type';
 import { DataSource, FindOptionsWhere, ILike, IsNull, TreeRepository } from 'typeorm';
-import { CategorySearchDto, CategoryUpdateDto } from '../../domain/model/category.dto';
+import { CategoryCreateDto, CategorySearchDto, CategoryUpdateDto } from '../../domain/model/category.dto';
 import { Category } from '../../domain/model/category.model';
 import { ICategoryRepository } from '../../domain/ports/category-repository.interface';
 import { CategoryEntity } from './category.entity';
 
 @Injectable()
 export class CategoryRepository implements ICategoryRepository {
-    constructor(
-        private dataSource: DataSource,
-        private transactionManager: TransactionManager,
-        @InjectRepository(CategoryEntity) private repository: TreeRepository<CategoryEntity>,
-    ) {}
+    constructor(@InjectRepository(CategoryEntity) private repository: TreeRepository<CategoryEntity>) {}
 
     /* Query */
     async list(query?: CategorySearchDto): Promise<Category[]> {
         const { orderBy, orderType } = query || {};
         const items = await this.repository.find({
-            where: this._buildWhereConditions(query),
-            order: this._buildOrderConditions({ orderBy, orderType }),
+            where: this.buildWhereConditions(query),
+            order: this.buildOrderConditions({ orderBy, orderType }),
         });
         return items;
     }
@@ -31,10 +27,10 @@ export class CategoryRepository implements ICategoryRepository {
         const { limit = 10, page = 1, orderBy, orderType } = query || {};
 
         const [items, total] = await this.repository.findAndCount({
-            where: this._buildWhereConditions(query),
+            where: this.buildWhereConditions(query),
             take: limit,
             skip: (page - 1) * limit,
-            order: this._buildOrderConditions({ orderBy, orderType }),
+            order: this.buildOrderConditions({ orderBy, orderType }),
         });
 
         const totalPages = Math.ceil(total / limit);
@@ -56,11 +52,12 @@ export class CategoryRepository implements ICategoryRepository {
             .where('category.deletedAt IS NULL')
             .getMany();
 
-        return this._buildTree(categories);
+        return this.buildTree(categories);
     }
 
-    findById(id: UUID): Promise<Category | null> {
-        return this.repository.findOneBy({ id });
+    async findById(id: UUID): Promise<Category | null> {
+        const category = await this.repository.findOneBy({ id });
+        return category;
     }
 
     async hasChildren(category: CategoryEntity): Promise<boolean> {
@@ -79,7 +76,7 @@ export class CategoryRepository implements ICategoryRepository {
         return this.repository.findDescendantsTree(category);
     }
 
-    private _buildWhereConditions(query?: CategorySearchDto) {
+    private buildWhereConditions(query?: CategorySearchDto) {
         const { limit = 10, page = 1, ...filters } = query || {};
 
         // Build search conditions dynamically
@@ -98,7 +95,7 @@ export class CategoryRepository implements ICategoryRepository {
         return where;
     }
 
-    private _buildOrderConditions(query?: CategorySearchDto) {
+    private buildOrderConditions(query?: CategorySearchDto) {
         const { orderBy, orderType } = query || {};
 
         if (!orderBy || !orderType) {
@@ -110,7 +107,7 @@ export class CategoryRepository implements ICategoryRepository {
         };
     }
 
-    private _buildTree(categories: Category[]): Category[] {
+    private buildTree(categories: Category[]): Category[] {
         // Build a map of categories by ID for easy access
         const categoryMap: Map<string, Category> = new Map();
         categories.forEach((category) => categoryMap.set(category.id, { ...category, children: [] }));
@@ -141,8 +138,7 @@ export class CategoryRepository implements ICategoryRepository {
     }
 
     /* Command */
-    @Transactional()
-    async create(category: Category, parentId?: UUID): Promise<boolean> {
+    async create(category: CategoryCreateDto, parentId?: UUID): Promise<boolean> {
         let parent: Category | null = null;
 
         if (parentId) {

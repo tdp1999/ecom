@@ -1,0 +1,33 @@
+import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Brand } from '../../domain/model/brand.model';
+import { STATUS } from '@shared/enums/status.enum';
+
+@Entity('brands')
+export class BrandEntity extends BaseEntity implements Brand {
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
+
+    @Column()
+    name: string;
+
+    @Column()
+    image: string;
+
+    @Column()
+    description: string;
+
+    @Column({ name: 'tag_line' })
+    tagLine: string;
+
+    @Column({ type: 'enum', enum: STATUS, default: STATUS.ACTIVE })
+    status: STATUS;
+
+    @Column({ type: 'bigint', name: 'created_at' })
+    createdAt: bigint;
+
+    @Column({ type: 'bigint', name: 'updated_at' })
+    updatedAt: bigint;
+
+    @Column({ type: 'bigint', name: 'deleted_at', nullable: true })
+    deletedAt: bigint | null;
+}

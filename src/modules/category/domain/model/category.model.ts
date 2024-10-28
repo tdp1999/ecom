@@ -1,8 +1,9 @@
 import { STATUS } from '@shared/enums/status.enum';
+import { UuidSchema } from '@shared/models/general-value-object.model';
 import { z } from 'zod';
 
 // Value Objects
-export const CategoryId = z.string().uuid();
+export const CategoryId = UuidSchema;
 
 export const CategoryMetadata = z.object({
     description: z.string().optional(),
@@ -32,12 +33,5 @@ export const CategorySchema = z.object({
     children: z.array(z.any()).optional(),
 });
 
-export const CategoryClosure = z.object({
-    ancestorId: CategoryId,
-    descendantId: CategoryId,
-    depth: z.number().int().min(0),
-});
-
 export type CategoryMetadata = z.infer<typeof CategoryMetadata>;
 export type Category = z.infer<typeof CategorySchema>;
-export type CategoryClosure = z.infer<typeof CategoryClosure>;

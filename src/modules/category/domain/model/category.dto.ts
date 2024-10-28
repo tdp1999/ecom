@@ -1,6 +1,6 @@
-import { ERR_COMMON_EMPTY_PAYLOAD } from '@shared/errors/common-errors';
 import { SearchSchema } from '@shared/dtos/seach.dto';
 import { STATUS } from '@shared/enums/status.enum';
+import { ERR_COMMON_EMPTY_PAYLOAD } from '@shared/errors/common-errors';
 import { z } from 'zod';
 import {
     ERR_CATEGORY_INVALID_POSITION,
@@ -24,12 +24,10 @@ export const CategoryCreateSchema = z.object({
     isClickable: z.boolean().optional().default(true),
     status: z.nativeEnum(STATUS).optional().default(STATUS.ACTIVE),
     metadata: CategoryCreateMetadataSchema,
-    isDeleted: z.boolean().optional().default(false),
 });
 
 export const CategoryUpdateSchema = z
     .object({
-        isDeleted: z.boolean().optional().default(false),
         deletedAt: z.bigint().nullable().optional(),
     })
     .merge(CategoryCreateSchema.partial())

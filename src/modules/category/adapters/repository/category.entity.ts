@@ -1,14 +1,5 @@
 import { STATUS } from '@shared/enums/status.enum';
-import {
-    BaseEntity,
-    Column,
-    CreateDateColumn,
-    Entity,
-    PrimaryGeneratedColumn,
-    Tree,
-    TreeChildren,
-    TreeParent,
-} from 'typeorm';
+import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, Tree, TreeChildren, TreeParent } from 'typeorm';
 import { Category } from '../../domain/model/category.model';
 
 @Entity('categories')
@@ -29,7 +20,8 @@ export class CategoryEntity extends BaseEntity implements Category {
     @TreeChildren()
     children?: CategoryEntity[];
 
-    @Column()
+    // TODO: change to uuid
+    @Column({ type: 'varchar', length: 36, nullable: true })
     parentId?: string | null;
 
     @TreeParent()

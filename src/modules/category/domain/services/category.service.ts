@@ -1,4 +1,4 @@
-import { Inject, Optional } from '@nestjs/common';
+import { Inject, Injectable, Optional } from '@nestjs/common';
 import { BadRequestError, NotFoundError } from '@shared/errors/domain-error';
 import { formatZodError } from '@shared/errors/error-formatter';
 import { MODULE_IDENTIFIER } from '@shared/tokens/common.token';
@@ -18,6 +18,7 @@ import { Category } from '../model/category.model';
 import { CATEGORY_REPOSITORY_TOKEN, ICategoryRepository } from '../ports/category-repository.interface';
 import { ICategoryService } from '../ports/category-service.interface';
 
+@Injectable()
 export class CategoryService implements ICategoryService {
     constructor(
         @Optional() @Inject(MODULE_IDENTIFIER) private readonly moduleName: string = 'Category',

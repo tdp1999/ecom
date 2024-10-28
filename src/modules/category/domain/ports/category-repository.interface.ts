@@ -1,24 +1,19 @@
 import { UUID } from '@shared/types/general.type';
 import { Pagination } from '@shared/types/pagination.type';
-import { CategorySearchDto, CategoryUpdateDto } from '../model/category.dto';
+import { CategoryCreateDto, CategorySearchDto, CategoryUpdateDto } from '../model/category.dto';
 import { Category } from '../model/category.model';
+import { IRepositoryCommand, IRepositoryQuery } from '@shared/interfaces/repository.interface';
 
-export interface ICategoryRepositoryQuery {
-    list(query?: CategorySearchDto): Promise<Category[]>;
-    paginatedList(query?: CategorySearchDto): Promise<Pagination<Category>>;
-    getFullTree(query?: CategorySearchDto): Promise<Category[]>;
-
-    findById(id: UUID): Promise<Category | null>;
-    hasChildren(category: Category): Promise<boolean>;
-    getFullTreeOfAncestor(id: UUID): Promise<Category | null>;
-}
-
-export interface ICategoryRepositoryCommand {
+export interface ICategoryRepositoryCommand extends IRepositoryCommand<CategoryCreateDto, CategoryUpdateDto> {
     create(category: Category, ancestorId?: UUID): Promise<boolean>;
-    update(id: UUID, data: CategoryUpdateDto): Promise<boolean>;
-    delete(id: UUID): Promise<boolean>;
 }
 
-export interface ICategoryRepository extends ICategoryRepositoryQuery, ICategoryRepositoryCommand {}
+export interface ICategoryRepositoryQuery extends IRepositoryQuery<Category, CategorySearchDto> {
+    getFullTree(query?: CategorySearchDto): Promise<Category[]>;
+    getFullTreeOfAncestor(id: UUID): Promise<Category | null>;
+    hasChildren(category: Category): Promise<boolean>;
+}
+
+export interface ICategoryRepository extends ICategoryRepositoryCommand, ICategoryRepositoryQuery {}
 
 export const CATEGORY_REPOSITORY_TOKEN = Symbol('ICategoryRepository');
