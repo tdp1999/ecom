@@ -3,13 +3,15 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { RestaurantModule } from '@restaurant/restaurant.module';
 import databaseConfig from '@shared/configs/database.config';
 import generalConfig from '@shared/configs/general.config';
+import { TransactionManager } from '@shared/decorators/transactional.decorator';
 import { GlobalExceptionFilter } from '@shared/filters/global-exception.filter';
 import { TransformInterceptor } from '@shared/interceptors/transform.interceptor';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+
+const modules = [CategoryModule];
 
 @Module({
     imports: [
@@ -34,8 +36,7 @@ import { AppService } from './app.service';
                 };
             },
         }),
-        RestaurantModule,
-        CategoryModule,
+        ...modules,
     ],
     controllers: [AppController],
     providers: [
