@@ -1,7 +1,7 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class RemoveFieldInCategoryTable1730088368821 implements MigrationInterface {
-    name = 'RemoveFieldInCategoryTable1730088368821'
+    name = 'RemoveFieldInCategoryTable1730088368821';
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
@@ -15,5 +15,4 @@ export class RemoveFieldInCategoryTable1730088368821 implements MigrationInterfa
             ADD \`is_deleted\` tinyint NULL DEFAULT '0'
         `);
     }
-
 }

@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Transactional, TransactionManager } from '@shared/decorators/transactional.decorator';
 import { UUID } from '@shared/types/general.type';
 import { Pagination } from '@shared/types/pagination.type';
-import { DataSource, FindOptionsWhere, ILike, IsNull, TreeRepository } from 'typeorm';
+import { FindOptionsWhere, ILike, IsNull, TreeRepository } from 'typeorm';
 import { CategoryCreateDto, CategorySearchDto, CategoryUpdateDto } from '../../domain/model/category.dto';
 import { Category } from '../../domain/model/category.model';
 import { ICategoryRepository } from '../../domain/ports/category-repository.interface';
@@ -77,7 +76,7 @@ export class CategoryRepository implements ICategoryRepository {
     }
 
     private buildWhereConditions(query?: CategorySearchDto) {
-        const { limit = 10, page = 1, ...filters } = query || {};
+        const { ...filters } = query || {};
 
         // Build search conditions dynamically
         const where: FindOptionsWhere<Category> = {

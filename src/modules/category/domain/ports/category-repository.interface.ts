@@ -1,8 +1,7 @@
+import { IRepositoryCommand, IRepositoryQuery } from '@shared/interfaces/repository.interface';
 import { UUID } from '@shared/types/general.type';
-import { Pagination } from '@shared/types/pagination.type';
 import { CategoryCreateDto, CategorySearchDto, CategoryUpdateDto } from '../model/category.dto';
 import { Category } from '../model/category.model';
-import { IRepositoryCommand, IRepositoryQuery } from '@shared/interfaces/repository.interface';
 
 export interface ICategoryRepositoryCommand extends IRepositoryCommand<CategoryCreateDto, CategoryUpdateDto> {
     create(category: Category, ancestorId?: UUID): Promise<boolean>;

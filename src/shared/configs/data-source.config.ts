@@ -1,6 +1,7 @@
 import { DataSource } from 'typeorm';
 import { getEntityPaths, getMigrationPaths } from '../utils/path';
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 require('dotenv').config();
 
 export default new DataSource({

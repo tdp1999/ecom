@@ -1,6 +1,5 @@
 import { Inject, Injectable, Optional } from '@nestjs/common';
 import { BadRequestError, NotFoundError } from '@shared/errors/domain-error';
-import { formatZodError } from '@shared/errors/error-formatter';
 import { MODULE_IDENTIFIER } from '@shared/tokens/common.token';
 import { UUID } from '@shared/types/general.type';
 import { Pagination } from '@shared/types/pagination.type';
@@ -16,6 +15,7 @@ import {
 import { Brand } from '../model/brand.model';
 import { BRAND_REPOSITORY_TOKEN, IBrandRepository } from '../ports/brand-repository.interface';
 import { IBrandService } from '../ports/brand-service.interface';
+import { formatZodError } from '@shared/errors/error-formatter';
 
 @Injectable()
 export class BrandService implements IBrandService {

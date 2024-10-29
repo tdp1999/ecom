@@ -1,7 +1,7 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class CreateBrandTable1730101884839 implements MigrationInterface {
-    name = 'CreateBrandTable1730101884839'
+    name = 'CreateBrandTable1730101884839';
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
@@ -25,5 +25,4 @@ export class CreateBrandTable1730101884839 implements MigrationInterface {
             DROP TABLE \`brands\`
         `);
     }
-
 }

@@ -1,7 +1,7 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class CreateCategoryTables1729338139818 implements MigrationInterface {
-    name = 'CreateCategoryTables1729338139818'
+    name = 'CreateCategoryTables1729338139818';
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
@@ -37,5 +37,4 @@ export class CreateCategoryTables1729338139818 implements MigrationInterface {
             DROP TABLE \`category_closure\`
         `);
     }
-
 }
