@@ -14,23 +14,58 @@ export class BrandRepository implements IBrandRepository {
 
     async list(query?: BrandSearchDto): Promise<Brand[]> {
         const { orderBy, orderType } = query || {};
-        const items = await this.repository.find({
+        return await this.repository.find({
             where: this.buildWhereConditions(query),
             order: this.buildOrderConditions({ orderBy, orderType }),
         });
-        return items;
     }
 
     async paginatedList(query?: BrandSearchDto): Promise<Pagination<Brand>> {
-        throw new Error('Method not implemented.');
+        const { limit = 10, page = 1, orderBy, orderType } = query || {};
+
+        const [items, total] = await this.repository.findAndCount({
+            where: this.buildWhereConditions(query),
+            take: limit,
+            skip: (page - 1) * limit,
+            order: this.buildOrderConditions({ orderBy, orderType }),
+        });
+
+        const totalPages = Math.ceil(total / limit);
+
+        return {
+            items,
+            meta: {
+                total,
+                page,
+                limit,
+                totalPages,
+            },
+        };
     }
 
     async findById(id: UUID): Promise<Brand | null> {
-        throw new Error('Method not implemented.');
+        return await this.repository.findOneBy({ id });
     }
 
+    async create(data: BrandCreateDto): Promise<boolean> {
+        // console.log("Data: ", data);
+        await this.repository.create(data).save();
+        return true;
+    }
+
+    async update(id: UUID, data: BrandUpdateDto): Promise<boolean> {
+        await this.repository.update(id, data);
+        return true;
+    }
+
+    async delete(id: UUID): Promise<boolean> {
+        await this.repository.delete(id);
+        return true;
+    }
+
+    /* Helper Functions */
     private buildWhereConditions(query?: BrandSearchDto) {
-        const { limit = 10, page = 1, ...filters } = query || {};
+        const { ...filters } = query || {};
 
         // Build search conditions dynamically
         const where: FindOptionsWhere<Brand> = {
@@ -62,17 +97,5 @@ export class BrandRepository implements IBrandRepository {
         return {
             [orderBy]: orderType.toUpperCase() === 'ASC' ? 'ASC' : 'DESC', // Ensure correct order type
         };
-    }
-
-    async create(data: BrandCreateDto): Promise<boolean> {
-        throw new Error('Method not implemented.');
-    }
-
-    async update(id: UUID, data: BrandUpdateDto): Promise<boolean> {
-        throw new Error('Method not implemented.');
-    }
-
-    async delete(id: UUID): Promise<boolean> {
-        throw new Error('Method not implemented.');
     }
 }

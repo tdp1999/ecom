@@ -15,11 +15,10 @@ export class CategoryRepository implements ICategoryRepository {
     /* Query */
     async list(query?: CategorySearchDto): Promise<Category[]> {
         const { orderBy, orderType } = query || {};
-        const items = await this.repository.find({
+        return await this.repository.find({
             where: this.buildWhereConditions(query),
             order: this.buildOrderConditions({ orderBy, orderType }),
         });
-        return items;
     }
 
     async paginatedList(query?: CategorySearchDto): Promise<Pagination<Category>> {
@@ -55,8 +54,7 @@ export class CategoryRepository implements ICategoryRepository {
     }
 
     async findById(id: UUID): Promise<Category | null> {
-        const category = await this.repository.findOneBy({ id });
-        return category;
+        return await this.repository.findOneBy({ id });
     }
 
     async hasChildren(category: CategoryEntity): Promise<boolean> {
@@ -143,7 +141,7 @@ export class CategoryRepository implements ICategoryRepository {
         if (parentId) {
             parent = await this.repository.findOneBy({ id: parentId });
 
-            // All the logical bugs should be catched in the service layer
+            // All the logical bugs should be caught in the service layer
             if (!parent) {
                 return false;
             }
@@ -157,7 +155,6 @@ export class CategoryRepository implements ICategoryRepository {
 
     async update(id: UUID, data: CategoryUpdateDto): Promise<boolean> {
         await this.repository.save({ id, ...data });
-
         return true;
     }
 

@@ -10,13 +10,13 @@ export class BrandEntity extends BaseEntity implements Brand {
     @Column()
     name: string;
 
-    @Column()
+    @Column({ nullable: true })
     image: string;
 
-    @Column()
+    @Column({ nullable: true })
     description: string;
 
-    @Column({ name: 'tag_line' })
+    @Column({ name: 'tag_line', nullable: true })
     tagLine: string;
 
     @Column({ type: 'enum', enum: STATUS, default: STATUS.ACTIVE })

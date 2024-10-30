@@ -1,13 +1,13 @@
 import { Body, Controller, Delete, Get, Inject, Param, Patch, Post, Query } from '@nestjs/common';
-import { CATEGORY_SERVICE_TOKEN, ICategoryService } from '../../domain/ports/category-service.interface';
 import { CategorySearchDto, CategoryCreateDto, CategoryUpdateDto } from '../../domain/model/category.dto';
+import { CATEGORY_SERVICE_TOKEN, ICategoryService } from '@category/domain/ports/category-service.interface';
 
 @Controller('category')
 export class CategoryController {
     constructor(@Inject(CATEGORY_SERVICE_TOKEN) private readonly service: ICategoryService) {}
 
     @Get()
-    pagnatedList(@Query() query?: CategorySearchDto) {
+    paginatedList(@Query() query?: CategorySearchDto) {
         return this.service.paginatedList(query);
     }
 

@@ -19,8 +19,8 @@
         "noFallthroughCasesInSwitch": true,
         "paths": {
             "@shared/*": ["src/shared/*"],
-            "@restaurant/*": ["src/modules/restaurant/*"],
-            "@category/*": ["src/modules/category/*"]
+            "@category/*": ["src/modules/category/*"],
+            "@brand/*": ["src/modules/brand/*"],
         }
     }
 }
