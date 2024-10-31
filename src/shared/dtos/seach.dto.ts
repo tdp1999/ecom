@@ -14,11 +14,11 @@ export const SearchSchema = z.object({
     orderType: z.string().toLowerCase().pipe(z.nativeEnum(ORDER_TYPE)).optional(),
 
     // Timestamp
-    created_at: z.string().datetime().optional(),
-    updated_at: z.string().datetime().optional(),
+    createdAt: z.bigint().optional(),
+    updatedAt: z.bigint().optional(),
 
     // Arbitrary
-    status: z.nativeEnum(STATUS).optional().default(STATUS.ACTIVE),
+    status: z.nativeEnum(STATUS).optional(),
 });
 
 export type SearchDto = z.infer<typeof SearchSchema>;
