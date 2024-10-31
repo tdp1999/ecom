@@ -42,7 +42,6 @@ export const CategoryMoveSchema = z.object({
 
 export const CategorySearchSchema = SearchSchema.merge(CategoryCreateSchema.pick({ name: true })).partial();
 
-// eslint-disable-next-line prettier/prettier
 export type CategoryCreateDto = z.infer<typeof CategoryCreateSchema>;
 export type CategoryUpdateDto = z.infer<typeof CategoryUpdateSchema>;
 export type CategoryMoveDto = z.infer<typeof CategoryMoveSchema>;

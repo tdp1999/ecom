@@ -1,5 +1,5 @@
 import { Inject, Injectable, Optional } from '@nestjs/common';
-import { BadRequestError, NotFoundError } from '@shared/errors/domain-error';
+import { BadRequestError, NotFoundError, NotSupportedMethodError } from '@shared/errors/domain-error';
 import { MODULE_IDENTIFIER } from '@shared/tokens/common.token';
 import { UUID } from '@shared/types/general.type';
 import { Pagination } from '@shared/types/pagination.type';
@@ -7,6 +7,8 @@ import { v7 } from 'uuid';
 import {
     BrandCreateDto,
     BrandCreateSchema,
+    BrandFindOneDto,
+    BrandFindOneSchema,
     BrandSearchDto,
     BrandSearchSchema,
     BrandUpdateDto,
@@ -16,6 +18,7 @@ import { Brand } from '../model/brand.model';
 import { BRAND_REPOSITORY_TOKEN, IBrandRepository } from '../ports/brand-repository.interface';
 import { IBrandService } from '../ports/brand-service.interface';
 import { formatZodError } from '@shared/errors/error-formatter';
+import { ERR_BRAND_NAME_DUPLICATED } from '@brand/domain/model/brand.error';
 
 @Injectable()
 export class BrandService implements IBrandService {
@@ -48,11 +51,31 @@ export class BrandService implements IBrandService {
         return this.getValidData(id);
     }
 
+    getByConditions(conditions?: BrandFindOneDto): Promise<Brand | null> {
+        if (!conditions) throw BadRequestError('Missing conditions');
+
+        if (!this.repository.findByConditions) throw NotSupportedMethodError();
+
+        const { success, error, data } = BrandFindOneSchema.safeParse(conditions);
+
+        if (!success) {
+            throw BadRequestError(formatZodError(error));
+        }
+
+        return this.repository.findByConditions(data);
+    }
+
     async create(payload: BrandCreateDto): Promise<UUID> {
         const { success, error, data } = BrandCreateSchema.safeParse(payload);
 
         if (!success) {
             throw BadRequestError(formatZodError(error));
+        }
+
+        const duplicatedBrand = await this.getByConditions({ name: data.name });
+
+        if (duplicatedBrand) {
+            throw BadRequestError(ERR_BRAND_NAME_DUPLICATED.message);
         }
 
         const id = v7();

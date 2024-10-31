@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Inject, Param, Patch, Post, Query } from '@nestjs/common';
-import { BrandSearchDto } from '../../domain/model/brand.dto';
+import { BrandFindOneDto, BrandSearchDto } from '../../domain/model/brand.dto';
 import { CategoryCreateDto, CategorySearchDto, CategoryUpdateDto } from '@category/domain/model/category.dto';
 import { BRAND_SERVICE_TOKEN, IBrandService } from '@brand/domain/ports/brand-service.interface';
 
@@ -15,6 +15,12 @@ export class BrandController {
     @Get('list')
     list(@Query() query?: BrandSearchDto) {
         return this.service.list(query);
+    }
+
+    @Get('name')
+    getByConditions(@Query() conditions?: BrandFindOneDto) {
+        console.log('Conditions: ', conditions);
+        return this.service.getByConditions(conditions);
     }
 
     @Get(':id')

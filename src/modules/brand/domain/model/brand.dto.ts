@@ -21,8 +21,17 @@ export const BrandUpdateSchema = z
         message: ERR_COMMON_EMPTY_PAYLOAD.message,
     });
 
+export const BrandFindOneSchema = BrandCreateSchema.pick({
+    name: true,
+    tagLine: true,
+})
+    .partial()
+    .refine((data) => Object.keys(data).length > 0, {
+        message: ERR_COMMON_EMPTY_PAYLOAD.message,
+    });
 export const BrandSearchSchema = SearchSchema.merge(BrandCreateSchema.pick({ name: true, tagLine: true })).partial();
 
 export type BrandCreateDto = z.infer<typeof BrandCreateSchema>;
 export type BrandUpdateDto = z.infer<typeof BrandUpdateSchema>;
+export type BrandFindOneDto = z.infer<typeof BrandFindOneSchema>;
 export type BrandSearchDto = z.infer<typeof BrandSearchSchema>;

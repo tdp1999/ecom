@@ -1,18 +1,18 @@
 import { Injectable } from '@nestjs/common';
+import { IProductRepository } from '../../domain/ports/product-repository.interface';
 import { UUID } from '@shared/types/general.type';
 import { Pagination } from '@shared/types/pagination.type';
-import { BrandCreateDto, BrandSearchDto, BrandUpdateDto } from '../../domain/model/brand.dto';
-import { Brand } from '../../domain/model/brand.model';
-import { IBrandRepository } from '../../domain/ports/brand-repository.interface';
-import { BrandEntity } from './brand.entity';
-import { InjectRepository } from '@nestjs/typeorm';
+import { Product } from '../../domain/model/product.model';
+import { ProductCreateDto, ProductSearchDto, ProductUpdateDto } from '../../domain/model/product.dto';
 import { FindOptionsWhere, ILike, IsNull, Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ProductEntity } from './product.entity';
 
 @Injectable()
-export class BrandRepository implements IBrandRepository {
-    constructor(@InjectRepository(BrandEntity) private repository: Repository<BrandEntity>) {}
+export class ProductRepository implements IProductRepository {
+    constructor(@InjectRepository(ProductEntity) private repository: Repository<ProductEntity>) {}
 
-    async list(query?: BrandSearchDto): Promise<Brand[]> {
+    async list(query?: ProductSearchDto): Promise<Product[]> {
         const { orderBy, orderType } = query || {};
         return await this.repository.find({
             where: this.buildWhereConditions(query),
@@ -20,7 +20,7 @@ export class BrandRepository implements IBrandRepository {
         });
     }
 
-    async paginatedList(query?: BrandSearchDto): Promise<Pagination<Brand>> {
+    async paginatedList(query?: ProductSearchDto): Promise<Pagination<Product>> {
         const { limit = 10, page = 1, orderBy, orderType } = query || {};
 
         const [items, total] = await this.repository.findAndCount({
@@ -43,21 +43,16 @@ export class BrandRepository implements IBrandRepository {
         };
     }
 
-    async findById(id: UUID): Promise<Brand | null> {
+    async findById(id: UUID): Promise<Product | null> {
         return await this.repository.findOneBy({ id });
     }
 
-    async findByConditions(conditions: Record<string, any>): Promise<Brand | null> {
-        const where = this.buildWhereConditions(conditions);
-        return await this.repository.findOneBy(where);
-    }
-
-    async create(data: BrandCreateDto): Promise<boolean> {
+    async create(data: ProductCreateDto): Promise<boolean> {
         await this.repository.create(data).save();
         return true;
     }
 
-    async update(id: UUID, data: BrandUpdateDto): Promise<boolean> {
+    async update(id: UUID, data: ProductUpdateDto): Promise<boolean> {
         await this.repository.update(id, data);
         return true;
     }
@@ -68,20 +63,16 @@ export class BrandRepository implements IBrandRepository {
     }
 
     /* Helper Functions */
-    private buildWhereConditions(query?: BrandSearchDto) {
+    private buildWhereConditions(query?: ProductSearchDto) {
         const { ...filters } = query || {};
 
         // Build search conditions dynamically
-        const where: FindOptionsWhere<Brand> = {
+        const where: FindOptionsWhere<Product> = {
             deletedAt: IsNull(),
         };
 
         if (filters.name) {
             where.name = ILike(`%${filters.name}%`); // Fuzzy search
-        }
-
-        if (filters.tagLine) {
-            where.tagLine = ILike(`%${filters.tagLine}%`);
         }
 
         if (filters.status) {
@@ -91,7 +82,7 @@ export class BrandRepository implements IBrandRepository {
         return where;
     }
 
-    private buildOrderConditions(query?: BrandSearchDto) {
+    private buildOrderConditions(query?: ProductSearchDto) {
         const { orderBy, orderType } = query || {};
 
         if (!orderBy || !orderType) {

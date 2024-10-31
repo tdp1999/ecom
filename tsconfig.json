@@ -18,9 +18,18 @@
         "forceConsistentCasingInFileNames": true,
         "noFallthroughCasesInSwitch": true,
         "paths": {
-            "@shared/*": ["src/shared/*"],
-            "@category/*": ["src/modules/category/*"],
-            "@brand/*": ["src/modules/brand/*"],
+            "@shared/*": [
+                "src/shared/*"
+            ],
+            "@category/*": [
+                "src/modules/category/*"
+            ],
+            "@brand/*": [
+                "src/modules/brand/*"
+            ],
+            "@product/*": [
+                "src/modules/product/*"
+            ]
         }
     }
 }

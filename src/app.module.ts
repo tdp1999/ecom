@@ -9,9 +9,10 @@ import { GlobalExceptionFilter } from '@shared/filters/global-exception.filter';
 import { TransformInterceptor } from '@shared/interceptors/transform.interceptor';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { BrandModule } from './modules/brand/brand.module';
+import { BrandModule } from '@brand/brand.module';
+import { ProductModule } from '@product/product.module';
 
-const modules = [CategoryModule, BrandModule];
+const modules = [CategoryModule, BrandModule, ProductModule];
 
 @Module({
     imports: [

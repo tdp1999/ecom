@@ -28,3 +28,11 @@ export const NotFoundError = (message: any = 'Not Found') => {
         message: message,
     });
 };
+
+export const NotSupportedMethodError = (message: any = 'Not Supported Method') => {
+    return new DomainError({
+        statusCode: HTTP_ERROR_STATUS.INTERNAL_SERVER_ERROR,
+        error: 'Not Supported Method',
+        message: message,
+    });
+};
