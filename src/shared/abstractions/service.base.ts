@@ -1,4 +1,4 @@
-import { BaseEntity } from '@shared/abstractions/entity.base';
+import { BaseEntityInterface } from '@shared/abstractions/entity.base';
 import { Inject, Optional } from '@nestjs/common';
 import { MODULE_IDENTIFIER } from '@shared/tokens/common.token';
 import { SearchDto } from '@shared/dtos/seach.dto';
@@ -9,7 +9,7 @@ import { v7 } from 'uuid';
 import { formatZodError } from '@shared/errors/error-formatter';
 
 export abstract class BaseCrudService<
-    T extends BaseEntity,
+    T extends BaseEntityInterface,
     C extends Partial<T>,
     U extends Partial<T>,
     S extends SearchDto,

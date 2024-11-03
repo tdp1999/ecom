@@ -8,9 +8,10 @@ import { CategoryController } from './adapters/transport/category.controller';
 import { CATEGORY_REPOSITORY_TOKEN } from './domain/ports/category-repository.interface';
 import { CATEGORY_SERVICE_TOKEN } from './domain/ports/category-service.interface';
 import { CategoryService } from './domain/services/category.service';
+import { CategoryRpcController } from '@category/adapters/rpc/category.rpc';
 
 @Module({
-    controllers: [CategoryController],
+    controllers: [CategoryController, CategoryRpcController],
     imports: [TypeOrmModule.forFeature([CategoryEntity])],
     providers: [
         TransactionManager,

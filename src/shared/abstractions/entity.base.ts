@@ -13,3 +13,10 @@ export abstract class BaseEntity extends TypeOrmBaseEntity {
     @Column({ type: 'bigint', nullable: true })
     deletedAt?: bigint | null;
 }
+
+export interface BaseEntityInterface {
+    id: string;
+    createdAt: bigint;
+    updatedAt: bigint;
+    deletedAt?: bigint | null;
+}

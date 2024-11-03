@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Inject, Param, Patch, Post, Query } from '@nestjs/common';
-import { IProductService, PRODUCT_SERVICE_TOKEN } from '../../domain/ports/product-service.interface';
 import { BrandSearchDto } from '@brand/domain/model/brand.dto';
-import { ProductCreateDto, ProductSearchDto, ProductUpdateDto } from '../../domain/model/product.dto';
+import { IProductService, PRODUCT_SERVICE_TOKEN } from '@product/domain/ports/product-service.interface';
+import { ProductCreateDto, ProductSearchDto, ProductUpdateDto } from '@product/domain/model/product.dto';
 
 @Controller('product')
 export class ProductController {

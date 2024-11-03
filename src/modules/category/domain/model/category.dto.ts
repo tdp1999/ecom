@@ -40,9 +40,11 @@ export const CategoryMoveSchema = z.object({
     newParentId: CategoryId,
 });
 
-export const CategorySearchSchema = SearchSchema.merge(CategoryCreateSchema.pick({ name: true })).partial();
+export const CategorySearchSchema = SearchSchema.merge(CategoryCreateSchema.pick({ name: true }))
+    .partial()
+    .optional();
 
 export type CategoryCreateDto = z.infer<typeof CategoryCreateSchema>;
 export type CategoryUpdateDto = z.infer<typeof CategoryUpdateSchema>;
-export type CategoryMoveDto = z.infer<typeof CategoryMoveSchema>;
+// export type CategoryMoveDto = z.infer<typeof CategoryMoveSchema>;
 export type CategorySearchDto = z.infer<typeof CategorySearchSchema>;

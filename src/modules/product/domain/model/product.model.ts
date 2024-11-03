@@ -3,12 +3,14 @@ import { PRODUCT_GENDER } from './product.type';
 import { STATUS } from '@shared/enums/status.enum';
 import { UuidSchema } from '@shared/models/general-value-object.model';
 
-export const ProductCategory = z.object({
+export const ProductCategorySchema = z.object({
     id: UuidSchema,
     name: z.string(),
 });
 
-export const ProductBrand = z.object({
+export const ProductCategoryListSchema = z.array(ProductCategorySchema);
+
+export const ProductBrandSchema = z.object({
     id: UuidSchema,
     name: z.string(),
 });
@@ -36,6 +38,9 @@ export const ProductSchema = z.object({
     deletedAt: z.bigint().nullable().optional(),
 });
 
-export type ProductCategory = z.infer<typeof ProductCategory>;
-export type ProductBrand = z.infer<typeof ProductBrand>;
-export type Product = z.infer<typeof ProductSchema> & { brand?: ProductBrand; category?: ProductCategory };
+export type ProductCategory = z.infer<typeof ProductCategorySchema>;
+export type ProductBrand = z.infer<typeof ProductBrandSchema>;
+export type Product = z.infer<typeof ProductSchema> & {
+    brand?: ProductBrand | null;
+    categories?: ProductCategory[] | null;
+};

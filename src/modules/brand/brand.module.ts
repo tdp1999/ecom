@@ -8,9 +8,10 @@ import { BRAND_REPOSITORY_TOKEN } from './domain/ports/brand-repository.interfac
 import { BRAND_SERVICE_TOKEN } from './domain/ports/brand-service.interface';
 import { BrandRepository } from './adapters/repository/brand.repository';
 import { BrandService } from './domain/services/brand.service';
+import { BrandRpcController } from '@brand/adapters/rpc/brand.rpc';
 
 @Module({
-    controllers: [BrandController],
+    controllers: [BrandController, BrandRpcController],
     imports: [TypeOrmModule.forFeature([BrandEntity])],
     providers: [
         TransactionManager,
