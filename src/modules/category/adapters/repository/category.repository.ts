@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UUID } from '@shared/types/general.type';
 import { Pagination } from '@shared/types/pagination.type';
-import { FindOptionsWhere, ILike, IsNull, TreeRepository } from 'typeorm';
+import { FindOptionsWhere, ILike, In, IsNull, TreeRepository } from 'typeorm';
 import { CategoryCreateDto, CategorySearchDto, CategoryUpdateDto } from '../../domain/model/category.dto';
 import { Category } from '../../domain/model/category.model';
 import { ICategoryRepository } from '../../domain/ports/category-repository.interface';
@@ -55,6 +55,20 @@ export class CategoryRepository implements ICategoryRepository {
 
     async findById(id: UUID): Promise<Category | null> {
         return await this.repository.findOneBy({ id });
+    }
+
+    async findByIds(ids: UUID[]): Promise<Category[]> {
+        return await this.repository.find({ where: { id: In(ids) }, select: ['id', 'name'] });
+    }
+
+    async exist(id: UUID): Promise<boolean> {
+        const result = await this.repository
+            .createQueryBuilder('entity')
+            .where('entity.id = :id', { id })
+            .select('1')
+            .getRawOne();
+
+        return !!result;
     }
 
     async hasChildren(category: CategoryEntity): Promise<boolean> {

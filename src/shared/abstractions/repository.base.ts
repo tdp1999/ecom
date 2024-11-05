@@ -42,6 +42,16 @@ export abstract class BaseCrudRepository<
         };
     }
 
+    async exist(id: string): Promise<boolean> {
+        const result = await this.repository
+            .createQueryBuilder('entity')
+            .where('entity.id = :id', { id })
+            .select('1') // Only return '1' instead of fetching fields
+            .getRawOne();
+
+        return !!result;
+    }
+
     async findById(id: string): Promise<T | null> {
         return await this.repository.findOneBy({ id } as any);
     }

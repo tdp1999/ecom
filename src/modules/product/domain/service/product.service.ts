@@ -21,6 +21,11 @@ import { Product, ProductBrandSchema, ProductCategoryListSchema } from '@product
 import { PRODUCT_BRAND_REPOSITORY_TOKEN, PRODUCT_CATEGORY_REPOSITORY_TOKEN } from '@product/domain/model/product.token';
 import { BadRequestError } from '@shared/errors/domain-error';
 import { formatZodError } from '@shared/errors/error-formatter';
+import {
+    ERR_PRODUCT_BRAND_ID_MUST_BE_VALID_UUID,
+    ERR_PRODUCT_CATEGORY_ID_MUST_BE_VALID_UUID,
+} from '@product/domain/model/product.error';
+import { Pagination } from '@shared/types/pagination.type';
 
 @Injectable()
 export class ProductService
@@ -40,6 +45,31 @@ export class ProductService
         super(moduleName, repository);
     }
 
+    override async list(query: ProductSearchDto): Promise<Product[]> {
+        const { success, error, data } = this.searchSchema.safeParse(query);
+
+        if (!success) throw this.handleValidationError(error);
+
+        const products = await this.repository.list(data);
+
+        await this.loadProductRelations(products);
+
+        return products;
+    }
+
+    override async paginatedList(query?: ProductSearchDto): Promise<Pagination<Product>> {
+        const { success, error, data } = this.searchSchema.safeParse(query);
+
+        if (!success) throw this.handleValidationError(error);
+
+        const result = await this.repository.paginatedList(data);
+
+        await this.loadProductRelations(result.items);
+
+        return result;
+    }
+
+    // TODO: Check if brand and categories are deleted
     override async get(id: UUID): Promise<Product | null> {
         const product = await this.getValidData(id);
 
@@ -70,11 +100,53 @@ export class ProductService
         return product;
     }
 
-    protected validateCreate(): Promise<void> {
+    // Protected methods
+    protected async validateCreate(data: ProductCreateDto): Promise<void> {
+        const { brandId, categoryIds } = data;
+
+        // Check if brand exists
+        if (brandId) {
+            const brand = await this.brandRepository.exist(brandId);
+            if (!brand) {
+                throw BadRequestError(ERR_PRODUCT_BRAND_ID_MUST_BE_VALID_UUID.message);
+            }
+        }
+
+        // Check if category exists
+        if (categoryIds) {
+            const categories = await Promise.all(categoryIds.map((id_1) => this.categoryRepository.exist(id_1)));
+            if (categories.some((category) => !category)) {
+                throw BadRequestError(ERR_PRODUCT_CATEGORY_ID_MUST_BE_VALID_UUID.message);
+            }
+        }
+    }
+
+    protected async validateUpdate(): Promise<void> {
         return Promise.resolve();
     }
 
-    protected validateUpdate(): Promise<void> {
-        return Promise.resolve();
+    // Private methods
+    private async loadProductRelations(products: Product[]): Promise<void> {
+        try {
+            await Promise.all(
+                products.flatMap((product) =>
+                    [
+                        // Load brand
+                        product.brandId &&
+                            this.brandRepository.load(product.brandId).then((brand) => {
+                                product.brand = brand || null;
+                            }),
+
+                        // Load category
+                        product.categoryIds?.length &&
+                            this.categoryRepository.getByIds(product.categoryIds).then((categories) => {
+                                product.categories = categories.filter((category) => !!category);
+                            }),
+                    ].filter(Boolean),
+                ),
+            ); // Filter out null promises
+        } catch (error) {
+            throw new Error(`Failed to load relations: ${error.message}`);
+        }
     }
 }

@@ -4,8 +4,9 @@ import { Brand } from '../../domain/model/brand.model';
 import { IBrandRepository } from '../../domain/ports/brand-repository.interface';
 import { BrandEntity } from './brand.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, ILike, IsNull, Repository } from 'typeorm';
+import { FindOptionsWhere, ILike, In, IsNull, Repository } from 'typeorm';
 import { BaseCrudRepository } from '@shared/abstractions/repository.base';
+import { UUID } from '@shared/types/general.type';
 
 @Injectable()
 export class BrandRepository
@@ -19,6 +20,10 @@ export class BrandRepository
     async findByConditions(conditions: Record<string, any>): Promise<Brand | null> {
         const where = this.buildWhereConditions(conditions);
         return await this.repository.findOneBy(where);
+    }
+
+    async findByIds(ids: UUID[]): Promise<Brand[]> {
+        return await this.repository.find({ where: { id: In(ids) }, select: ['id', 'name'] });
     }
 
     protected buildWhereConditions(query?: BrandSearchDto): FindOptionsWhere<BrandEntity> {

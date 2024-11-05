@@ -59,6 +59,10 @@ export class CategoryService implements ICategoryService {
         return this.repository.getFullTreeOfAncestor(id);
     }
 
+    exist(id: UUID): Promise<boolean> {
+        return this.repository.exist(id);
+    }
+
     async create(payload: CategoryCreateDto): Promise<UUID> {
         const { success, error, data } = CategoryCreateSchema.safeParse(payload);
 

@@ -9,6 +9,8 @@ z.setErrorMap(globalErrorMap);
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
 
+    app.setGlobalPrefix(process.env.GLOBAL_PREFIX || 'api');
+
     app.connectMicroservice<MicroserviceOptions>({
         transport: Transport.TCP,
         options: {
@@ -19,7 +21,7 @@ async function bootstrap() {
     // Start all microservices and then listen on HTTP port
     await app.startAllMicroservices();
 
-    await app.listen(3000);
+    await app.listen(process.env.PORT || 3000);
 }
 
 bootstrap();

@@ -7,6 +7,7 @@ import { Pagination } from '@shared/types/pagination.type';
 import { BadRequestError, NotFoundError } from '@shared/errors/domain-error';
 import { v7 } from 'uuid';
 import { formatZodError } from '@shared/errors/error-formatter';
+import { UUID } from '@shared/types/general.type';
 
 export abstract class BaseCrudService<
     T extends BaseEntityInterface,
@@ -37,15 +38,17 @@ export abstract class BaseCrudService<
     async paginatedList(query?: S): Promise<Pagination<T>> {
         const { success, error, data } = this.searchSchema.safeParse(query);
 
-        if (!success) {
-            throw this.handleValidationError(error);
-        }
+        if (!success) throw this.handleValidationError(error);
 
         return this.repository.paginatedList(data);
     }
 
-    get(id: string): Promise<T | null> {
-        return this.getValidData(id);
+    async get(id: string): Promise<T | null> {
+        return await this.getValidData(id);
+    }
+
+    exist(id: UUID): Promise<boolean> {
+        return this.repository.exist(id);
     }
 
     async create(payload: C): Promise<string> {

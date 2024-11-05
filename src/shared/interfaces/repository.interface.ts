@@ -16,5 +16,7 @@ export interface IRepositoryQuery<T, Search, Conditions = Record<string, any>> {
 
     findById(id: UUID): Promise<T | null>;
 
+    exist(id: UUID): Promise<boolean>;
+
     findByConditions?(conditions: Conditions): Promise<T | null>;
 }
