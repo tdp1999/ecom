@@ -11,8 +11,10 @@
         "^.+\\.(t|j)s$": "ts-jest"
     },
     "moduleNameMapper": {
-        "^@shared/(.*)$": "<rootDir>/src/shared/$1",
-        "^@category/(.*)$": "<rootDir>/src/modules/category/$1",
-        "^@brand/(.*)$": "<rootDir>/src/modules/brand/$1"
+        "^@shared/(.*)$": "<rootDir>/../src/shared/$1",
+        "^@/(.*)$": "<rootDir>/../src/$1",
+        "^@product/(.*)$": "<rootDir>/../src/modules/product/$1",
+        "^@category/(.*)$": "<rootDir>/../src/modules/category/$1",
+        "^@brand/(.*)$": "<rootDir>/../src/modules/brand/$1"
     }
 }
