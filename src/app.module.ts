@@ -11,8 +11,9 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { BrandModule } from '@brand/brand.module';
 import { ProductModule } from '@product/product.module';
+import { UserModule } from '@user/user.module';
 
-const modules = [CategoryModule, BrandModule, ProductModule];
+const modules = [CategoryModule, BrandModule, ProductModule, UserModule];
 
 @Module({
     imports: [

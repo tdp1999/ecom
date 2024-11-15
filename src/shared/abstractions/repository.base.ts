@@ -1,12 +1,12 @@
 import { SearchDto } from '@shared/dtos/seach.dto';
-import { FindOptionsOrder, FindOptionsWhere, ObjectLiteral, Repository } from 'typeorm';
+import { DeepPartial, FindOptionsOrder, FindOptionsWhere, ObjectLiteral, Repository } from 'typeorm';
 import { Pagination } from '@shared/types/pagination.type';
 import { ORDER_TYPE } from '@shared/enums/status.enum';
 
 export abstract class BaseCrudRepository<
     T extends ObjectLiteral,
-    C extends Partial<T>,
-    U extends Partial<T>,
+    C extends DeepPartial<T>,
+    U extends DeepPartial<T>,
     S extends SearchDto,
 > {
     protected constructor(protected readonly repository: Repository<T>) {}

@@ -17,7 +17,6 @@ export const CategoryMetadata = z.object({
 export const CategorySchema = z.object({
     id: CategoryId,
     name: z.string(),
-
     isGroup: z.boolean(),
     isClickable: z.boolean(),
     metadata: CategoryMetadata,
@@ -29,6 +28,7 @@ export const CategorySchema = z.object({
     deletedAt: z.bigint().nullable().optional(),
 
     parentId: CategoryId.nullable().optional(),
+
     parent: z.any().optional(),
     children: z.array(z.any()).optional(),
 });

@@ -1,5 +1,8 @@
+import { ERR_BRAND_NAME_DUPLICATED } from '@brand/domain/model/brand.error';
 import { Inject, Injectable, Optional } from '@nestjs/common';
+import { BaseCrudService } from '@shared/abstractions/service.base';
 import { BadRequestError, NotSupportedMethodError } from '@shared/errors/domain-error';
+import { formatZodError } from '@shared/errors/error-formatter';
 import { MODULE_IDENTIFIER } from '@shared/tokens/common.token';
 import {
     BrandCreateDto,
@@ -14,14 +17,10 @@ import {
 import { Brand } from '../model/brand.model';
 import { BRAND_REPOSITORY_TOKEN, IBrandRepository } from '../ports/brand-repository.interface';
 import { IBrandService } from '../ports/brand-service.interface';
-import { formatZodError } from '@shared/errors/error-formatter';
-import { ERR_BRAND_NAME_DUPLICATED } from '@brand/domain/model/brand.error';
-import { BaseCrudService } from '@shared/abstractions/service.base';
-import { BrandEntity } from '@brand/adapters/repository/brand.entity';
 
 @Injectable()
 export class BrandService
-    extends BaseCrudService<BrandEntity, BrandCreateDto, BrandUpdateDto, BrandSearchDto>
+    extends BaseCrudService<Brand, BrandCreateDto, BrandUpdateDto, BrandSearchDto>
     implements IBrandService
 {
     constructor(

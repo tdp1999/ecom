@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ORDER_TYPE, STATUS } from '../enums/status.enum';
+import { ORDER_TYPE } from '../enums/status.enum';
 
 export const SearchSchema = z.object({
     // General search
@@ -18,7 +18,7 @@ export const SearchSchema = z.object({
     updatedAt: z.bigint().optional(),
 
     // Arbitrary
-    status: z.nativeEnum(STATUS).optional(),
+    // status: z.nativeEnum(STATUS).optional(),
 });
 
 export type SearchDto = z.infer<typeof SearchSchema>;

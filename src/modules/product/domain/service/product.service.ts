@@ -1,5 +1,16 @@
 import { Inject, Injectable, Optional } from '@nestjs/common';
-import { IProductService } from '../ports/product-service.interface';
+import {
+    ERR_PRODUCT_BRAND_ID_MUST_BE_VALID_UUID,
+    ERR_PRODUCT_CATEGORY_ID_MUST_BE_VALID_UUID,
+} from '@product/domain/model/product.error';
+import { Product, ProductBrandSchema, ProductCategoryListSchema } from '@product/domain/model/product.model';
+import { PRODUCT_BRAND_REPOSITORY_TOKEN, PRODUCT_CATEGORY_REPOSITORY_TOKEN } from '@product/domain/model/product.token';
+import { BaseCrudService } from '@shared/abstractions/service.base';
+import { BadRequestError } from '@shared/errors/domain-error';
+import { formatZodError } from '@shared/errors/error-formatter';
+import { MODULE_IDENTIFIER } from '@shared/tokens/common.token';
+import { UUID } from '@shared/types/general.type';
+import { Pagination } from '@shared/types/pagination.type';
 import {
     ProductCreateDto,
     ProductCreateSchema,
@@ -8,24 +19,13 @@ import {
     ProductUpdateDto,
     ProductUpdateSchema,
 } from '../model/product.dto';
-import { MODULE_IDENTIFIER } from '@shared/tokens/common.token';
 import {
     IProductBrandRepository,
     IProductCategoryRepository,
     IProductRepository,
     PRODUCT_REPOSITORY_TOKEN,
 } from '../ports/product-repository.interface';
-import { BaseCrudService } from '@shared/abstractions/service.base';
-import { UUID } from '@shared/types/general.type';
-import { Product, ProductBrandSchema, ProductCategoryListSchema } from '@product/domain/model/product.model';
-import { PRODUCT_BRAND_REPOSITORY_TOKEN, PRODUCT_CATEGORY_REPOSITORY_TOKEN } from '@product/domain/model/product.token';
-import { BadRequestError } from '@shared/errors/domain-error';
-import { formatZodError } from '@shared/errors/error-formatter';
-import {
-    ERR_PRODUCT_BRAND_ID_MUST_BE_VALID_UUID,
-    ERR_PRODUCT_CATEGORY_ID_MUST_BE_VALID_UUID,
-} from '@product/domain/model/product.error';
-import { Pagination } from '@shared/types/pagination.type';
+import { IProductService } from '../ports/product-service.interface';
 
 @Injectable()
 export class ProductService

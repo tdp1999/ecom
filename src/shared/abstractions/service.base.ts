@@ -8,11 +8,12 @@ import { BadRequestError, NotFoundError } from '@shared/errors/domain-error';
 import { v7 } from 'uuid';
 import { formatZodError } from '@shared/errors/error-formatter';
 import { UUID } from '@shared/types/general.type';
+import { DeepPartial } from 'typeorm';
 
 export abstract class BaseCrudService<
     T extends BaseEntityInterface,
-    C extends Partial<T>,
-    U extends Partial<T>,
+    C extends DeepPartial<T>,
+    U extends DeepPartial<T>,
     S extends SearchDto,
 > {
     protected constructor(

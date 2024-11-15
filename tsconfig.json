@@ -29,6 +29,9 @@
             ],
             "@product/*": [
                 "src/modules/product/*"
+            ],
+            "@user/*": [
+                "src/modules/user/*"
             ]
         }
     }

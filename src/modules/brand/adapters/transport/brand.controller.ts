@@ -1,6 +1,5 @@
 import { Body, Controller, Delete, Get, Inject, Param, Patch, Post, Query } from '@nestjs/common';
-import { BrandFindOneDto, BrandSearchDto } from '../../domain/model/brand.dto';
-import { CategoryCreateDto, CategorySearchDto, CategoryUpdateDto } from '@category/domain/model/category.dto';
+import { BrandCreateDto, BrandFindOneDto, BrandSearchDto, BrandUpdateDto } from '../../domain/model/brand.dto';
 import { BRAND_SERVICE_TOKEN, IBrandService } from '@brand/domain/ports/brand-service.interface';
 
 @Controller('brand')
@@ -8,7 +7,7 @@ export class BrandController {
     constructor(@Inject(BRAND_SERVICE_TOKEN) private readonly service: IBrandService) {}
 
     @Get()
-    paginatedList(@Query() query?: CategorySearchDto) {
+    paginatedList(@Query() query?: BrandSearchDto) {
         return this.service.paginatedList(query);
     }
 
@@ -29,12 +28,12 @@ export class BrandController {
     }
 
     @Post()
-    create(@Body() payload: CategoryCreateDto) {
+    create(@Body() payload: BrandCreateDto) {
         return this.service.create(payload);
     }
 
     @Patch(':id')
-    update(@Param('id') id: string, @Body() payload: CategoryUpdateDto) {
+    update(@Param('id') id: string, @Body() payload: BrandUpdateDto) {
         return this.service.update(id, payload);
     }
 

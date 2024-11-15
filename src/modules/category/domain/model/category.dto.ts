@@ -40,7 +40,7 @@ export const CategoryMoveSchema = z.object({
     newParentId: CategoryId,
 });
 
-export const CategorySearchSchema = SearchSchema.merge(CategoryCreateSchema.pick({ name: true }))
+export const CategorySearchSchema = SearchSchema.merge(CategoryCreateSchema.pick({ name: true, status: true }))
     .partial()
     .optional();
 

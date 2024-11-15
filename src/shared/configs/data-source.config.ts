@@ -14,6 +14,7 @@ export default new DataSource({
 
     synchronize: false,
     logging: false,
+    logger: 'advanced-console',
 
     entities: getEntityPaths(process.env.TYPEORM_ENTITIES),
     migrations: getMigrationPaths(process.env.TYPEORM_MIGRATIONS),

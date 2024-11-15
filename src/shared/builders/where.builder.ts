@@ -1,10 +1,6 @@
 import { FindOptionsWhere, ILike, IsNull } from 'typeorm';
 import { SearchDto } from '../dtos/seach.dto';
 
-export type BaseWhere = {
-    deletedAt: number;
-};
-
 export function whereBuilder<T extends SearchDto>(filters: Partial<T> = {}): FindOptionsWhere<T> {
     const where: FindOptionsWhere<T> = {
         deletedAt: IsNull(),

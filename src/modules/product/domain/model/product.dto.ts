@@ -44,7 +44,7 @@ export const ProductUpdateSchema = z
         message: ERR_COMMON_EMPTY_PAYLOAD.message,
     });
 
-export const ProductSearchSchema = SearchSchema.merge(ProductCreateSchema.pick({ name: true })).partial();
+export const ProductSearchSchema = SearchSchema.merge(ProductCreateSchema.pick({ name: true, status: true })).partial();
 export const ProductFilterSchema = z.object({
     fromPrice: z.number().positive(ERR_PRODUCT_PRICE_MUST_BE_POSITIVE).optional(),
     toPrice: z.number().positive(ERR_PRODUCT_PRICE_MUST_BE_POSITIVE).optional(),
