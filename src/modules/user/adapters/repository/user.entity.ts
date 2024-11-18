@@ -1,6 +1,7 @@
-import { BaseEntity, Column, Entity, OneToOne, PrimaryGeneratedColumn, Relation } from 'typeorm';
-import { USER_ROLE, USER_STATUS } from '../../domain/model/user.type';
+import { BaseEntity, Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, Relation } from 'typeorm';
 import { User } from '../../domain/model/user.model';
+import { USER_ROLE, USER_STATUS } from '../../domain/model/user.type';
+// eslint-disable-next-line import/no-cycle
 import { UserProfileEntity } from './user-profile.entity';
 
 @Entity('users')
@@ -11,10 +12,11 @@ export class UserEntity extends BaseEntity implements User {
     @Column({ unique: true })
     email: string;
 
-    @Column()
+    // CONSIDER: move this to application (use-case) layer, in case this logic need to change
+    @Column({ select: false })
     password: string;
 
-    @Column()
+    @Column({ select: false })
     salt: string;
 
     @Column({ type: 'enum', enum: USER_ROLE })
@@ -24,9 +26,11 @@ export class UserEntity extends BaseEntity implements User {
     status: USER_STATUS;
 
     @OneToOne(() => UserProfileEntity, (profile) => profile.user, {
-        cascade: true, // Will automatically save the profile
+        cascade: true,
         eager: false,
+        onDelete: 'CASCADE',
     })
+    @JoinColumn()
     profile: Relation<UserProfileEntity>;
 
     @Column({ type: 'bigint' })

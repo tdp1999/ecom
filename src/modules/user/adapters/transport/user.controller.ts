@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Inject, Param, Patch, Post, Query } from '@nestjs/common';
+import { UserCreateDto, UserSearchDto, UserUpdateDto } from '../../domain/model/user.dto';
 import { USER_SERVICE_TOKEN } from '../../domain/model/user.token';
 import { IUserService } from '../../domain/ports/user-service.interface';
-import { UserCreateDto, UserSearchDto, UserUpdateDto } from '../../domain/model/user.dto';
 
 @Controller('user')
 export class UserController {
@@ -35,6 +35,7 @@ export class UserController {
 
     @Patch(':id')
     update(@Param('id') id: string, @Body() payload: UserUpdateDto) {
+        // this.logger.log('Updating user with id: ', id);
         return this.service.update(id, payload);
     }
 

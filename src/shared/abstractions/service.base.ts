@@ -83,14 +83,21 @@ export abstract class BaseCrudService<
             throw this.handleValidationError(error);
         }
 
-        await this.getValidData(id);
+        const isExisted = await this.repository.exist(id);
+        if (!isExisted) {
+            throw NotFoundError(`${this.moduleName} with id ${id} not found`);
+        }
+
         await this.validateUpdate(id, data);
 
         return this.repository.update(id, data);
     }
 
     async delete(id: string, isHardDelete?: boolean): Promise<boolean> {
-        await this.getValidData(id);
+        const isExisted = await this.repository.exist(id);
+        if (!isExisted) {
+            throw NotFoundError(`${this.moduleName} with id ${id} not found`);
+        }
 
         if (isHardDelete) {
             return this.repository.delete(id);

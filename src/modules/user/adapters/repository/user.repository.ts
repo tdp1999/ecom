@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ObjectUtils } from '@shared/utils/object.util';
 import { IUserRepository } from '../../domain/ports/user-repository.interface';
 import { UserCreateDto, UserSearchDto, UserUpdateDto } from '../../domain/model/user.dto';
 import { FindOptionsWhere, ILike, IsNull, Repository } from 'typeorm';
@@ -24,6 +25,7 @@ export class UserRepository implements IUserRepository {
 
         return await this.repository.find({
             where: this.buildWhereConditions(filters),
+            relations: ['profile'],
             order: buildOrderConditions<User>(orderBy, orderType),
         });
     }
@@ -33,6 +35,7 @@ export class UserRepository implements IUserRepository {
 
         const [items, total] = await this.repository.findAndCount({
             where: this.buildWhereConditions(query),
+            relations: ['profile'],
             take: limit,
             skip: (page - 1) * limit,
             order: buildOrderConditions<User>(orderBy, orderType),
@@ -52,13 +55,17 @@ export class UserRepository implements IUserRepository {
     }
 
     async findById(id: UUID): Promise<User | null> {
-        return await this.repository.findOneBy({ id });
+        return await this.repository.findOne({
+            where: { id },
+            relations: ['profile'],
+        });
     }
 
     async exist(id: UUID): Promise<boolean> {
         const result = await this.repository
             .createQueryBuilder('entity')
             .where('entity.id = :id', { id })
+            .andWhere('entity.deletedAt IS NULL')
             .select('1') // Only return '1' instead of fetching fields
             .getRawOne();
 
@@ -79,14 +86,25 @@ export class UserRepository implements IUserRepository {
         return true;
     }
 
+    @Transactional()
     async update(id: UUID, data: UserUpdateDto): Promise<boolean> {
-        const { profile: profileData, ...userData } = data;
-        const profile = await this.profileRepository.findOneBy({ userId: id });
-        if (profile) {
-            await this.profileRepository.update(profile.id, profileData ?? {});
+        const user = await this.repository.findOne({
+            where: { id },
+            relations: ['profile'],
+        });
+
+        if (!user) return false;
+        const profileId = user.profile.id;
+        const { profile, ...userData } = data;
+
+        if (profile && !ObjectUtils.isEmpty(profile)) {
+            await this.profileRepository.update(profileId, profile ?? {});
         }
 
-        await this.repository.update(id, { ...userData });
+        if (!ObjectUtils.isEmpty(userData)) {
+            await this.repository.update(id, userData);
+        }
+
         return true;
     }
 

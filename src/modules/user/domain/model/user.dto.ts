@@ -20,7 +20,7 @@ export const UserCreateSchema = z.object({
     email: z.string().email(ERR_USER_EMAIL_INVALID.message),
     role: z.nativeEnum(USER_ROLE).default(USER_ROLE.USER),
     status: z.nativeEnum(USER_STATUS).default(USER_STATUS.PENDING),
-    profile: UserProfileUpdateSchema.nullable().optional(),
+    profile: UserProfileUpdateSchema.partial().nullable().optional(),
 });
 
 export const UserUpdateSchema = z
@@ -37,7 +37,15 @@ export const UserSearchSchema = SearchSchema.merge(
         email: true,
         status: true,
         role: true,
-    }).merge(z.object({ profile: UserProfileUpdateSchema.pick({ firstName: true, lastName: true, address: true }) })),
+    }).merge(
+        z.object({
+            profile: UserProfileUpdateSchema.pick({
+                firstName: true,
+                lastName: true,
+                address: true,
+            }),
+        }),
+    ),
 ).partial();
 
 export const UserLoginSchema = z.object({

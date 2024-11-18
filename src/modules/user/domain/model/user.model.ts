@@ -5,7 +5,7 @@ import { z } from 'zod';
 // User Profile Schema (less frequently accessed, profile-related)
 export const UserProfileSchema = z.object({
     id: UuidSchema,
-    userId: UuidSchema, // Reference to main user
+    // userId: UuidSchema, // Reference to main user
     firstName: z.string(),
     lastName: z.string(),
     avatar: z.string().nullable().optional(),
@@ -28,7 +28,7 @@ export const UserSchema = z.object({
     updatedAt: z.bigint(),
     deletedAt: z.bigint().nullable().optional(),
 
-    profile: UserProfileSchema.nullable().optional(),
+    // profile: UserProfileSchema.nullable().optional(),
 });
 
 export type User = z.infer<typeof UserSchema>;
