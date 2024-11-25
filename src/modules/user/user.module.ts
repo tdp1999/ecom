@@ -1,19 +1,20 @@
 import { Module } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserEntity } from './adapters/repository/user.entity';
-import { UserProfileEntity } from './adapters/repository/user-profile.entity';
 import { TransactionManager } from '@shared/decorators/transactional.decorator';
 import { MODULE_IDENTIFIER } from '@shared/tokens/common.token';
-import { USER_REPOSITORY_TOKEN, USER_SERVICE_TOKEN } from './domain/model/user.token';
-import { UserService } from './domain/service/user.service';
+import { UserRpcController } from '@user/adapters/rpc/user.rpc';
+import { UserProfileEntity } from './adapters/repository/user-profile.entity';
+import { UserEntity } from './adapters/repository/user.entity';
 import { UserRepository } from './adapters/repository/user.repository';
 import { UserController } from './adapters/transport/user.controller';
-import { ConfigService } from '@nestjs/config';
-import { IUserRepository } from './domain/ports/user-repository.interface';
 import { UserConfigAdapter } from './adapters/user-config.adapter';
+import { USER_REPOSITORY_TOKEN, USER_SERVICE_TOKEN } from './domain/model/user.token';
+import { IUserRepository } from './domain/ports/user-repository.interface';
+import { UserService } from './domain/service/user.service';
 
 @Module({
-    controllers: [UserController],
+    controllers: [UserController, UserRpcController],
     imports: [TypeOrmModule.forFeature([UserEntity, UserProfileEntity])],
     providers: [
         TransactionManager,

@@ -2,7 +2,7 @@ import { Inject, Injectable, Optional } from '@nestjs/common';
 import { BaseCrudService } from '@shared/abstractions/service.base';
 import { BadRequestError } from '@shared/errors/domain-error';
 import { MODULE_IDENTIFIER } from '@shared/tokens/common.token';
-import { UUID } from '@shared/types/general.type';
+import { Email, UUID } from '@shared/types/general.type';
 import { hashPasswordByBcrypt } from '@shared/utils/hashing.util';
 import { v7 } from 'uuid';
 import {
@@ -82,8 +82,17 @@ export class UserService
         return await Promise.resolve();
     }
 
+    public async findByEmail(email: Email): Promise<User | null> {
+        if (!this.repository.findByConditions) throw new Error('Method repository.findByConditions not implemented.');
+        return await this.repository.findByConditions({ email });
+    }
+
+    public async getPassword(userId: UUID): Promise<string> {
+        return await this.repository.getPassword(userId);
+    }
+
     // Helper methods
-    private async checkIfEmailExist(email: string): Promise<boolean> {
+    private async checkIfEmailExist(email: Email): Promise<boolean> {
         if (!this.repository.findByConditions) throw new Error('Method repository.findByConditions not implemented.');
         return !!(await this.repository.findByConditions({ email }));
     }

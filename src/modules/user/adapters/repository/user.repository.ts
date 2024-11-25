@@ -61,6 +61,14 @@ export class UserRepository implements IUserRepository {
         });
     }
 
+    async getPassword(userId: UUID): Promise<string> {
+        const user = await this.repository.findOne({ where: { id: userId }, select: ['password'] });
+
+        if (!user) return '';
+
+        return user.password;
+    }
+
     async exist(id: UUID): Promise<boolean> {
         const result = await this.repository
             .createQueryBuilder('entity')

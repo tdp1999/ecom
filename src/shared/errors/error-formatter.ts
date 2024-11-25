@@ -24,8 +24,6 @@ export function formatZodError(error: ZodError) {
     // const flattenedErrors = error.flatten();
     const flattenedErrors = customFlatten(error);
 
-    console.log('flattenedErrors', flattenedErrors);
-
     if (flattenedErrors.formErrors && flattenedErrors.formErrors.length > 0) {
         return { formErrors: flattenedErrors.formErrors };
     }

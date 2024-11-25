@@ -18,7 +18,6 @@ export class BrandController {
 
     @Get('name')
     getByConditions(@Query() conditions?: BrandFindOneDto) {
-        console.log('Conditions: ', conditions);
         return this.service.getByConditions(conditions);
     }
 

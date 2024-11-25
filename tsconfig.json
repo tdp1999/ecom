@@ -32,6 +32,9 @@
             ],
             "@user/*": [
                 "src/modules/user/*"
+            ],
+            "@auth/*": [
+                "src/modules/auth/*"
             ]
         }
     }

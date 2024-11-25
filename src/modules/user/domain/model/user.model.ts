@@ -1,4 +1,4 @@
-import { UuidSchema } from '@shared/models/general-value-object.model';
+import { EmailSchema, UuidSchema } from '@shared/models/general-value-object.model';
 import { USER_GENDER, USER_ROLE, USER_STATUS } from './user.type';
 import { z } from 'zod';
 
@@ -18,7 +18,7 @@ export const UserProfileSchema = z.object({
 // Core User Schema (frequently accessed, authentication-related)
 export const UserSchema = z.object({
     id: UuidSchema,
-    email: z.string().email(),
+    email: EmailSchema,
     password: z.string(),
     salt: z.string(),
 
