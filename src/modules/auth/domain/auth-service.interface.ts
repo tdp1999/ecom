@@ -2,10 +2,15 @@ import { Email, Password, UUID } from '@shared/types/general.type';
 import { AuthChangePasswordDto, AuthLoginDto, AuthRegisterDto } from './auth.dto';
 import { AuthTokenPayload, AuthTokens } from './auth.type';
 
-export interface IAuthService {
-    register(credentials: AuthLoginDto): Promise<boolean>;
+export interface ILoginResponse {
+    accessToken: string;
+    // refresh_token: string;
+}
 
-    login(data: AuthRegisterDto): Promise<string>;
+export interface IAuthService {
+    register(credentials: AuthRegisterDto): Promise<boolean>;
+
+    login(data: AuthLoginDto): Promise<ILoginResponse>;
 
     changePassword(userId: UUID, payload: AuthChangePasswordDto): Promise<boolean>;
 

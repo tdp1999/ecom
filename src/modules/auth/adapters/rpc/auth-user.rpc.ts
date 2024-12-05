@@ -3,13 +3,15 @@ import { AuthChangePasswordDto, AuthUser, AuthUserCreateDto } from '@auth/domain
 import { Inject } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { AuthUserAction } from '@shared/actions/auth.action';
+import { RpcClient } from '@shared/decorators/client.rpc.decorator';
 import { Email, UUID } from '@shared/types/general.type';
 import { lastValueFrom } from 'rxjs';
 
 export class AuthUserRpcRepository implements IAuthUserRepository {
     constructor(@Inject('AUTH_PROXY') private readonly client: ClientProxy) {}
 
-    async create(payload: AuthUserCreateDto): Promise<UUID> {
+    @RpcClient()
+    async create(payload: AuthUserCreateDto) {
         return await lastValueFrom(this.client.send(AuthUserAction.CREATE, payload));
     }
 

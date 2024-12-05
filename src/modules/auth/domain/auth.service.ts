@@ -1,20 +1,24 @@
+import { IJwtService } from '@auth/domain/auth-adapters.interface';
 import { IAuthUserRepository } from '@auth/domain/auth-repository.interface';
 import { ERR_AUTH_USER_NOT_FOUND, ERR_AUTH_USER_PASSWORD_INVALID } from '@auth/domain/auth.error';
-import { AUTH_USER_REPOSITORY_TOKEN } from '@auth/domain/auth.token';
+import { AUTH_JWT_SERVICE_TOKEN, AUTH_USER_REPOSITORY_TOKEN } from '@auth/domain/auth.token';
 import { Inject, Injectable } from '@nestjs/common';
 import { BadRequestError } from '@shared/errors/domain-error';
 import { formatZodError } from '@shared/errors/error-formatter';
 import { Email, Password, UUID } from '@shared/types/general.type';
 import { comparePasswordByBcrypt, hashPasswordByBcrypt } from '@shared/utils/hashing.util';
-import { IAuthService } from './auth-service.interface';
+import { IAuthService, ILoginResponse } from './auth-service.interface';
 import { AuthChangePasswordDto, AuthLoginDto, AuthLoginSchema, AuthRegisterDto, AuthRegisterSchema } from './auth.dto';
 import { AuthTokenPayload, AuthTokens } from './auth.type';
 
 @Injectable()
 export class AuthService implements IAuthService {
-    constructor(@Inject(AUTH_USER_REPOSITORY_TOKEN) private readonly userRepository: IAuthUserRepository) {}
+    constructor(
+        @Inject(AUTH_JWT_SERVICE_TOKEN) private readonly jwtService: IJwtService,
+        @Inject(AUTH_USER_REPOSITORY_TOKEN) private readonly userRepository: IAuthUserRepository,
+    ) {}
 
-    async register(credentials: AuthLoginDto): Promise<boolean> {
+    async register(credentials: AuthRegisterDto): Promise<boolean> {
         const { success, error, data } = AuthLoginSchema.safeParse(credentials);
 
         if (!success) throw BadRequestError(formatZodError(error));
@@ -23,18 +27,12 @@ export class AuthService implements IAuthService {
 
         const hashedPassword = await hashPasswordByBcrypt(password);
 
-        try {
-            await this.userRepository.create({ ...data, password: hashedPassword });
-        } catch (error) {
-            // throw new Error(`Failed to load relations: ${error.message}`);
-            console.log('Error:', error);
-            throw BadRequestError(error);
-        }
+        await this.userRepository.create({ ...data, password: hashedPassword });
 
         return true;
     }
 
-    async login(credentials: AuthRegisterDto): Promise<string> {
+    async login(credentials: AuthLoginDto): Promise<ILoginResponse> {
         const { success, error, data } = AuthRegisterSchema.safeParse(credentials);
 
         if (!success) throw BadRequestError(formatZodError(error));
@@ -54,7 +52,10 @@ export class AuthService implements IAuthService {
             throw BadRequestError(ERR_AUTH_USER_PASSWORD_INVALID.message);
         }
 
-        return user.id;
+        // Token will be expired in 1h
+        const tokenPayload = this.jwtService.generatePayload('E-com', user.id, user.email);
+
+        return { accessToken: await this.jwtService.sign(tokenPayload) };
     }
 
     async changePassword(userId: UUID, payload: AuthChangePasswordDto): Promise<boolean> {
