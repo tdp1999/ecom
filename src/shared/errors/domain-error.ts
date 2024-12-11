@@ -38,14 +38,37 @@ export class DomainError extends Error {
     }
 }
 
-export const BadRequestError = (message: any = 'Data is invalid') => {
+// 400
+export const BadRequestError = (message: any = 'Data is invalid', errorCode: string | null = null) => {
     return new DomainError({
         statusCode: HTTP_ERROR_STATUS.BAD_REQUEST,
         error: 'Bad Request',
         message: message,
+        errorCode,
     });
 };
 
+// 401
+export const UnauthorizedError = (message: any = 'Unauthorized', errorCode: string | null = null) => {
+    return new DomainError({
+        statusCode: HTTP_ERROR_STATUS.UNAUTHORIZED,
+        error: 'Unauthorized',
+        message: message,
+        errorCode,
+    });
+};
+
+// 403
+export const ForbiddenError = (message: any = 'Forbidden', errorCode: string | null = null) => {
+    return new DomainError({
+        statusCode: HTTP_ERROR_STATUS.FORBIDDEN,
+        error: 'Forbidden',
+        message: message,
+        errorCode,
+    });
+};
+
+// 404
 export const NotFoundError = (message: any = 'Not Found') => {
     return new DomainError({
         statusCode: HTTP_ERROR_STATUS.NOT_FOUND,
@@ -54,6 +77,7 @@ export const NotFoundError = (message: any = 'Not Found') => {
     });
 };
 
+// 500
 export const NotSupportedMethodError = (message: any = 'Not Supported Method') => {
     return new DomainError({
         statusCode: HTTP_ERROR_STATUS.INTERNAL_SERVER_ERROR,

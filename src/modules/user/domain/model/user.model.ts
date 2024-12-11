@@ -1,6 +1,7 @@
+import { USER_STATUS } from '@shared/enums/shared-user.enum';
 import { EmailSchema, UuidSchema } from '@shared/models/general-value-object.model';
-import { USER_GENDER, USER_ROLE, USER_STATUS } from './user.type';
 import { z } from 'zod';
+import { USER_GENDER, USER_ROLE } from './user.type';
 
 // User Profile Schema (less frequently accessed, profile-related)
 export const UserProfileSchema = z.object({

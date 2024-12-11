@@ -73,7 +73,6 @@ export class UserRepository implements IUserRepository {
         const result = await this.repository
             .createQueryBuilder('entity')
             .where('entity.id = :id', { id })
-            .andWhere('entity.deletedAt IS NULL')
             .select('1') // Only return '1' instead of fetching fields
             .getRawOne();
 

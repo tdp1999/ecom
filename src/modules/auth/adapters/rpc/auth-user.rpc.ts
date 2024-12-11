@@ -5,6 +5,7 @@ import { ClientProxy } from '@nestjs/microservices';
 import { AuthUserAction } from '@shared/actions/auth.action';
 import { RpcClient } from '@shared/decorators/client.rpc.decorator';
 import { Email, UUID } from '@shared/types/general.type';
+import { UserValidityResult } from '@shared/types/shared-user.type';
 import { lastValueFrom } from 'rxjs';
 
 export class AuthUserRpcRepository implements IAuthUserRepository {
@@ -21,6 +22,11 @@ export class AuthUserRpcRepository implements IAuthUserRepository {
 
     async getByEmail(email: Email): Promise<AuthUser | null> {
         return await lastValueFrom(this.client.send(AuthUserAction.GET_BY_EMAIL, email));
+    }
+
+    @RpcClient()
+    async getUserValidity(user: AuthUser): Promise<UserValidityResult> {
+        return await lastValueFrom(this.client.send(AuthUserAction.VALIDATE, user));
     }
 
     async getPassword(userId: UUID): Promise<string> {

@@ -1,8 +1,9 @@
 import { SearchSchema } from '@shared/dtos/seach.dto';
+import { USER_STATUS } from '@shared/enums/shared-user.enum';
 import { ERR_COMMON_EMPTY_PAYLOAD } from '@shared/errors/common-errors';
 import { EmailSchema } from '@shared/models/general-value-object.model';
 import { z } from 'zod';
-import { USER_GENDER, USER_ROLE, USER_STATUS } from './user.type';
+import { USER_GENDER, USER_ROLE } from './user.type';
 
 export const UserProfileUpdateSchema = z.object({
     // No need to require user id, because it will be handled in the repository

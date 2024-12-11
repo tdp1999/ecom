@@ -1,8 +1,10 @@
 import { Inject, Injectable, Optional } from '@nestjs/common';
 import { BaseCrudService } from '@shared/abstractions/service.base';
+import { USER_STATUS } from '@shared/enums/shared-user.enum';
 import { BadRequestError } from '@shared/errors/domain-error';
 import { MODULE_IDENTIFIER } from '@shared/tokens/common.token';
 import { Email, UUID } from '@shared/types/general.type';
+import { UserValidityResult } from '@shared/types/shared-user.type';
 import { hashPasswordByBcrypt } from '@shared/utils/hashing.util';
 import { v7 } from 'uuid';
 import {
@@ -35,6 +37,14 @@ export class UserService
         @Optional() @Inject(MODULE_IDENTIFIER) protected readonly moduleName: string = '',
     ) {
         super(moduleName, repository);
+    }
+
+    public async getUserValidity(user: User): Promise<UserValidityResult> {
+        if (user.deletedAt) return { isValid: false, status: USER_STATUS.DELETED };
+
+        if (user.status !== USER_STATUS.ACTIVE) return { isValid: false, status: user.status };
+
+        return { isValid: true, status: USER_STATUS.ACTIVE };
     }
 
     override async create(payload: UserCreateDto, hashedPassword?: string): Promise<UUID> {

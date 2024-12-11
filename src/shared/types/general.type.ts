@@ -3,4 +3,4 @@ import { EmailSchema, PasswordSchema, UuidSchema } from '../models/general-value
 
 export type UUID = z.infer<typeof UuidSchema>;
 export type Email = z.infer<typeof EmailSchema>;
-export type Password = z.infer<typeof PasswordSchema>
+export type Password = z.infer<typeof PasswordSchema>;

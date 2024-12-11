@@ -4,6 +4,7 @@ import { AuthUserAction } from '@shared/actions/auth.action';
 import { RpcExceptionFilter } from '@shared/filters/rpc-exception.filter';
 import { Email, UUID } from '@shared/types/general.type';
 import { UserCreateDto } from '@user/domain/model/user.dto';
+import { User } from '@user/domain/model/user.model';
 import { USER_SERVICE_TOKEN } from '@user/domain/model/user.token';
 import { IUserService } from '@user/domain/ports/user-service.interface';
 
@@ -12,8 +13,8 @@ export class UserRpcController {
     constructor(@Inject(USER_SERVICE_TOKEN) private readonly service: IUserService) {}
 
     @MessagePattern(AuthUserAction.VALIDATE)
-    async validateUser(id: UUID) {
-        throw new Error('Method not implemented.');
+    async validateUser(user: User) {
+        return await this.service.getUserValidity(user);
     }
 
     @UseFilters(RpcExceptionFilter)

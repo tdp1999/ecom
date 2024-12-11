@@ -1,10 +1,8 @@
-import { Body, Controller, Delete, Get, Inject, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from '@shared/guards/jwt.guard';
+import { Body, Controller, Delete, Get, Inject, Param, Patch, Post, Query } from '@nestjs/common';
 import { UserCreateDto, UserSearchDto, UserUpdateDto } from '../../domain/model/user.dto';
 import { USER_SERVICE_TOKEN } from '../../domain/model/user.token';
 import { IUserService } from '../../domain/ports/user-service.interface';
 
-@UseGuards(JwtAuthGuard)
 @Controller('user')
 export class UserController {
     constructor(@Inject(USER_SERVICE_TOKEN) private readonly service: IUserService) {}
