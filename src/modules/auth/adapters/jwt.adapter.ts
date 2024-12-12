@@ -1,4 +1,4 @@
-import { IJwtPayload, IJwtService } from '@auth/domain/auth-adapters.interface';
+import { IJwtData, IJwtPayload, IJwtService } from '@auth/domain/auth-adapters.interface';
 import { Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
@@ -10,10 +10,6 @@ export class JwtAdapter implements IJwtService {
     ) {}
 
     generatePayload(iss: string, sub: string, email: string): IJwtPayload {
-        // const iat = TemporalValue.getNow();
-        // const duration = this.configService.get<number>('JWT_DURATION');
-        // const exp = TemporalValue.addMillis(iat, );
-
         return { iss, sub, email };
     }
 
@@ -21,7 +17,7 @@ export class JwtAdapter implements IJwtService {
         return this.jwtService.signAsync(payload);
     }
 
-    verify(token: string): Promise<IJwtPayload> {
+    verify(token: string): Promise<IJwtData> {
         return this.jwtService.verifyAsync(token);
     }
 }

@@ -2,8 +2,11 @@ export interface IJwtPayload {
     iss: string;
     sub: string;
     email: string;
-    // iat: bigint;
-    // exp: bigint;
+}
+
+export interface IJwtData extends IJwtPayload {
+    iat: number;
+    exp: number;
 }
 
 export interface IJwtService {
@@ -11,5 +14,5 @@ export interface IJwtService {
 
     sign(payload: IJwtPayload): Promise<string>;
 
-    verify(token: string): Promise<IJwtPayload>;
+    verify(token: string): Promise<IJwtData>;
 }

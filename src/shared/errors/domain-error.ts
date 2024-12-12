@@ -78,6 +78,14 @@ export const NotFoundError = (message: any = 'Not Found') => {
 };
 
 // 500
+export const InternalServerError = (message: any = 'Internal Server Error') => {
+    return new DomainError({
+        statusCode: HTTP_ERROR_STATUS.INTERNAL_SERVER_ERROR,
+        error: 'Internal Server Error',
+        message: message,
+    });
+};
+
 export const NotSupportedMethodError = (message: any = 'Not Supported Method') => {
     return new DomainError({
         statusCode: HTTP_ERROR_STATUS.INTERNAL_SERVER_ERROR,

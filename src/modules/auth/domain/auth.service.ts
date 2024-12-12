@@ -7,11 +7,10 @@ import { USER_STATUS } from '@shared/enums/shared-user.enum';
 import { ERR_COMMON_FORBIDDEN_ACCOUNT, ERR_COMMON_INVALID_ACCOUNT } from '@shared/errors/common-errors';
 import { BadRequestError, ForbiddenError, UnauthorizedError } from '@shared/errors/domain-error';
 import { formatZodError } from '@shared/errors/error-formatter';
-import { Email, Password, UUID } from '@shared/types/general.type';
+import { UUID } from '@shared/types/general.type';
 import { comparePasswordByBcrypt, hashPasswordByBcrypt } from '@shared/utils/hashing.util';
 import { IAuthService, ILoginResponse } from './auth-service.interface';
 import { AuthChangePasswordDto, AuthLoginDto, AuthLoginSchema, AuthRegisterDto, AuthRegisterSchema } from './auth.dto';
-import { AuthTokenPayload, AuthTokens } from './auth.type';
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -68,18 +67,6 @@ export class AuthService implements IAuthService {
     }
 
     async changePassword(userId: UUID, payload: AuthChangePasswordDto): Promise<boolean> {
-        throw new Error('Method not implemented.');
-    }
-
-    async validateUser(email: Email, password: Password): Promise<any> {
-        throw new Error('Method not implemented.');
-    }
-
-    async generateTokens(userId: UUID): Promise<AuthTokens> {
-        throw new Error('Method not implemented.');
-    }
-
-    async verifyToken(token: string): Promise<AuthTokenPayload> {
         throw new Error('Method not implemented.');
     }
 }
