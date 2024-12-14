@@ -8,9 +8,9 @@ import { AUTH_JWT_SERVICE_TOKEN, AUTH_SERVICE_TOKEN, AUTH_USER_REPOSITORY_TOKEN 
 import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
-import { ClientsModule } from '@nestjs/microservices';
 import { PassportModule } from '@nestjs/passport';
 import { TransactionManager } from '@shared/decorators/transactional.decorator';
+import { ClientModule } from '@shared/modules/client/client.module';
 import { MODULE_IDENTIFIER } from '@shared/tokens/common.token';
 
 @Module({
@@ -24,7 +24,7 @@ import { MODULE_IDENTIFIER } from '@shared/tokens/common.token';
             }),
             inject: [ConfigService],
         }),
-        ClientsModule.register([{ name: 'AUTH_PROXY', options: { port: 3001 } }]),
+        ClientModule.register(),
     ],
     providers: [
         TransactionManager,

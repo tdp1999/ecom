@@ -1,4 +1,5 @@
 import { IProductCategoryRepository } from '@product/domain/ports/product-repository.interface';
+import { CLIENT_PROXY } from '@shared/modules/client/client.module';
 import { UUID } from '@shared/types/general.type';
 import { Inject } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
@@ -10,7 +11,7 @@ import { ProductCategory } from '@product/domain/model/product.model';
 export class ProductCategoryRpcRepository implements IProductCategoryRepository {
     public categoriesLoader: DataLoader<UUID, ProductCategory | null>;
 
-    constructor(@Inject('PRODUCT_PROXY') private readonly client: ClientProxy) {
+    constructor(@Inject(CLIENT_PROXY) private readonly client: ClientProxy) {
         this.categoriesLoader = new DataLoader(this.categoryBatchFn.bind(this), { maxBatchSize: 100 });
     }
 

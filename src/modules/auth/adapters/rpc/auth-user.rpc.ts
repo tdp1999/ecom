@@ -4,12 +4,13 @@ import { Inject } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { AuthUserAction } from '@shared/actions/auth.action';
 import { RpcClient } from '@shared/decorators/client.rpc.decorator';
+import { CLIENT_PROXY } from '@shared/modules/client/client.module';
 import { Email, UUID } from '@shared/types/general.type';
 import { UserValidityResult } from '@shared/types/shared-user.type';
 import { lastValueFrom } from 'rxjs';
 
 export class AuthUserRpcRepository implements IAuthUserRepository {
-    constructor(@Inject('AUTH_PROXY') private readonly client: ClientProxy) {}
+    constructor(@Inject(CLIENT_PROXY) private readonly client: ClientProxy) {}
 
     @RpcClient()
     async create(payload: AuthUserCreateDto) {

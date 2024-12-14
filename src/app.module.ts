@@ -4,7 +4,6 @@ import { CategoryModule } from '@category/category.module';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
-import { ClientsModule } from '@nestjs/microservices';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductModule } from '@product/product.module';
 import databaseConfig from '@shared/configs/database.config';
@@ -12,6 +11,7 @@ import generalConfig from '@shared/configs/general.config';
 import { GlobalExceptionFilter } from '@shared/filters/global-exception.filter';
 import { JwtAuthGuard } from '@shared/guards/jwt.guard';
 import { TransformInterceptor } from '@shared/interceptors/transform.interceptor';
+import { ClientModule } from '@shared/modules/client/client.module';
 import { UserModule } from '@user/user.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -20,7 +20,7 @@ const modules = [CategoryModule, BrandModule, ProductModule, UserModule, AuthMod
 
 @Module({
     imports: [
-        ClientsModule.register([{ name: 'PRODUCT_PROXY', options: { port: 3001 } }]),
+        ClientModule.register(),
         ConfigModule.forRoot({
             isGlobal: true,
             load: [databaseConfig, generalConfig],

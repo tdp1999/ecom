@@ -5,8 +5,9 @@ import { AuthGuard } from '@nestjs/passport';
 import { AuthUserAction } from '@shared/actions/auth.action';
 import { METADATA_PUBLIC } from '@shared/decorators/public.decorator';
 import { USER_STATUS } from '@shared/enums/shared-user.enum';
-import { ERR_COMMON_FORBIDDEN_ACCOUNT, ERR_COMMON_INVALID_ACCOUNT } from '@shared/errors/common-errors';
+import { ERR_COMMON_FORBIDDEN_ACCOUNT, ERR_COMMON_UNAUTHORIZED } from '@shared/errors/common-errors';
 import { ForbiddenError, InternalServerError, UnauthorizedError } from '@shared/errors/domain-error';
+import { CLIENT_PROXY } from '@shared/modules/client/client.module';
 import { UserValidityResult } from '@shared/types/shared-user.type';
 import { lastValueFrom } from 'rxjs';
 
@@ -14,7 +15,7 @@ import { lastValueFrom } from 'rxjs';
 export class JwtAuthGuard extends AuthGuard('jwt') {
     constructor(
         private reflector: Reflector,
-        @Inject('PRODUCT_PROXY') private readonly client: ClientProxy,
+        @Inject(CLIENT_PROXY) private readonly client: ClientProxy,
     ) {
         super();
     }
@@ -37,20 +38,20 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
         // Check if user is valid
         const user = await lastValueFrom(this.client.send<Record<string, any>>(AuthUserAction.GET, userId));
-        if (!user) throw UnauthorizedError(ERR_COMMON_INVALID_ACCOUNT.message);
+        if (!user) throw UnauthorizedError(ERR_COMMON_UNAUTHORIZED.message);
 
         request.user = user;
 
         const result = await lastValueFrom(this.client.send<UserValidityResult>(AuthUserAction.VALIDATE, user));
         if (result.isValid) return true;
-        if (result.status === USER_STATUS.DELETED) throw UnauthorizedError(ERR_COMMON_INVALID_ACCOUNT.message);
+        if (result.status === USER_STATUS.DELETED) throw UnauthorizedError(ERR_COMMON_UNAUTHORIZED.message);
         throw ForbiddenError(result.invalidMessage || ERR_COMMON_FORBIDDEN_ACCOUNT.message);
     }
 
     handleRequest(err: any, user: any) {
         // Customize the 401 response
         if (err || !user) {
-            throw UnauthorizedError(ERR_COMMON_INVALID_ACCOUNT.message);
+            throw UnauthorizedError(ERR_COMMON_UNAUTHORIZED.message);
         }
 
         return user;

@@ -4,7 +4,7 @@ import { ERR_AUTH_USER_NOT_FOUND, ERR_AUTH_USER_PASSWORD_INVALID } from '@auth/d
 import { AUTH_JWT_SERVICE_TOKEN, AUTH_USER_REPOSITORY_TOKEN } from '@auth/domain/auth.token';
 import { Inject, Injectable } from '@nestjs/common';
 import { USER_STATUS } from '@shared/enums/shared-user.enum';
-import { ERR_COMMON_FORBIDDEN_ACCOUNT, ERR_COMMON_INVALID_ACCOUNT } from '@shared/errors/common-errors';
+import { ERR_COMMON_FORBIDDEN_ACCOUNT, ERR_COMMON_UNAUTHORIZED } from '@shared/errors/common-errors';
 import { BadRequestError, ForbiddenError, UnauthorizedError } from '@shared/errors/domain-error';
 import { formatZodError } from '@shared/errors/error-formatter';
 import { UUID } from '@shared/types/general.type';
@@ -49,7 +49,7 @@ export class AuthService implements IAuthService {
         const result = await this.userRepository.getUserValidity(user);
 
         if (!result.isValid) {
-            if (result.status === USER_STATUS.DELETED) throw UnauthorizedError(ERR_COMMON_INVALID_ACCOUNT.message);
+            if (result.status === USER_STATUS.DELETED) throw UnauthorizedError(ERR_COMMON_UNAUTHORIZED.message);
             throw ForbiddenError(result.invalidMessage || ERR_COMMON_FORBIDDEN_ACCOUNT.message);
         }
 
