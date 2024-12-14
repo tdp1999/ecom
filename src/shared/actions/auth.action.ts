@@ -1,3 +1,7 @@
+export enum AuthAction {
+    VERIFY = 'auth.verify',
+}
+
 export enum AuthUserAction {
     VALIDATE = 'auth_user.validate',
     CREATE = 'auth_user.create',

@@ -1,3 +1,4 @@
+import { IJwtData } from '@shared/types/auth.type';
 import { UUID } from '@shared/types/general.type';
 import { AuthChangePasswordDto, AuthLoginDto, AuthRegisterDto } from './auth.dto';
 
@@ -12,4 +13,6 @@ export interface IAuthService {
     login(data: AuthLoginDto): Promise<ILoginResponse>;
 
     changePassword(userId: UUID, payload: AuthChangePasswordDto): Promise<boolean>;
+
+    verify(token: string): Promise<IJwtData>;
 }

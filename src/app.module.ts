@@ -9,7 +9,7 @@ import { ProductModule } from '@product/product.module';
 import databaseConfig from '@shared/configs/database.config';
 import generalConfig from '@shared/configs/general.config';
 import { GlobalExceptionFilter } from '@shared/filters/global-exception.filter';
-import { JwtAuthGuard } from '@shared/guards/jwt.guard';
+import { AuthGuard } from '@shared/guards/auth.guard';
 import { TransformInterceptor } from '@shared/interceptors/transform.interceptor';
 import { ClientModule } from '@shared/modules/client/client.module';
 import { UserModule } from '@user/user.module';
@@ -60,7 +60,7 @@ const modules = [CategoryModule, BrandModule, ProductModule, UserModule, AuthMod
         {
             // For global authentication
             provide: APP_GUARD,
-            useClass: JwtAuthGuard,
+            useClass: AuthGuard,
         },
     ],
 })
