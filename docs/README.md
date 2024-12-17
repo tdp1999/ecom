@@ -71,3 +71,9 @@ async canActivate(context: ExecutionContext): Promise<boolean> {
   ```
  - 12/12: after checking, it will attach the user information into the request, so inside controller, data can be accessed. With Passport.js, we'll do it inside the strategy.
  - 12/12: tiep tuc bai giang 11. Xong bai giang 11. Qua bai giang 12. Bo passport strategy la jwt. Su dung guard thuan.
+ - 14/12: xong bo passport. Xem tiep bai giang 12
+ - 15/12: Lam permission guard, permission decorator to skip. // chua lam
+ - 15/12: Doc va hieu cac design pattern sau: // chua lam
+   - Decorator pattern va no khac gi so voi decorator o angular va nestjs
+   - Factory Method pattern
+- 15/12: Them with log o error guard
