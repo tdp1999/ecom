@@ -8,13 +8,17 @@ export function RpcClient() {
             try {
                 return await originalMethod.apply(this, args);
             } catch (error) {
-                if (error && typeof error === 'object' && error.name === 'DomainError') {
+                if (!error || typeof error !== 'object') throw error;
+
+                // Catch error from RPC, since the error go through rpc cannot maintain the class, only object
+                // See DomainError.toJson()
+                if (error.name === 'DomainError') {
                     throw DomainError.fromJSON(error);
                 }
 
                 // If it's a standard Error, you might want to wrap it
                 if (error instanceof Error) {
-                    throw new DomainError({
+                    throw DomainError.fromJSON({
                         statusCode: 500,
                         errorCode: 'RPC_ERROR',
                         error: 'RPC Call Failed',

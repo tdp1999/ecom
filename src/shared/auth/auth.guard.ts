@@ -1,13 +1,13 @@
 import { CanActivate, ExecutionContext, Inject, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ClientProxy } from '@nestjs/microservices';
-import { AuthAction, AuthUserAction } from '@shared/actions/auth.action';
-import { METADATA_PUBLIC } from '@shared/decorators/public.decorator';
+import { AuthAction, AuthUserAction } from '@shared/auth/auth.action';
 import { USER_STATUS } from '@shared/enums/shared-user.enum';
 import { ERR_COMMON_FORBIDDEN_ACCOUNT, ERR_COMMON_UNAUTHORIZED } from '@shared/errors/common-errors';
 import { ForbiddenError, UnauthorizedError } from '@shared/errors/domain-error';
 import { CLIENT_PROXY } from '@shared/modules/client/client.module';
-import { IJwtData } from '@shared/types/auth.type';
+import { METADATA_PUBLIC } from '@shared/auth/auth.token';
+import { IJwtData } from '@shared/auth/auth.type';
 import { UserValidityResult } from '@shared/types/shared-user.type';
 import { catchError, lastValueFrom, of } from 'rxjs';
 

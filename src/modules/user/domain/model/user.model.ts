@@ -3,6 +3,18 @@ import { EmailSchema, UuidSchema } from '@shared/models/general-value-object.mod
 import { z } from 'zod';
 import { USER_GENDER, USER_ROLE } from './user.type';
 
+// Permission
+export const PermissionSchema = z.object({
+    id: UuidSchema,
+    name: z.string(),
+    description: z.string().nullable().optional(),
+    actions: z.array(z.string()),
+    slug: z.string(),
+    createdAt: z.bigint(),
+    updatedAt: z.bigint(),
+    deletedAt: z.bigint().nullable().optional(),
+});
+
 // User Profile Schema (less frequently accessed, profile-related)
 export const UserProfileSchema = z.object({
     id: UuidSchema,

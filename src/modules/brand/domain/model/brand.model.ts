@@ -1,6 +1,6 @@
-import { z } from 'zod';
-import { UuidSchema } from '@shared/models/general-value-object.model';
 import { STATUS } from '@shared/enums/status.enum';
+import { UuidSchema } from '@shared/models/general-value-object.model';
+import { z } from 'zod';
 
 export const BrandSchema = z.object({
     id: UuidSchema,
@@ -13,6 +13,8 @@ export const BrandSchema = z.object({
     createdAt: z.bigint(),
     updatedAt: z.bigint(),
     deletedAt: z.bigint().nullable().optional(),
+
+    // ...AuditableSchema.shape,
 });
 
 export type Brand = z.infer<typeof BrandSchema>;

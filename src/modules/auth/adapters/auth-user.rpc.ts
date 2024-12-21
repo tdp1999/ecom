@@ -2,7 +2,7 @@ import { IAuthUserRepository } from '@auth/domain/auth-repository.interface';
 import { AuthChangePasswordDto, AuthUser, AuthUserCreateDto } from '@auth/domain/auth.dto';
 import { Inject } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { AuthUserAction } from '@shared/actions/auth.action';
+import { AuthUserAction } from '@shared/auth/auth.action';
 import { RpcClient } from '@shared/decorators/client.rpc.decorator';
 import { CLIENT_PROXY } from '@shared/modules/client/client.module';
 import { Email, UUID } from '@shared/types/general.type';

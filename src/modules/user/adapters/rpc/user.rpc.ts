@@ -1,6 +1,6 @@
 import { Controller, Inject, UseFilters } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
-import { AuthUserAction } from '@shared/actions/auth.action';
+import { AuthUserAction } from '@shared/auth/auth.action';
 import { RpcExceptionFilter } from '@shared/filters/rpc-exception.filter';
 import { Email, UUID } from '@shared/types/general.type';
 import { UserCreateDto } from '@user/domain/model/user.dto';

@@ -1,6 +1,6 @@
+import { STATUS } from '@shared/enums/status.enum';
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { Brand } from '../../domain/model/brand.model';
-import { STATUS } from '@shared/enums/status.enum';
 
 @Entity('brands')
 export class BrandEntity extends BaseEntity implements Brand {

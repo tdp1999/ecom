@@ -73,7 +73,20 @@ async canActivate(context: ExecutionContext): Promise<boolean> {
  - 12/12: tiep tuc bai giang 11. Xong bai giang 11. Qua bai giang 12. Bo passport strategy la jwt. Su dung guard thuan.
  - 14/12: xong bo passport. Xem tiep bai giang 12
  - 15/12: Lam permission guard, permission decorator to skip. // chua lam
- - 15/12: Doc va hieu cac design pattern sau: // chua lam
-   - Decorator pattern va no khac gi so voi decorator o angular va nestjs
-   - Factory Method pattern
-- 15/12: Them with log o error guard
+ - 15/12: Doc va hieu cac design pattern sau:
+   - Decorator pattern va no khac gi so voi decorator o angular va nestjs // decorator.ts
+   - Factory Method pattern // done
+- 15/12: Them with log o error guard // remove
+- 17/12: Nghien cuu permission/policy guard, lam prototype cho cac app sau nay. Find out what is the best way to create a custom guard/decorator
+- 18/12: Read about execution context, argument host and metadata in decorator:
+  - Argument host (host): 
+    - được dùng để truy cập các object request, response của api. Được dùng ở filter để lấy request. 
+    - Dựa trên tính chất platform diagnostic của nestjs, ta cần chuyển đổi host sang context (http, rpc).
+  - execution context (ctx):
+    - được extends từ argument host, có thêm 2 method là getHandler và getClass.
+- dùng ở guard và interceptor để check metadata
+  - metadata được set bởi reflector hoặc hàm SetMetadata của nestjs.
+      - Để lấy ra được metadata nào đã set, ta cần dùng reflector.get...
+      - Có 3 cách get chính: get bình thường, nhận vào tên token và class/method được gắn metadata. còn lại là get-override hoặc get-merge.
+- 21/12: Try to implement RBAC
+- 21/12: Try to implement a seeder feature

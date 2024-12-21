@@ -6,7 +6,8 @@ export class DomainError extends Error {
     error: string;
     message: any;
 
-    constructor(payload: { statusCode: number; errorCode?: string | null; error: string; message: any }) {
+    /* Factory method - https://refactoring.guru/design-patterns/factory-method */
+    private constructor(payload: { statusCode: number; errorCode?: string | null; error: string; message: any }) {
         super();
         Object.assign(this, payload);
         Object.setPrototypeOf(this, DomainError.prototype);
@@ -25,10 +26,6 @@ export class DomainError extends Error {
 
     // Static method to reconstruct the error from a plain object
     static fromJSON(json: any): DomainError {
-        if (json.name !== 'DomainError') {
-            throw new Error('Invalid error type');
-        }
-
         return new DomainError({
             statusCode: json.statusCode,
             errorCode: json.errorCode,
@@ -40,7 +37,7 @@ export class DomainError extends Error {
 
 // 400
 export const BadRequestError = (message: any = 'Data is invalid', errorCode: string | null = null) => {
-    return new DomainError({
+    return DomainError.fromJSON({
         statusCode: HTTP_ERROR_STATUS.BAD_REQUEST,
         error: 'Bad Request',
         message: message,
@@ -50,7 +47,7 @@ export const BadRequestError = (message: any = 'Data is invalid', errorCode: str
 
 // 401
 export const UnauthorizedError = (message: any = 'Unauthorized', errorCode: string | null = null) => {
-    return new DomainError({
+    return DomainError.fromJSON({
         statusCode: HTTP_ERROR_STATUS.UNAUTHORIZED,
         error: 'Unauthorized',
         message: message,
@@ -60,7 +57,7 @@ export const UnauthorizedError = (message: any = 'Unauthorized', errorCode: stri
 
 // 403
 export const ForbiddenError = (message: any = 'Forbidden', errorCode: string | null = null) => {
-    return new DomainError({
+    return DomainError.fromJSON({
         statusCode: HTTP_ERROR_STATUS.FORBIDDEN,
         error: 'Forbidden',
         message: message,
@@ -70,7 +67,7 @@ export const ForbiddenError = (message: any = 'Forbidden', errorCode: string | n
 
 // 404
 export const NotFoundError = (message: any = 'Not Found') => {
-    return new DomainError({
+    return DomainError.fromJSON({
         statusCode: HTTP_ERROR_STATUS.NOT_FOUND,
         error: 'Not Found',
         message: message,
@@ -79,7 +76,7 @@ export const NotFoundError = (message: any = 'Not Found') => {
 
 // 500
 export const InternalServerError = (message: any = 'Internal Server Error') => {
-    return new DomainError({
+    return DomainError.fromJSON({
         statusCode: HTTP_ERROR_STATUS.INTERNAL_SERVER_ERROR,
         error: 'Internal Server Error',
         message: message,
@@ -87,7 +84,7 @@ export const InternalServerError = (message: any = 'Internal Server Error') => {
 };
 
 export const NotSupportedMethodError = (message: any = 'Not Supported Method') => {
-    return new DomainError({
+    return DomainError.fromJSON({
         statusCode: HTTP_ERROR_STATUS.INTERNAL_SERVER_ERROR,
         error: 'Not Supported Method',
         message: message,

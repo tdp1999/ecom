@@ -1,5 +1,4 @@
 import { SetMetadata } from '@nestjs/common';
-
-export const METADATA_PUBLIC = Symbol('METADATA_PUBLIC');
+import { METADATA_PUBLIC } from '@shared/auth/auth.token';
 
 export const Public = () => SetMetadata(METADATA_PUBLIC, true);

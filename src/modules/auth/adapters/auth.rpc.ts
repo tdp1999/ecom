@@ -2,8 +2,8 @@ import { IAuthService } from '@auth/domain/auth-service.interface';
 import { AUTH_SERVICE_TOKEN } from '@auth/domain/auth.token';
 import { Controller, Inject } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
-import { AuthAction } from '@shared/actions/auth.action';
-import { IJwtData } from '@shared/types/auth.type';
+import { AuthAction } from '@shared/auth/auth.action';
+import { IJwtData } from '@shared/auth/auth.type';
 
 @Controller()
 export class AuthRpcController {

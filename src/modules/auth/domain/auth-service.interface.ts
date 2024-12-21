@@ -1,4 +1,4 @@
-import { IJwtData } from '@shared/types/auth.type';
+import { IJwtData } from '@shared/auth/auth.type';
 import { UUID } from '@shared/types/general.type';
 import { AuthChangePasswordDto, AuthLoginDto, AuthRegisterDto } from './auth.dto';
 
