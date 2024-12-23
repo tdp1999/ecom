@@ -15,7 +15,7 @@ import { ProductService } from './domain/service/product.service';
 
 @Module({
     controllers: [ProductController],
-    imports: [TypeOrmModule.forFeature([ProductEntity]), ClientModule.register()],
+    imports: [TypeOrmModule.forFeature([ProductEntity]), ClientModule.registerAsync()],
     providers: [
         TransactionManager,
         {

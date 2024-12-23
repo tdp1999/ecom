@@ -26,7 +26,8 @@
         "test:docker:down": "docker-compose -f docker-compose.test.yml down",
         "pretest:e2e": "npm run test:docker:up",
         "test:e2e": "jest --config ./test/jest-e2e.json --runInBand",
-        "posttest:e2e": "npm run test:docker:down"
+        "posttest:e2e": "npm run test:docker:down",
+        "seed": "ts-node -r tsconfig-paths/register src/seed.ts"
     },
     "dependencies": {
         "@nestjs/axios": "^3.1.1",

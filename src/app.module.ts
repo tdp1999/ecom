@@ -20,7 +20,7 @@ const modules = [CategoryModule, BrandModule, ProductModule, UserModule, AuthMod
 
 @Module({
     imports: [
-        ClientModule.register(),
+        ClientModule.registerAsync(),
         ConfigModule.forRoot({
             isGlobal: true,
             load: [databaseConfig, generalConfig],

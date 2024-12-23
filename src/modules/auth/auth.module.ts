@@ -21,7 +21,7 @@ import { MODULE_IDENTIFIER } from '@shared/tokens/common.token';
             }),
             inject: [ConfigService],
         }),
-        ClientModule.register(),
+        ClientModule.registerAsync(),
     ],
     providers: [
         TransactionManager,

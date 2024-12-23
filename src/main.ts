@@ -1,3 +1,4 @@
+import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { z } from 'zod';
@@ -11,12 +12,15 @@ async function bootstrap() {
         logger: ['log', 'error'],
     });
 
+    const configService = app.get(ConfigService);
+
     app.setGlobalPrefix(process.env.GLOBAL_PREFIX || 'api');
 
     app.connectMicroservice<MicroserviceOptions>({
         transport: Transport.TCP,
         options: {
-            port: 3001,
+            host: configService.get<string>('general.transportHost'),
+            port: Number(configService.get<number>('general.transportPort')),
         },
     });
 

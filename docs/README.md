@@ -90,3 +90,5 @@ async canActivate(context: ExecutionContext): Promise<boolean> {
       - Có 3 cách get chính: get bình thường, nhận vào tên token và class/method được gắn metadata. còn lại là get-override hoặc get-merge.
 - 21/12: Try to implement RBAC
 - 21/12: Try to implement a seeder feature
+- 22/12: Done seeder feature
+- 23/12: Update default auditable entity
