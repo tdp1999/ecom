@@ -1,7 +1,6 @@
-import { USER_STATUS } from '@shared/enums/shared-user.enum';
+import { USER_ROLE, USER_STATUS } from '@shared/enums/shared-user.enum';
 import { BaseEntity, Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, Relation } from 'typeorm';
 import { User } from '../../domain/model/user.model';
-import { USER_ROLE } from '../../domain/model/user.type';
 // eslint-disable-next-line import/no-cycle
 import { UserProfileEntity } from './user-profile.entity';
 

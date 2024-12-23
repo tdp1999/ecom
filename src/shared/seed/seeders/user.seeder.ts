@@ -2,6 +2,7 @@ import { Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ClientProxy } from '@nestjs/microservices';
 import { AuthUserAction } from '@shared/auth/auth.action';
+import { USER_ROLE, USER_STATUS } from '@shared/enums/shared-user.enum';
 import { CLIENT_PROXY } from '@shared/modules/client/client.module';
 import { ISeed } from '@shared/seed/seed.interface';
 import { hashPasswordByBcrypt } from '@shared/utils/hashing.util';
@@ -21,8 +22,8 @@ export class UserSeeder implements ISeed {
             email: this.config.get('general.defaultAdminEmail'),
             password: hashedPassword,
             // Todo: remove those magic strings, use enum instead
-            status: 'active',
-            role: 'admin',
+            status: USER_STATUS.ACTIVE,
+            role: USER_ROLE.ROOT_ADMIN,
             profile: {
                 firstName: 'Root',
                 lastName: 'User',

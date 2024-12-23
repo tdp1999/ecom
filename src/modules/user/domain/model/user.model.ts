@@ -1,7 +1,7 @@
-import { USER_STATUS } from '@shared/enums/shared-user.enum';
+import { USER_ROLE, USER_STATUS } from '@shared/enums/shared-user.enum';
 import { EmailSchema, UuidSchema } from '@shared/models/general-value-object.model';
 import { z } from 'zod';
-import { USER_GENDER, USER_ROLE } from './user.type';
+import { USER_GENDER } from './user.type';
 
 // Permission
 export const PermissionSchema = z.object({

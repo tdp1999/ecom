@@ -1,4 +1,5 @@
 import { STATUS } from '@shared/enums/status.enum';
+import { AuditableSchema } from '@shared/models/auditable.model';
 import { UuidSchema } from '@shared/models/general-value-object.model';
 import { z } from 'zod';
 
@@ -10,11 +11,7 @@ export const BrandSchema = z.object({
     tagLine: z.string().optional(),
     status: z.nativeEnum(STATUS),
 
-    createdAt: z.bigint(),
-    updatedAt: z.bigint(),
-    deletedAt: z.bigint().nullable().optional(),
-
-    // ...AuditableSchema.shape,
+    ...AuditableSchema.shape,
 });
 
 export type Brand = z.infer<typeof BrandSchema>;
