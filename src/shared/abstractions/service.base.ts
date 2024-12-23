@@ -2,6 +2,7 @@ import { BaseEntityInterface } from '@shared/abstractions/entity.base';
 import { Inject, Optional } from '@nestjs/common';
 import { MODULE_IDENTIFIER } from '@shared/tokens/common.token';
 import { SearchDto } from '@shared/dtos/seach.dto';
+import { SharedUser } from '@shared/types/user.shared.type';
 import { ZodError, ZodSchema } from 'zod';
 import { Pagination } from '@shared/types/pagination.type';
 import { BadRequestError, NotFoundError } from '@shared/errors/domain-error';
@@ -52,7 +53,7 @@ export abstract class BaseCrudService<
         return this.repository.exist(id);
     }
 
-    async create(payload: C): Promise<string> {
+    async create(payload: C, user: SharedUser): Promise<string> {
         const { success, error, data } = this.createSchema.safeParse(payload);
 
         if (!success) {
@@ -64,19 +65,21 @@ export abstract class BaseCrudService<
         const id = v7();
         const currentTimestamp = BigInt(Date.now());
 
-        const entity = {
+        const entity: T = {
             id,
             ...data,
             createdAt: currentTimestamp,
+            createdById: user.id,
             updatedAt: currentTimestamp,
-        } as T;
+            updatedById: user.id,
+        };
 
         await this.repository.create(entity as unknown as C);
 
         return id;
     }
 
-    async update(id: string, payload: U): Promise<boolean> {
+    async update(id: string, payload: U, user: SharedUser): Promise<boolean> {
         const { success, error, data } = this.updateSchema.safeParse(payload);
 
         if (!success) {
@@ -90,7 +93,7 @@ export abstract class BaseCrudService<
 
         await this.validateUpdate(id, data);
 
-        return this.repository.update(id, data);
+        return this.repository.update(id, { ...data, updatedById: user.id });
     }
 
     async delete(id: string, isHardDelete?: boolean): Promise<boolean> {

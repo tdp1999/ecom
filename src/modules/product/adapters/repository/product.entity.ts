@@ -1,7 +1,8 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity } from '@shared/abstractions/entity.base';
+import { STATUS } from '@shared/enums/status.enum';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { Product } from '../../domain/model/product.model';
 import { PRODUCT_GENDER } from '../../domain/model/product.type';
-import { STATUS } from '@shared/enums/status.enum';
 
 @Entity('products')
 export class ProductEntity extends BaseEntity implements Product {
@@ -46,13 +47,4 @@ export class ProductEntity extends BaseEntity implements Product {
 
     @Column({ type: 'enum', enum: STATUS, default: STATUS.ACTIVE })
     status: STATUS;
-
-    @Column({ type: 'bigint' })
-    createdAt: bigint;
-
-    @Column({ type: 'bigint' })
-    updatedAt: bigint;
-
-    @Column({ type: 'bigint', nullable: true })
-    deletedAt?: bigint | null;
 }

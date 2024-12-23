@@ -1,5 +1,6 @@
+import { BaseEntity } from '@shared/abstractions/entity.base';
 import { STATUS } from '@shared/enums/status.enum';
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, Tree, TreeChildren, TreeParent } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, Tree, TreeChildren, TreeParent } from 'typeorm';
 import { Category } from '../../domain/model/category.model';
 
 @Entity('categories')
@@ -32,13 +33,4 @@ export class CategoryEntity extends BaseEntity implements Category {
 
     @Column({ type: 'enum', enum: STATUS, default: STATUS.ACTIVE })
     status: STATUS;
-
-    @Column({ type: 'bigint', name: 'created_at' })
-    createdAt: bigint;
-
-    @Column({ type: 'bigint', name: 'updated_at' })
-    updatedAt: bigint;
-
-    @Column({ type: 'bigint', name: 'deleted_at', nullable: true })
-    deletedAt: bigint | null;
 }

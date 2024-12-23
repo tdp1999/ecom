@@ -4,6 +4,7 @@ import { formatZodError } from '@shared/errors/error-formatter';
 import { MODULE_IDENTIFIER } from '@shared/tokens/common.token';
 import { UUID } from '@shared/types/general.type';
 import { Pagination } from '@shared/types/pagination.type';
+import { SharedUser } from '@shared/types/user.shared.type';
 import { v7 } from 'uuid';
 import {
     CategoryCreateDto,
@@ -63,7 +64,7 @@ export class CategoryService implements ICategoryService {
         return this.repository.exist(id);
     }
 
-    async create(payload: CategoryCreateDto): Promise<UUID> {
+    async create(payload: CategoryCreateDto, user: SharedUser): Promise<UUID> {
         const { success, error, data } = CategoryCreateSchema.safeParse(payload);
 
         if (!success) {
@@ -80,7 +81,9 @@ export class CategoryService implements ICategoryService {
             id,
             ...data,
             createdAt: currentTimestamp,
+            createdById: user.id,
             updatedAt: currentTimestamp,
+            updatedById: user.id,
         };
 
         await this.repository.create(category, payload.ancestorId);
@@ -101,7 +104,7 @@ export class CategoryService implements ICategoryService {
         }
 
         await this.getValidData(id);
-        return this.repository.update(id, data);
+        return this.repository.update(id, { ...data, updatedById: id } as Category);
     }
 
     async delete(id: UUID, isHardDelete?: boolean): Promise<boolean> {

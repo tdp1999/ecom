@@ -1,4 +1,6 @@
 import { Body, Controller, Delete, Get, Inject, Param, Patch, Post, Query } from '@nestjs/common';
+import { User } from '@shared/decorators/user.decorator';
+import { SharedUser } from '@shared/types/user.shared.type';
 import { BrandCreateDto, BrandFindOneDto, BrandSearchDto, BrandUpdateDto } from '../../domain/model/brand.dto';
 import { BRAND_SERVICE_TOKEN, IBrandService } from '@brand/domain/ports/brand-service.interface';
 
@@ -27,13 +29,13 @@ export class BrandController {
     }
 
     @Post()
-    create(@Body() payload: BrandCreateDto) {
-        return this.service.create(payload);
+    create(@Body() payload: BrandCreateDto, @User() user: SharedUser) {
+        return this.service.create(payload, user);
     }
 
     @Patch(':id')
-    update(@Param('id') id: string, @Body() payload: BrandUpdateDto) {
-        return this.service.update(id, payload);
+    update(@Param('id') id: string, @Body() payload: BrandUpdateDto, @User() user: SharedUser) {
+        return this.service.update(id, payload, user);
     }
 
     @Delete(':id')

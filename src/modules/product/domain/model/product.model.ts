@@ -1,3 +1,4 @@
+import { AuditableSchema } from '@shared/models/auditable.model';
 import { z } from 'zod';
 import { PRODUCT_GENDER } from './product.type';
 import { STATUS } from '@shared/enums/status.enum';
@@ -33,9 +34,7 @@ export const ProductSchema = z.object({
     saleCount: z.number().int().nonnegative(),
     status: z.nativeEnum(STATUS),
 
-    createdAt: z.bigint(),
-    updatedAt: z.bigint(),
-    deletedAt: z.bigint().nullable().optional(),
+    ...AuditableSchema.shape,
 });
 
 export type ProductCategory = z.infer<typeof ProductCategorySchema>;

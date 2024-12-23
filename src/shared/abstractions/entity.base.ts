@@ -26,9 +26,9 @@ export abstract class BaseEntity extends TypeOrmBaseEntity {
 export interface BaseEntityInterface {
     id: string;
     createdAt: bigint;
-    // createdById: string;
+    createdById: string;
     updatedAt: bigint;
-    // updatedById: string;
+    updatedById: string;
     deletedAt?: bigint | null;
-    // deletedById?: string | null;
+    deletedById?: string | null;
 }

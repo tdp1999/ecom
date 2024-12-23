@@ -3,6 +3,7 @@ import { MessagePattern } from '@nestjs/microservices';
 import { AuthUserAction } from '@shared/auth/auth.action';
 import { RpcExceptionFilter } from '@shared/filters/rpc-exception.filter';
 import { Email, UUID } from '@shared/types/general.type';
+import { SharedUser } from '@shared/types/user.shared.type';
 import { UserCreateDto } from '@user/domain/model/user.dto';
 import { User } from '@user/domain/model/user.model';
 import { USER_SERVICE_TOKEN } from '@user/domain/model/user.token';
@@ -19,8 +20,8 @@ export class UserRpcController {
 
     @UseFilters(RpcExceptionFilter)
     @MessagePattern(AuthUserAction.CREATE)
-    async createUser(payload: UserCreateDto & { password?: string }) {
-        return await this.service.create(payload, payload.password);
+    async createUser(payload: UserCreateDto & { password?: string; user: User | SharedUser | undefined }) {
+        return await this.service.create(payload, payload.user, payload.password);
     }
 
     @MessagePattern(AuthUserAction.GET)

@@ -1,9 +1,9 @@
 import { Email, UUID } from '@shared/types/general.type';
-import { UserValidityResult } from '@shared/types/shared-user.type';
+import { SharedUser, UserValidityResult } from '@shared/types/user.shared.type';
 import { AuthChangePasswordDto, AuthUser, AuthUserCreateDto } from './auth.dto';
 
 export interface IAuthUserRepository {
-    create(payload: AuthUserCreateDto): Promise<UUID>;
+    create(payload: AuthUserCreateDto, user?: SharedUser): Promise<UUID>;
 
     get(userId: UUID): Promise<AuthUser | null>;
 

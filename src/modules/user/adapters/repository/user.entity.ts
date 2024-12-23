@@ -36,9 +36,18 @@ export class UserEntity extends BaseEntity implements User {
     @Column({ type: 'bigint' })
     createdAt: bigint;
 
+    @Column({ type: 'uuid', name: 'created_by_id', nullable: true })
+    createdById?: string | null;
+
     @Column({ type: 'bigint' })
     updatedAt: bigint;
 
+    @Column({ type: 'uuid', name: 'updated_by_id', nullable: true })
+    updatedById?: string | null;
+
     @Column({ type: 'bigint', nullable: true })
     deletedAt?: bigint | null;
+
+    @Column({ type: 'uuid', name: 'deleted_by_id', nullable: true })
+    deletedById?: string | null;
 }

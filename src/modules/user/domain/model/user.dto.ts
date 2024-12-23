@@ -43,7 +43,9 @@ export const UserSearchSchema = SearchSchema.merge(
                 firstName: true,
                 lastName: true,
                 address: true,
-            }),
+            })
+                .partial()
+                .nullable(),
         }),
     ),
 ).partial();

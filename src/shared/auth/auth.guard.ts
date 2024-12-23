@@ -8,7 +8,7 @@ import { ForbiddenError, UnauthorizedError } from '@shared/errors/domain-error';
 import { CLIENT_PROXY } from '@shared/modules/client/client.module';
 import { METADATA_PUBLIC } from '@shared/auth/auth.token';
 import { IJwtData } from '@shared/auth/auth.type';
-import { UserValidityResult } from '@shared/types/shared-user.type';
+import { UserValidityResult } from '@shared/types/user.shared.type';
 import { catchError, lastValueFrom, of } from 'rxjs';
 
 @Injectable()

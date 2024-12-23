@@ -15,11 +15,12 @@ export class UserSeeder implements ISeed {
     ) {}
 
     async seed(): Promise<void> {
+        const email = this.config.get('general.defaultAdminEmail');
         const password = this.config.get('general.defaultAdminPassword');
         const hashedPassword = await hashPasswordByBcrypt(password);
 
         const rootUser = {
-            email: this.config.get('general.defaultAdminEmail'),
+            email,
             password: hashedPassword,
             // Todo: remove those magic strings, use enum instead
             status: USER_STATUS.ACTIVE,

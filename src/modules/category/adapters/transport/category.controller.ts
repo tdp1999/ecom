@@ -1,6 +1,8 @@
-import { Body, Controller, Delete, Get, Inject, Param, Patch, Post, Query } from '@nestjs/common';
-import { CategoryCreateDto, CategorySearchDto, CategoryUpdateDto } from '../../domain/model/category.dto';
 import { CATEGORY_SERVICE_TOKEN, ICategoryService } from '@category/domain/ports/category-service.interface';
+import { Body, Controller, Delete, Get, Inject, Param, Patch, Post, Query } from '@nestjs/common';
+import { User } from '@shared/decorators/user.decorator';
+import { SharedUser } from '@shared/types/user.shared.type';
+import { CategoryCreateDto, CategorySearchDto, CategoryUpdateDto } from '../../domain/model/category.dto';
 
 @Controller('category')
 export class CategoryController {
@@ -27,13 +29,13 @@ export class CategoryController {
     }
 
     @Post()
-    create(@Body() payload: CategoryCreateDto) {
-        return this.service.create(payload);
+    create(@Body() payload: CategoryCreateDto, @User() user: SharedUser) {
+        return this.service.create(payload, user);
     }
 
     @Patch(':id')
-    update(@Param('id') id: string, @Body() payload: CategoryUpdateDto) {
-        return this.service.update(id, payload);
+    update(@Param('id') id: string, @Body() payload: CategoryUpdateDto, @User() user: SharedUser) {
+        return this.service.update(id, payload, user);
     }
 
     @Delete(':id')

@@ -1,12 +1,14 @@
 import { Inject, Injectable, Optional } from '@nestjs/common';
-import { BaseCrudService } from '@shared/abstractions/service.base';
 import { USER_STATUS } from '@shared/enums/shared-user.enum';
-import { BadRequestError } from '@shared/errors/domain-error';
+import { BadRequestError, NotFoundError } from '@shared/errors/domain-error';
+import { formatZodError } from '@shared/errors/error-formatter';
 import { MODULE_IDENTIFIER } from '@shared/tokens/common.token';
 import { Email, UUID } from '@shared/types/general.type';
-import { UserValidityResult } from '@shared/types/shared-user.type';
+import { Pagination } from '@shared/types/pagination.type';
+import { SharedUser, UserValidityResult } from '@shared/types/user.shared.type';
 import { hashPasswordByBcrypt } from '@shared/utils/hashing.util';
 import { v7 } from 'uuid';
+import { ZodError } from 'zod';
 import {
     UserCreateDto,
     UserCreateSchema,
@@ -23,20 +25,56 @@ import { IUserRepository } from '../ports/user-repository.interface';
 import { IUserService } from '../ports/user-service.interface';
 
 @Injectable()
-export class UserService
-    extends BaseCrudService<User, UserCreateDto, UserUpdateDto, UserSearchDto>
-    implements IUserService
-{
-    protected createSchema = UserCreateSchema;
-    protected updateSchema = UserUpdateSchema;
-    protected searchSchema = UserSearchSchema;
-
+export class UserService implements IUserService {
     constructor(
         @Inject(USER_CONFIG_TOKEN) private config: IUserConfig,
         @Inject(USER_REPOSITORY_TOKEN) protected readonly repository: IUserRepository,
         @Optional() @Inject(MODULE_IDENTIFIER) protected readonly moduleName: string = '',
-    ) {
-        super(moduleName, repository);
+    ) {}
+
+    public async list(query?: UserSearchDto): Promise<User[]> {
+        const { success, error, data } = UserCreateSchema.safeParse(query);
+
+        if (!success) {
+            throw BadRequestError(formatZodError(error));
+        }
+
+        return this.repository.list(data);
+    }
+
+    public async paginatedList(query?: UserSearchDto): Promise<Pagination<User>> {
+        const { success, error, data } = UserSearchSchema.safeParse(query);
+
+        if (!success) throw this.handleValidationError(error);
+
+        return this.repository.paginatedList(data);
+    }
+
+    public async exist(id: UUID): Promise<boolean> {
+        return this.repository.exist(id);
+    }
+
+    public async findByEmail(email: Email): Promise<User | null> {
+        if (!this.repository.findByConditions) throw new Error('Method repository.findByConditions not implemented.');
+        return await this.repository.findByConditions({ email });
+    }
+
+    public async getPassword(userId: UUID): Promise<string> {
+        return await this.repository.getPassword(userId);
+    }
+
+    public async get(id: string): Promise<User | null> {
+        return await this.getValidData(id);
+    }
+
+    public async getValidData(id: UUID): Promise<User> {
+        const data = await this.repository.findById(id);
+
+        if (!data || !!data.deletedAt) {
+            throw NotFoundError(`${this.moduleName} with id ${id} not found`);
+        }
+
+        return data;
     }
 
     public async getUserValidity(user: User): Promise<UserValidityResult> {
@@ -47,8 +85,8 @@ export class UserService
         return { isValid: true, status: USER_STATUS.ACTIVE };
     }
 
-    override async create(payload: UserCreateDto, hashedPassword?: string): Promise<UUID> {
-        const { success, error, data } = this.createSchema.safeParse(payload);
+    public async create(payload: UserCreateDto, user?: SharedUser, hashedPassword?: string): Promise<UUID> {
+        const { success, error, data } = UserCreateSchema.safeParse(payload);
 
         if (!success) {
             throw this.handleValidationError(error);
@@ -66,13 +104,15 @@ export class UserService
         const id = v7();
         const currentTimestamp = BigInt(Date.now());
 
-        const entity = {
+        const entity: User = {
             id,
             ...data,
             password: hashedPassword,
             salt: '',
             createdAt: currentTimestamp,
+            createdById: user?.id ?? null,
             updatedAt: currentTimestamp,
+            updatedById: user?.id ?? null,
         };
 
         await this.repository.create(entity);
@@ -80,7 +120,38 @@ export class UserService
         return id;
     }
 
-    protected async validateCreate(data: UserCreateDto): Promise<void> {
+    public async update(id: string, payload: UserUpdateDto, user: SharedUser): Promise<boolean> {
+        const { success, error, data } = UserUpdateSchema.safeParse(payload);
+
+        if (!success) {
+            throw this.handleValidationError(error);
+        }
+
+        const isExisted = await this.repository.exist(id);
+        if (!isExisted) {
+            throw NotFoundError(`${this.moduleName} with id ${id} not found`);
+        }
+
+        // await this.validateUpdate(id, data);
+
+        return this.repository.update(id, { ...data, updatedById: user.id } as User);
+    }
+
+    public async delete(id: string, isHardDelete?: boolean): Promise<boolean> {
+        const isExisted = await this.repository.exist(id);
+        if (!isExisted) {
+            throw NotFoundError(`${this.moduleName} with id ${id} not found`);
+        }
+
+        if (isHardDelete) {
+            return this.repository.delete(id);
+        }
+
+        return this.repository.update(id, { deletedAt: BigInt(Date.now()) });
+    }
+
+    // Validate method
+    private async validateCreate(data: UserCreateDto): Promise<void> {
         const isEmailExist = await this.checkIfEmailExist(data.email);
 
         if (isEmailExist) {
@@ -88,22 +159,17 @@ export class UserService
         }
     }
 
-    protected async validateUpdate(): Promise<void> {
+    private async validateUpdate(): Promise<void> {
         return await Promise.resolve();
-    }
-
-    public async findByEmail(email: Email): Promise<User | null> {
-        if (!this.repository.findByConditions) throw new Error('Method repository.findByConditions not implemented.');
-        return await this.repository.findByConditions({ email });
-    }
-
-    public async getPassword(userId: UUID): Promise<string> {
-        return await this.repository.getPassword(userId);
     }
 
     // Helper methods
     private async checkIfEmailExist(email: Email): Promise<boolean> {
         if (!this.repository.findByConditions) throw new Error('Method repository.findByConditions not implemented.');
         return !!(await this.repository.findByConditions({ email }));
+    }
+
+    private handleValidationError(error: ZodError) {
+        return BadRequestError(formatZodError(error));
     }
 }

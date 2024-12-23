@@ -2,6 +2,8 @@ import { Body, Controller, Delete, Get, Inject, Param, Patch, Post, Query } from
 import { BrandSearchDto } from '@brand/domain/model/brand.dto';
 import { IProductService, PRODUCT_SERVICE_TOKEN } from '@product/domain/ports/product-service.interface';
 import { ProductCreateDto, ProductSearchDto, ProductUpdateDto } from '@product/domain/model/product.dto';
+import { User } from '@shared/decorators/user.decorator';
+import { SharedUser } from '@shared/types/user.shared.type';
 
 @Controller('product')
 export class ProductController {
@@ -23,13 +25,13 @@ export class ProductController {
     }
 
     @Post()
-    create(@Body() payload: ProductCreateDto) {
-        return this.service.create(payload);
+    create(@Body() payload: ProductCreateDto, @User() user: SharedUser) {
+        return this.service.create(payload, user);
     }
 
     @Patch(':id')
-    update(@Param('id') id: string, @Body() payload: ProductUpdateDto) {
-        return this.service.update(id, payload);
+    update(@Param('id') id: string, @Body() payload: ProductUpdateDto, @User() user: SharedUser) {
+        return this.service.update(id, payload, user);
     }
 
     @Delete(':id')
