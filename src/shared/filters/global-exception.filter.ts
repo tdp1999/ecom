@@ -1,5 +1,7 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { HttpAdapterHost } from '@nestjs/core';
+import { BooleanValue } from '@shared/vos/boolean.value';
 import { DomainError } from '../errors/domain-error';
 
 export interface FormattedResponse {
@@ -7,13 +9,17 @@ export interface FormattedResponse {
     errorCode: string | null;
     error: string;
     message: any;
+    remarks?: string | null;
 }
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
     private readonly logger = new Logger(GlobalExceptionFilter.name);
 
-    constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
+    constructor(
+        private readonly configService: ConfigService,
+        private readonly httpAdapterHost: HttpAdapterHost,
+    ) {}
 
     catch(exception: unknown, host: ArgumentsHost) {
         const { httpAdapter } = this.httpAdapterHost;
@@ -38,7 +44,13 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     }
 
     private _domainExceptionContent(exception: DomainError): [number, FormattedResponse] {
-        const { statusCode, error, message, errorCode = null } = exception;
+        const { statusCode, error, message, errorCode = null, remarks } = exception;
+        const isDebugMode = BooleanValue.toBoolean(this.configService.get('general.debug'));
+
+        if (isDebugMode) {
+            return [statusCode, { statusCode, error, message, errorCode, remarks }];
+        }
+
         return [statusCode, { statusCode, error, message, errorCode }];
     }
 
