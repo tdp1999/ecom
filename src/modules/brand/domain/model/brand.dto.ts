@@ -1,6 +1,7 @@
 import { SearchSchema } from '@shared/dtos/seach.dto';
 import { STATUS } from '@shared/enums/status.enum';
 import { ERR_COMMON_EMPTY_PAYLOAD } from '@shared/errors/common-errors';
+import { UuidSchema } from '@shared/models/general-value-object.model';
 import { z } from 'zod';
 import { ERR_BRAND_NAME_TOO_SHORT } from './brand.error';
 
@@ -15,6 +16,7 @@ export const BrandCreateSchema = z.object({
 export const BrandUpdateSchema = z
     .object({
         deletedAt: z.bigint().nullable().optional(),
+        deletedById: UuidSchema.nullable().optional(),
     })
     .merge(BrandCreateSchema.partial())
     .refine((data) => Object.keys(data).length > 0, {

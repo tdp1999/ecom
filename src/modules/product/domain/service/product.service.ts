@@ -76,6 +76,7 @@ export class ProductService
         // Get brand
         if (product.brandId) {
             const brand = await this.brandRepository.get(product.brandId);
+
             const { success, data, error } = ProductBrandSchema.safeParse(brand);
 
             if (!success) {

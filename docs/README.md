@@ -93,3 +93,6 @@ async canActivate(context: ExecutionContext): Promise<boolean> {
 - 22/12: Done seeder feature
 - 23/12: Update default auditable entity -> done all
 - 24/12: Test lại tất cả các API
+  - Add logic delete at cho all api -> done
+  - Sửa bug -> done
+- 25/12: Try to implement RBAC

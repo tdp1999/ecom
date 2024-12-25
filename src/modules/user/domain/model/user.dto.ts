@@ -1,7 +1,7 @@
 import { SearchSchema } from '@shared/dtos/seach.dto';
 import { USER_ROLE, USER_STATUS } from '@shared/enums/shared-user.enum';
 import { ERR_COMMON_EMPTY_PAYLOAD } from '@shared/errors/common-errors';
-import { EmailSchema } from '@shared/models/general-value-object.model';
+import { EmailSchema, UuidSchema } from '@shared/models/general-value-object.model';
 import { z } from 'zod';
 import { USER_GENDER } from './user.type';
 
@@ -26,6 +26,7 @@ export const UserCreateSchema = z.object({
 export const UserUpdateSchema = z
     .object({
         deletedAt: z.bigint().nullable().optional(),
+        deletedById: UuidSchema.nullable().optional(),
     })
     .merge(UserCreateSchema.partial())
     .refine((data) => Object.keys(data).length > 0, {

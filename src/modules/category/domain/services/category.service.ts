@@ -64,7 +64,11 @@ export class CategoryService implements ICategoryService {
         return this.repository.exist(id);
     }
 
-    async create(payload: CategoryCreateDto, user: SharedUser): Promise<UUID> {
+    existAndValid(id: UUID): Promise<boolean> {
+        return this.repository.existAndNotDeleted(id);
+    }
+
+    async create(user: SharedUser, payload: CategoryCreateDto): Promise<UUID> {
         const { success, error, data } = CategoryCreateSchema.safeParse(payload);
 
         if (!success) {
@@ -91,7 +95,7 @@ export class CategoryService implements ICategoryService {
         return id;
     }
 
-    async update(id: UUID, payload: CategoryUpdateDto): Promise<boolean> {
+    async update(user: SharedUser, id: UUID, payload: CategoryUpdateDto): Promise<boolean> {
         const { success, error, data } = CategoryUpdateSchema.safeParse(payload);
 
         if (!success) {
@@ -107,7 +111,7 @@ export class CategoryService implements ICategoryService {
         return this.repository.update(id, { ...data, updatedById: id } as Category);
     }
 
-    async delete(id: UUID, isHardDelete?: boolean): Promise<boolean> {
+    async delete(user: SharedUser, id: UUID, isHardDelete?: boolean): Promise<boolean> {
         const data = await this.getValidData(id);
 
         // Prevent deleting if it has children
@@ -119,7 +123,7 @@ export class CategoryService implements ICategoryService {
             return this.repository.delete(id);
         }
 
-        return this.repository.update(id, { deletedAt: BigInt(Date.now()) });
+        return this.repository.update(id, { deletedAt: BigInt(Date.now()), deletedById: user.id });
     }
 
     private async getValidData(id: UUID): Promise<Category> {

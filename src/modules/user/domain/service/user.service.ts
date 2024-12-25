@@ -33,7 +33,7 @@ export class UserService implements IUserService {
     ) {}
 
     public async list(query?: UserSearchDto): Promise<User[]> {
-        const { success, error, data } = UserCreateSchema.safeParse(query);
+        const { success, error, data } = UserSearchSchema.safeParse(query);
 
         if (!success) {
             throw BadRequestError(formatZodError(error));
@@ -52,6 +52,10 @@ export class UserService implements IUserService {
 
     public async exist(id: UUID): Promise<boolean> {
         return this.repository.exist(id);
+    }
+
+    public async existAndValid(id: UUID): Promise<boolean> {
+        return this.repository.existAndNotDeleted(id);
     }
 
     public async findByEmail(email: Email): Promise<User | null> {
@@ -120,7 +124,7 @@ export class UserService implements IUserService {
         return id;
     }
 
-    public async update(id: string, payload: UserUpdateDto, user: SharedUser): Promise<boolean> {
+    public async update(user: SharedUser, id: string, payload: UserUpdateDto): Promise<boolean> {
         const { success, error, data } = UserUpdateSchema.safeParse(payload);
 
         if (!success) {
@@ -137,17 +141,22 @@ export class UserService implements IUserService {
         return this.repository.update(id, { ...data, updatedById: user.id } as User);
     }
 
-    public async delete(id: string, isHardDelete?: boolean): Promise<boolean> {
+    public async delete(user: SharedUser, id: string, isHardDelete?: boolean): Promise<boolean> {
         const isExisted = await this.repository.exist(id);
+
         if (!isExisted) {
             throw NotFoundError(`${this.moduleName} with id ${id} not found`);
         }
+
+        // if (user.id === id) {
+        //     throw BadRequestError('Cannot delete your own account');
+        // }
 
         if (isHardDelete) {
             return this.repository.delete(id);
         }
 
-        return this.repository.update(id, { deletedAt: BigInt(Date.now()) });
+        return this.repository.update(id, { deletedAt: BigInt(Date.now()), deletedById: user.id });
     }
 
     // Validate method

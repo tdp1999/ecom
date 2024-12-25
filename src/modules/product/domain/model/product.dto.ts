@@ -1,3 +1,4 @@
+import { UuidSchema } from '@shared/models/general-value-object.model';
 import { z } from 'zod';
 import { PRODUCT_GENDER } from './product.type';
 import {
@@ -38,6 +39,7 @@ export const ProductCreateSchema = z.object({
 export const ProductUpdateSchema = z
     .object({
         deletedAt: z.bigint().nullable().optional(),
+        deletedById: UuidSchema.nullable().optional(),
     })
     .merge(ProductCreateSchema.partial())
     .refine((data) => Object.keys(data).length > 0, {

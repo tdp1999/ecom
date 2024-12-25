@@ -79,6 +79,17 @@ export class UserRepository implements IUserRepository {
         return !!result;
     }
 
+    async existAndNotDeleted(id: UUID): Promise<boolean> {
+        const result = await this.repository
+            .createQueryBuilder('entity')
+            .where('entity.id = :id', { id })
+            .andWhere('entity.deletedAt IS NULL')
+            .select('1') // Only return '1' instead of fetching fields
+            .getRawOne();
+
+        return !!result;
+    }
+
     async findByConditions(conditions: Record<string, any>): Promise<User | null> {
         const where = this.buildWhereConditions(conditions);
         return await this.repository.findOneBy(where);

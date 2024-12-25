@@ -11,9 +11,11 @@ export interface IService<T, Create, Update, Search> {
 
     exist(id: UUID): Promise<boolean>;
 
-    create(payload: Create, user: SharedUser): Promise<UUID>;
+    existAndValid(id: UUID): Promise<boolean>;
 
-    update(id: UUID, payload: Update, user: SharedUser): Promise<boolean>;
+    create(user: SharedUser, payload: Create): Promise<UUID>;
 
-    delete(id: UUID, isHardDelete?: boolean): Promise<boolean>;
+    update(user: SharedUser, id: UUID, payload: Update): Promise<boolean>;
+
+    delete(user: SharedUser, id: UUID, isHardDelete?: boolean): Promise<boolean>;
 }

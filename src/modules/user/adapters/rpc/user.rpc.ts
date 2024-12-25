@@ -10,6 +10,7 @@ import { USER_SERVICE_TOKEN } from '@user/domain/model/user.token';
 import { IUserService } from '@user/domain/ports/user-service.interface';
 
 @Controller()
+@UseFilters(RpcExceptionFilter)
 export class UserRpcController {
     constructor(@Inject(USER_SERVICE_TOKEN) private readonly service: IUserService) {}
 
@@ -18,7 +19,6 @@ export class UserRpcController {
         return await this.service.getUserValidity(user);
     }
 
-    @UseFilters(RpcExceptionFilter)
     @MessagePattern(AuthUserAction.CREATE)
     async createUser(payload: UserCreateDto & { password?: string; user: User | SharedUser | undefined }) {
         return await this.service.create(payload, payload.user, payload.password);

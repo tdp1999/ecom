@@ -1,12 +1,13 @@
-import { IProductBrandRepository } from '@product/domain/ports/product-repository.interface';
 import { Inject } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
+import { ProductBrand } from '@product/domain/model/product.model';
+import { IProductBrandRepository } from '@product/domain/ports/product-repository.interface';
+import { ProductBrandAction } from '@shared/actions/product.action';
+import { RpcClient } from '@shared/decorators/client.rpc.decorator';
 import { CLIENT_PROXY } from '@shared/modules/client/client.module';
 import { UUID } from '@shared/types/general.type';
-import { lastValueFrom } from 'rxjs';
-import { ProductBrandAction } from '@shared/actions/product.action';
 import DataLoader from 'dataloader';
-import { ProductBrand } from '@product/domain/model/product.model';
+import { lastValueFrom } from 'rxjs';
 
 export class ProductBrandRpcRepository implements IProductBrandRepository {
     public brandsLoader: DataLoader<UUID, ProductBrand | null>;
@@ -15,6 +16,7 @@ export class ProductBrandRpcRepository implements IProductBrandRepository {
         this.brandsLoader = new DataLoader(this.brandBatchFn.bind(this), { maxBatchSize: 100 });
     }
 
+    @RpcClient()
     async get(id: UUID) {
         return await lastValueFrom(this.client.send(ProductBrandAction.GET, id));
     }
@@ -36,6 +38,7 @@ export class ProductBrandRpcRepository implements IProductBrandRepository {
         });
     }
 
+    @RpcClient()
     async exist(id: UUID) {
         return await lastValueFrom(this.client.send(ProductBrandAction.EXIST, id));
     }

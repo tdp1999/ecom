@@ -1,11 +1,13 @@
-import { Controller, Inject } from '@nestjs/common';
+import { Controller, Inject, UseFilters } from '@nestjs/common';
 import { BRAND_SERVICE_TOKEN, IBrandService } from '@brand/domain/ports/brand-service.interface';
 import { MessagePattern } from '@nestjs/microservices';
 import { ProductBrandAction } from '@shared/actions/product.action';
+import { RpcExceptionFilter } from '@shared/filters/rpc-exception.filter';
 import { UUID } from '@shared/types/general.type';
 import { BRAND_REPOSITORY_TOKEN, IBrandRepository } from '@brand/domain/ports/brand-repository.interface';
 
 @Controller()
+@UseFilters(RpcExceptionFilter)
 export class BrandRpcController {
     constructor(
         @Inject(BRAND_SERVICE_TOKEN) private readonly service: IBrandService,

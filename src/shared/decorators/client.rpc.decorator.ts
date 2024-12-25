@@ -1,5 +1,6 @@
 import { DomainError } from '@shared/errors/domain-error';
 
+// Use this decorator to wrap the RPC call with error handling
 export function RpcClient() {
     return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
         const originalMethod = descriptor.value;

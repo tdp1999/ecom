@@ -71,10 +71,22 @@ export class CategoryRepository implements ICategoryRepository {
         return !!result;
     }
 
+    async existAndNotDeleted(id: UUID): Promise<boolean> {
+        const result = await this.repository
+            .createQueryBuilder('entity')
+            .where('entity.id = :id', { id })
+            .andWhere('entity.deletedAt IS NULL')
+            .select('1')
+            .getRawOne();
+
+        return !!result;
+    }
+
     async hasChildren(category: CategoryEntity): Promise<boolean> {
         const count = await this.repository.countDescendants(category);
 
-        return count > 0;
+        // The count includes the category itself, so we need to subtract 1
+        return count - 1 > 0;
     }
 
     async getFullTreeOfAncestor(id: UUID): Promise<Category | null> {

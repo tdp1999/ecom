@@ -26,16 +26,16 @@ export class ProductController {
 
     @Post()
     create(@Body() payload: ProductCreateDto, @User() user: SharedUser) {
-        return this.service.create(payload, user);
+        return this.service.create(user, payload);
     }
 
     @Patch(':id')
     update(@Param('id') id: string, @Body() payload: ProductUpdateDto, @User() user: SharedUser) {
-        return this.service.update(id, payload, user);
+        return this.service.update(user, id, payload);
     }
 
     @Delete(':id')
-    delete(@Param('id') id: string) {
-        return this.service.delete(id, false);
+    delete(@User() user: SharedUser, @Param('id') id: string) {
+        return this.service.delete(user, id, false);
     }
 }

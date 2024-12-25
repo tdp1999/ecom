@@ -1,6 +1,10 @@
 import { IJwtService } from '@auth/domain/auth-adapters.interface';
 import { IAuthUserRepository } from '@auth/domain/auth-repository.interface';
-import { ERR_AUTH_USER_NOT_FOUND, ERR_AUTH_USER_PASSWORD_INVALID } from '@auth/domain/auth.error';
+import {
+    ERR_AUTH_USER_NOT_FOUND,
+    ERR_AUTH_USER_PASSWORD_INVALID,
+    ERR_AUTH_USER_PENDING,
+} from '@auth/domain/auth.error';
 import { AUTH_JWT_SERVICE_TOKEN, AUTH_USER_REPOSITORY_TOKEN } from '@auth/domain/auth.token';
 import { Inject, Injectable } from '@nestjs/common';
 import { USER_STATUS } from '@shared/enums/shared-user.enum';
@@ -47,18 +51,24 @@ export class AuthService implements IAuthService {
             throw BadRequestError(ERR_AUTH_USER_NOT_FOUND.message);
         }
 
-        const result = await this.userRepository.getUserValidity(user);
-
-        if (!result.isValid) {
-            if (result.status === USER_STATUS.DELETED) throw UnauthorizedError(ERR_COMMON_UNAUTHORIZED.message);
-            throw ForbiddenError(result.invalidMessage || ERR_COMMON_FORBIDDEN_ACCOUNT.message);
-        }
-
         const hashedPassword = await this.userRepository.getPassword(user.id);
         const isPasswordValid = await comparePasswordByBcrypt(password, hashedPassword);
 
         if (!isPasswordValid) {
             throw BadRequestError(ERR_AUTH_USER_PASSWORD_INVALID.message);
+        }
+
+        const userValidity = await this.userRepository.getUserValidity(user);
+
+        if (!userValidity.isValid) {
+            switch (userValidity.status) {
+                case USER_STATUS.DELETED:
+                    throw UnauthorizedError(ERR_COMMON_UNAUTHORIZED.message);
+                case USER_STATUS.PENDING:
+                    throw ForbiddenError(ERR_AUTH_USER_PENDING.message);
+                default:
+                    throw ForbiddenError(userValidity.invalidMessage || ERR_COMMON_FORBIDDEN_ACCOUNT.message);
+            }
         }
 
         // Token will be expired in 1h

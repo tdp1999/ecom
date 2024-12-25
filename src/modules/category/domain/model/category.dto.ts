@@ -1,6 +1,7 @@
 import { SearchSchema } from '@shared/dtos/seach.dto';
 import { STATUS } from '@shared/enums/status.enum';
 import { ERR_COMMON_EMPTY_PAYLOAD } from '@shared/errors/common-errors';
+import { UuidSchema } from '@shared/models/general-value-object.model';
 import { z } from 'zod';
 import {
     ERR_CATEGORY_INVALID_POSITION,
@@ -29,6 +30,7 @@ export const CategoryCreateSchema = z.object({
 export const CategoryUpdateSchema = z
     .object({
         deletedAt: z.bigint().nullable().optional(),
+        deletedById: UuidSchema.nullable().optional(),
     })
     .merge(CategoryCreateSchema.partial())
     .refine((data) => Object.keys(data).length > 0, {

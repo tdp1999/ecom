@@ -52,6 +52,17 @@ export abstract class BaseCrudRepository<
         return !!result;
     }
 
+    async existAndNotDeleted(id: string): Promise<boolean> {
+        const result = await this.repository
+            .createQueryBuilder('entity')
+            .where('entity.id = :id', { id })
+            .andWhere('entity.deletedAt IS NULL')
+            .select('1') // Only return '1' instead of fetching fields
+            .getRawOne();
+
+        return !!result;
+    }
+
     async findById(id: string): Promise<T | null> {
         return await this.repository.findOneBy({ id } as any);
     }

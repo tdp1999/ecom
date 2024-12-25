@@ -24,6 +24,6 @@ export class CategoryRpcController {
 
     @MessagePattern(ProductCategoryAction.EXIST)
     async exist(id: UUID) {
-        return await this.service.exist(id);
+        return await this.service.existAndValid(id);
     }
 }

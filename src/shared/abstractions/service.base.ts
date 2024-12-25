@@ -53,7 +53,11 @@ export abstract class BaseCrudService<
         return this.repository.exist(id);
     }
 
-    async create(payload: C, user: SharedUser): Promise<string> {
+    existAndValid(id: UUID): Promise<boolean> {
+        return this.repository.existAndNotDeleted(id);
+    }
+
+    async create(user: SharedUser, payload: C): Promise<string> {
         const { success, error, data } = this.createSchema.safeParse(payload);
 
         if (!success) {
@@ -79,7 +83,7 @@ export abstract class BaseCrudService<
         return id;
     }
 
-    async update(id: string, payload: U, user: SharedUser): Promise<boolean> {
+    async update(user: SharedUser, id: UUID, payload: U): Promise<boolean> {
         const { success, error, data } = this.updateSchema.safeParse(payload);
 
         if (!success) {
@@ -96,17 +100,14 @@ export abstract class BaseCrudService<
         return this.repository.update(id, { ...data, updatedById: user.id });
     }
 
-    async delete(id: string, isHardDelete?: boolean): Promise<boolean> {
-        const isExisted = await this.repository.exist(id);
-        if (!isExisted) {
-            throw NotFoundError(`${this.moduleName} with id ${id} not found`);
-        }
+    async delete(user: SharedUser, id: string, isHardDelete?: boolean): Promise<boolean> {
+        await this.getValidData(id);
 
         if (isHardDelete) {
             return this.repository.delete(id);
         }
 
-        return this.repository.update(id, { deletedAt: BigInt(Date.now()) } as U);
+        return this.repository.update(id, { deletedAt: BigInt(Date.now()), deletedById: user.id } as U);
     }
 
     protected async getValidData(id: string): Promise<T> {
