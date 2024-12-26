@@ -1,20 +1,21 @@
 import { Body, Controller, Delete, Get, Inject, Param, Patch, Post, Query } from '@nestjs/common';
-import { ProductCreateDto, ProductSearchDto, ProductUpdateDto } from '@product/domain/model/product.dto';
-import { IProductService, PRODUCT_SERVICE_TOKEN } from '@product/domain/ports/product-service.interface';
 import { User } from '@shared/decorators/user.decorator';
 import { SharedUser } from '@shared/types/user.shared.type';
+import { IPermissionService } from '../domain/permission-service.interface';
+import { PermissionCreateDto, PermissionSearchDto, PermissionUpdateDto } from '../domain/permission.dto';
+import { PERMISSION_SERVICE_TOKEN } from '../domain/permission.token';
 
-@Controller('product')
-export class ProductController {
-    constructor(@Inject(PRODUCT_SERVICE_TOKEN) private readonly service: IProductService) {}
+@Controller('permission')
+export class PermissionController {
+    constructor(@Inject(PERMISSION_SERVICE_TOKEN) private readonly service: IPermissionService) {}
 
     @Get()
-    paginatedList(@Query() query?: ProductSearchDto) {
+    paginatedList(@Query() query?: PermissionSearchDto) {
         return this.service.paginatedList(query);
     }
 
     @Get('list')
-    list(@Query() query?: ProductSearchDto) {
+    list(@Query() query?: PermissionSearchDto) {
         return this.service.list(query);
     }
 
@@ -24,12 +25,12 @@ export class ProductController {
     }
 
     @Post()
-    create(@Body() payload: ProductCreateDto, @User() user: SharedUser) {
+    create(@Body() payload: PermissionCreateDto, @User() user: SharedUser) {
         return this.service.create(user, payload);
     }
 
     @Patch(':id')
-    update(@Param('id') id: string, @Body() payload: ProductUpdateDto, @User() user: SharedUser) {
+    update(@User() user: SharedUser, @Param('id') id: string, @Body() payload: PermissionUpdateDto) {
         return this.service.update(user, id, payload);
     }
 
