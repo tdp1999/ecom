@@ -6,6 +6,7 @@ import { ISeed } from '@shared/seed/seed.interface';
 import { hashPasswordByBcrypt } from '@shared/utils/hashing.util';
 import { UserEntity } from '@user/adapters/repository/user.entity';
 import { Repository } from 'typeorm';
+import { v7 } from 'uuid';
 
 @Injectable()
 export class UserSeeder implements ISeed {
@@ -19,8 +20,12 @@ export class UserSeeder implements ISeed {
         const password = this.config.get('general.defaultAdminPassword');
         const hashedPassword = await hashPasswordByBcrypt(password);
 
+        const currentTimestamp = BigInt(Date.now());
+
         const user = this.userRepository.create({
+            id: v7(),
             email,
+            salt: '',
             password: hashedPassword,
             status: USER_STATUS.ACTIVE,
             isSystem: true,
@@ -28,6 +33,10 @@ export class UserSeeder implements ISeed {
                 firstName: 'Root',
                 lastName: 'User',
             },
+            createdAt: currentTimestamp,
+            createdById: 'system',
+            updatedAt: currentTimestamp,
+            updatedById: 'system',
         });
         await this.userRepository.save(user);
     }
