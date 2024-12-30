@@ -1,5 +1,6 @@
-import { USER_ROLE, USER_STATUS } from '@shared/enums/shared-user.enum';
-import { BaseEntity, Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, Relation } from 'typeorm';
+import { BaseEntity } from '@shared/abstractions/entity.base';
+import { USER_STATUS } from '@shared/enums/shared-user.enum';
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, Relation } from 'typeorm';
 import { User } from '../../domain/model/user.model';
 // eslint-disable-next-line import/no-cycle
 import { UserProfileEntity } from './user-profile.entity';
@@ -19,8 +20,8 @@ export class UserEntity extends BaseEntity implements User {
     @Column({ select: false })
     salt: string;
 
-    @Column({ type: 'enum', enum: USER_ROLE })
-    role: USER_ROLE;
+    @Column({ type: 'boolean', default: false })
+    isSystem: boolean;
 
     @Column({ type: 'enum', enum: USER_STATUS, default: USER_STATUS.ACTIVE })
     status: USER_STATUS;
@@ -32,22 +33,4 @@ export class UserEntity extends BaseEntity implements User {
     })
     @JoinColumn()
     profile: Relation<UserProfileEntity>;
-
-    @Column({ type: 'bigint' })
-    createdAt: bigint;
-
-    @Column({ type: 'uuid', name: 'created_by_id', nullable: true })
-    createdById?: string | null;
-
-    @Column({ type: 'bigint' })
-    updatedAt: bigint;
-
-    @Column({ type: 'uuid', name: 'updated_by_id', nullable: true })
-    updatedById?: string | null;
-
-    @Column({ type: 'bigint', nullable: true })
-    deletedAt?: bigint | null;
-
-    @Column({ type: 'uuid', name: 'deleted_by_id', nullable: true })
-    deletedById?: string | null;
 }

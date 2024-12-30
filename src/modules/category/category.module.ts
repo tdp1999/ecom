@@ -1,3 +1,4 @@
+import { CategoryRpcController } from '@category/adapters/rpc/category.rpc';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TransactionManager } from '@shared/decorators/transactional.decorator';
@@ -8,7 +9,6 @@ import { CategoryController } from './adapters/transport/category.controller';
 import { CATEGORY_REPOSITORY_TOKEN } from './domain/ports/category-repository.interface';
 import { CATEGORY_SERVICE_TOKEN } from './domain/ports/category-service.interface';
 import { CategoryService } from './domain/services/category.service';
-import { CategoryRpcController } from '@category/adapters/rpc/category.rpc';
 
 @Module({
     controllers: [CategoryController, CategoryRpcController],

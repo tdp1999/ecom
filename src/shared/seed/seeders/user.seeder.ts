@@ -1,17 +1,17 @@
-import { Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ClientProxy } from '@nestjs/microservices';
-import { AuthUserAction } from '@shared/auth/auth.action';
-import { USER_ROLE, USER_STATUS } from '@shared/enums/shared-user.enum';
-import { CLIENT_PROXY } from '@shared/modules/client/client.module';
+import { InjectRepository } from '@nestjs/typeorm';
+import { USER_STATUS } from '@shared/enums/shared-user.enum';
 import { ISeed } from '@shared/seed/seed.interface';
 import { hashPasswordByBcrypt } from '@shared/utils/hashing.util';
-import { lastValueFrom } from 'rxjs';
+import { UserEntity } from '@user/adapters/repository/user.entity';
+import { Repository } from 'typeorm';
 
+@Injectable()
 export class UserSeeder implements ISeed {
     constructor(
-        @Inject(CLIENT_PROXY) private readonly client: ClientProxy,
         @Inject(ConfigService) private readonly config: ConfigService,
+        @InjectRepository(UserEntity) private userRepository: Repository<UserEntity>,
     ) {}
 
     async seed(): Promise<void> {
@@ -19,18 +19,16 @@ export class UserSeeder implements ISeed {
         const password = this.config.get('general.defaultAdminPassword');
         const hashedPassword = await hashPasswordByBcrypt(password);
 
-        const rootUser = {
+        const user = this.userRepository.create({
             email,
             password: hashedPassword,
-            // Todo: remove those magic strings, use enum instead
             status: USER_STATUS.ACTIVE,
-            role: USER_ROLE.ROOT_ADMIN,
+            isSystem: true,
             profile: {
                 firstName: 'Root',
                 lastName: 'User',
             },
-        };
-
-        return lastValueFrom(this.client.send(AuthUserAction.CREATE, rootUser));
+        });
+        await this.userRepository.save(user);
     }
 }

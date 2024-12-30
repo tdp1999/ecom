@@ -1,4 +1,5 @@
-import { USER_ROLE, USER_STATUS } from '@shared/enums/shared-user.enum';
+import { USER_STATUS } from '@shared/enums/shared-user.enum';
+import { AuditableSchema } from '@shared/models/auditable.model';
 import { EmailSchema, UuidSchema } from '@shared/models/general-value-object.model';
 import { z } from 'zod';
 import { USER_GENDER } from './user.type';
@@ -6,7 +7,6 @@ import { USER_GENDER } from './user.type';
 // User Profile Schema (less frequently accessed, profile-related)
 export const UserProfileSchema = z.object({
     id: UuidSchema,
-    // userId: UuidSchema, // Reference to main user
     firstName: z.string(),
     lastName: z.string(),
     avatar: z.string().nullable().optional(),
@@ -23,19 +23,10 @@ export const UserSchema = z.object({
     password: z.string(),
     salt: z.string(),
 
-    role: z.nativeEnum(USER_ROLE),
+    isSystem: z.boolean().optional().default(false),
     status: z.nativeEnum(USER_STATUS),
 
-    createdAt: z.bigint(),
-    createdById: UuidSchema.nullable().optional(),
-
-    updatedAt: z.bigint(),
-    updatedById: UuidSchema.nullable().optional(),
-
-    deletedAt: z.bigint().nullable().optional(),
-    deletedById: UuidSchema.nullable().optional(),
-
-    // profile: UserProfileSchema.nullable().optional(),
+    ...AuditableSchema.shape,
 });
 
 export type User = z.infer<typeof UserSchema>;

@@ -3,7 +3,7 @@ import { CategoryCreateDto, CategorySearchDto, CategoryUpdateDto } from '../mode
 import { Category } from '../model/category.model';
 
 export interface ICategoryService extends IService<Category, CategoryCreateDto, CategoryUpdateDto, CategorySearchDto> {
-    getFullTree(query?: CategorySearchDto): Promise<Category[]>;
+    getFullTree(): Promise<Category[]>;
 }
 
 export const CATEGORY_SERVICE_TOKEN = Symbol('ICategoryService');

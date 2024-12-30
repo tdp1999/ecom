@@ -27,6 +27,8 @@ export abstract class BaseCrudService<
     protected abstract readonly updateSchema: ZodSchema;
     protected abstract readonly searchSchema: ZodSchema;
 
+    protected visibleColumns: (keyof T)[] | undefined = undefined;
+
     async list(query?: S): Promise<T[]> {
         const { success, error, data } = this.searchSchema.safeParse(query);
 
@@ -34,7 +36,9 @@ export abstract class BaseCrudService<
             throw this.handleValidationError(error);
         }
 
-        return this.repository.list(data);
+        console.log('this.visibleColumns', this.visibleColumns);
+
+        return this.repository.list(data, this.visibleColumns);
     }
 
     async paginatedList(query?: S): Promise<Pagination<T>> {
@@ -42,7 +46,7 @@ export abstract class BaseCrudService<
 
         if (!success) throw this.handleValidationError(error);
 
-        return this.repository.paginatedList(data);
+        return this.repository.paginatedList(data, this.visibleColumns);
     }
 
     async get(id: string): Promise<T | null> {
@@ -111,7 +115,7 @@ export abstract class BaseCrudService<
     }
 
     protected async getValidData(id: string): Promise<T> {
-        const data = await this.repository.findById(id);
+        const data = await this.repository.findById(id, this.visibleColumns);
 
         if (!data || !!data.deletedAt) {
             throw NotFoundError(`${this.moduleName} with id ${id} not found`);

@@ -13,18 +13,21 @@ export class CategoryRepository implements ICategoryRepository {
     constructor(@InjectRepository(CategoryEntity) private repository: TreeRepository<CategoryEntity>) {}
 
     /* Query */
-    async list(query?: CategorySearchDto): Promise<Category[]> {
+    async list(query?: CategorySearchDto, visibleColumns?: (keyof Category)[]): Promise<Category[]> {
         const { orderBy, orderType } = query || {};
+
         return await this.repository.find({
+            ...(visibleColumns && visibleColumns.length && { select: visibleColumns }),
             where: this.buildWhereConditions(query),
             order: this.buildOrderConditions({ orderBy, orderType }),
         });
     }
 
-    async paginatedList(query?: CategorySearchDto): Promise<Pagination<Category>> {
+    async paginatedList(query?: CategorySearchDto, visibleColumns?: (keyof Category)[]): Promise<Pagination<Category>> {
         const { limit = 10, page = 1, orderBy, orderType } = query || {};
 
         const [items, total] = await this.repository.findAndCount({
+            ...(visibleColumns && visibleColumns.length && { select: visibleColumns }),
             where: this.buildWhereConditions(query),
             take: limit,
             skip: (page - 1) * limit,
@@ -44,21 +47,28 @@ export class CategoryRepository implements ICategoryRepository {
         };
     }
 
-    async getFullTree(): Promise<Category[]> {
-        const categories = await this.repository
-            .createQueryBuilder('category')
-            .where('category.deletedAt IS NULL')
-            .getMany();
+    async getFullTree(visibleColumns?: (keyof Category)[]): Promise<Category[]> {
+        const queryBuilder = this.repository.createQueryBuilder('category').where('category.deletedAt IS NULL');
+        if (visibleColumns?.length) {
+            queryBuilder.select(visibleColumns.map((col) => `category.${col}`));
+        } else {
+            queryBuilder.select();
+        }
 
+        const categories = await queryBuilder.getMany();
         return this.buildTree(categories);
     }
 
-    async findById(id: UUID): Promise<Category | null> {
-        return await this.repository.findOneBy({ id });
+    async findById(id: UUID, visibleColumns?: (keyof Category)[]): Promise<Category | null> {
+        return await this.repository.findOne({
+            where: { id },
+            ...(visibleColumns && visibleColumns.length && { select: visibleColumns }),
+        });
     }
 
-    async findByIds(ids: UUID[]): Promise<Category[]> {
-        return await this.repository.find({ where: { id: In(ids) }, select: ['id', 'name'] });
+    async findByIds(ids: UUID[], visibleColumns?: (keyof Category)[]): Promise<Category[]> {
+        const selectedColumns = visibleColumns || ['id', 'name'];
+        return await this.repository.find({ where: { id: In(ids) }, select: selectedColumns });
     }
 
     async exist(id: UUID): Promise<boolean> {
@@ -89,8 +99,11 @@ export class CategoryRepository implements ICategoryRepository {
         return count - 1 > 0;
     }
 
-    async getFullTreeOfAncestor(id: UUID): Promise<Category | null> {
-        const category = await this.repository.findOneBy({ id });
+    async getFullTreeOfAncestor(id: UUID, visibleColumns?: (keyof Category)[]): Promise<Category | null> {
+        const category = await this.repository.findOne({
+            where: { id },
+            ...(visibleColumns && visibleColumns.length && { select: visibleColumns }),
+        });
 
         if (!category) {
             return null;

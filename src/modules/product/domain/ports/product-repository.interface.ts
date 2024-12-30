@@ -3,7 +3,8 @@ import { Product, ProductBrand, ProductCategory } from '../model/product.model';
 import { ProductCreateDto, ProductSearchDto, ProductUpdateDto } from '../model/product.dto';
 import { UUID } from '@shared/types/general.type';
 
-export interface IProductRepositoryQuery extends IRepositoryQuery<Product, ProductSearchDto> {}
+export interface IProductRepositoryQuery
+    extends IRepositoryQuery<Omit<Product, 'brand' | 'categories'>, ProductSearchDto> {}
 
 export interface IProductRepositoryCommand extends IRepositoryCommand<ProductCreateDto, ProductUpdateDto> {}
 

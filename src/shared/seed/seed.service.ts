@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SeedEntity } from '@shared/seed/seed.entity';
 import { ISeed } from '@shared/seed/seed.interface';
+import { PermissionSeeder } from '@shared/seed/seeders/permission.seeder';
 import { UserSeeder } from '@shared/seed/seeders/user.seeder';
 import { BooleanValue } from '@shared/vos/boolean.value';
 import { Repository } from 'typeorm';
@@ -13,6 +14,7 @@ export class SeedService {
 
     constructor(
         private userSeeder: UserSeeder,
+        private permissionSeeder: PermissionSeeder,
         @Inject(ConfigService) private configService: ConfigService,
         @InjectRepository(SeedEntity) private seedRepository: Repository<SeedEntity>,
     ) {}
@@ -25,7 +27,10 @@ export class SeedService {
             return;
         }
 
-        const seeders: { name: string; seeder: ISeed }[] = [{ name: 'Default User', seeder: this.userSeeder }];
+        const seeders: { name: string; seeder: ISeed }[] = [
+            { name: 'Default User', seeder: this.userSeeder },
+            { name: 'Permissions', seeder: this.permissionSeeder },
+        ];
 
         for (const { name, seeder } of seeders) {
             const existingSeed = await this.seedRepository.findOne({ where: { name } });
@@ -42,6 +47,18 @@ export class SeedService {
                 }
             } else {
                 this.logger.debug(`Skipping ${name} seeder as it's already executed`);
+            }
+
+            if (existingSeed && seeder.rerun && typeof seeder.rerun === 'function') {
+                try {
+                    this.logger.log(`Re-running ${name} seeder...`);
+                    await seeder.rerun();
+                    await this.seedRepository.update(existingSeed.id, { executedAt: BigInt(Date.now()) });
+                    this.logger.log(`${name} seeder re-run completed successfully`);
+                } catch (error) {
+                    this.logger.error(`Error re-running ${name} seeder`, error.stack);
+                    throw error;
+                }
             }
         }
     }

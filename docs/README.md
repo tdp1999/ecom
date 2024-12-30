@@ -23,10 +23,10 @@ Develop Journal
 - 12/12: read this about custom decorator: https://docs.nestjs.com/custom-decorators. Cannot understand how hutton service do it => Understand it now. When a request go through the guard, the guard will eventually check all the criteria
 
 ```typescript
-async
+async;
 canActivate(context
 :
-ExecutionContext
+ExecutionContext;
 ):
 Promise < boolean > {
     const skipAuth = this.reflector.getAllAndOverride(METADATA_SKIP_AUTH, [context.getClass(), context.getHandler()]);
@@ -65,7 +65,7 @@ const salesperson = await this.clientService.send<AgentInterface>(SalespersonRea
 req.salesperson = salesperson;
 return true;
 } catch
-(error)
+(error);
 {
     const code = parseInt(error.message);
     if (!Number.isNaN(code)) {
@@ -109,6 +109,9 @@ return true;
     - Add a feature to inject remark to error -> done
 - 26/12: Try to implement RBAC
     - Add permission Module -> done
-    - ADd permission seeding
+    - Add permission seeding -> done
+    - Add DTO for list, detail (29/12) -> done
+    - Add isSystem property to user table (29/12) -> done
+    - Change fixed role to dynamic role
     - Add new role
     - Add role/group module

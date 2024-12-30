@@ -10,15 +10,15 @@ export interface IRepositoryCommand<Create, Update> {
 }
 
 export interface IRepositoryQuery<T, Search, Conditions = Record<string, any>> {
-    list(query?: Search): Promise<T[]>;
+    list(query?: Search, visibleColumns?: (keyof T)[]): Promise<T[]>;
 
-    paginatedList(query?: Search): Promise<Pagination<T>>;
+    paginatedList(query?: Search, visibleColumns?: (keyof T)[]): Promise<Pagination<T>>;
 
-    findById(id: UUID): Promise<T | null>;
+    findById(id: UUID, visibleColumns?: (keyof T)[]): Promise<T | null>;
 
     exist(id: UUID): Promise<boolean>;
 
     existAndNotDeleted(id: UUID): Promise<boolean>;
 
-    findByConditions?(conditions: Conditions): Promise<T | null>;
+    findByConditions?(conditions: Conditions, visibleColumns?: (keyof T)[]): Promise<T | null>;
 }

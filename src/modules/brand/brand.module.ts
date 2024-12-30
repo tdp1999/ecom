@@ -1,14 +1,14 @@
+import { BrandRpcController } from '@brand/adapters/rpc/brand.rpc';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TransactionManager } from '@shared/decorators/transactional.decorator';
 import { MODULE_IDENTIFIER } from '@shared/tokens/common.token';
 import { BrandEntity } from './adapters/repository/brand.entity';
+import { BrandRepository } from './adapters/repository/brand.repository';
 import { BrandController } from './adapters/transport/brand.controller';
 import { BRAND_REPOSITORY_TOKEN } from './domain/ports/brand-repository.interface';
 import { BRAND_SERVICE_TOKEN } from './domain/ports/brand-service.interface';
-import { BrandRepository } from './adapters/repository/brand.repository';
 import { BrandService } from './domain/services/brand.service';
-import { BrandRpcController } from '@brand/adapters/rpc/brand.rpc';
 
 @Module({
     controllers: [BrandController, BrandRpcController],

@@ -5,18 +5,19 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { PermissionModule } from '@permission/permission.module';
 import { ProductModule } from '@product/product.module';
+import { AuthGuard } from '@shared/auth/auth.guard';
 import databaseConfig from '@shared/configs/database.config';
 import generalConfig from '@shared/configs/general.config';
 import { GlobalExceptionFilter } from '@shared/filters/global-exception.filter';
-import { AuthGuard } from '@shared/auth/auth.guard';
 import { TransformInterceptor } from '@shared/interceptors/transform.interceptor';
 import { ClientModule } from '@shared/modules/client/client.module';
 import { UserModule } from '@user/user.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
-const modules = [CategoryModule, BrandModule, ProductModule, UserModule, AuthModule];
+const featureModules = [CategoryModule, BrandModule, ProductModule, UserModule, AuthModule, PermissionModule];
 
 @Module({
     imports: [
@@ -42,7 +43,7 @@ const modules = [CategoryModule, BrandModule, ProductModule, UserModule, AuthMod
                 };
             },
         }),
-        ...modules,
+        ...featureModules,
     ],
     controllers: [AppController],
     providers: [

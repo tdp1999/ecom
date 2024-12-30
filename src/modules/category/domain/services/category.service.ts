@@ -21,6 +21,18 @@ import { ICategoryService } from '../ports/category-service.interface';
 
 @Injectable()
 export class CategoryService implements ICategoryService {
+    private visibleFields: (keyof Category)[] = [
+        // 'id',
+        // 'name',
+        // 'status',
+        // 'isGroup',
+        // 'isClickable',
+        // 'parentId',
+        // 'createdAt',
+        // 'updatedAt',
+        // 'deletedAt',
+    ];
+
     constructor(
         @Optional() @Inject(MODULE_IDENTIFIER) private readonly moduleName: string = 'Category',
         @Inject(CATEGORY_REPOSITORY_TOKEN) private readonly repository: ICategoryRepository,
@@ -33,7 +45,7 @@ export class CategoryService implements ICategoryService {
             throw BadRequestError(formatZodError(error));
         }
 
-        return this.repository.list(data);
+        return this.repository.list(data, this.visibleFields);
     }
 
     paginatedList(query?: CategorySearchDto): Promise<Pagination<Category>> {
@@ -43,21 +55,15 @@ export class CategoryService implements ICategoryService {
             throw BadRequestError(formatZodError(error));
         }
 
-        return this.repository.paginatedList(data);
+        return this.repository.paginatedList(data, this.visibleFields);
     }
 
-    getFullTree(query?: CategorySearchDto): Promise<Category[]> {
-        const { success, error, data } = CategorySearchSchema.safeParse(query);
-
-        if (!success) {
-            throw BadRequestError(formatZodError(error));
-        }
-
-        return this.repository.getFullTree(data);
+    getFullTree(): Promise<Category[]> {
+        return this.repository.getFullTree(this.visibleFields);
     }
 
     get(id: UUID): Promise<Category | null> {
-        return this.repository.getFullTreeOfAncestor(id);
+        return this.repository.getFullTreeOfAncestor(id, this.visibleFields);
     }
 
     exist(id: UUID): Promise<boolean> {
@@ -127,7 +133,7 @@ export class CategoryService implements ICategoryService {
     }
 
     private async getValidData(id: UUID): Promise<Category> {
-        const data = await this.repository.findById(id);
+        const data = await this.repository.findById(id, this.visibleFields);
 
         if (!data || !!data.deletedAt) throw NotFoundError(`${this.moduleName} with id ${id} not found`);
 

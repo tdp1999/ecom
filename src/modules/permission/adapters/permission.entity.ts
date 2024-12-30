@@ -4,7 +4,7 @@ import { BeforeInsert, BeforeUpdate, Column, Entity } from 'typeorm';
 
 @Entity('permissions')
 export class PermissionEntity extends BaseEntity implements Permission {
-    @Column({ unique: true })
+    @Column()
     name: string;
 
     @Column({ type: 'text', nullable: true })

@@ -1,19 +1,19 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class AddRole1734923055234 implements MigrationInterface {
-    name = 'AddRole1734923055234';
+export class RemoveRole1735467785226 implements MigrationInterface {
+    name = 'RemoveRole1735467785226';
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
             ALTER TABLE \`users\`
-                CHANGE \`role\` \`role\` enum ('root_admin', 'admin', 'user') NOT NULL
+                DROP COLUMN \`role\`
         `);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
             ALTER TABLE \`users\`
-                CHANGE \`role\` \`role\` enum ('admin', 'user') NOT NULL
+                ADD \`role\` enum ('root_admin', 'admin', 'user') NOT NULL
         `);
     }
 }

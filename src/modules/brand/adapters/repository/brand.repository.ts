@@ -17,13 +17,17 @@ export class BrandRepository
         super(repository);
     }
 
-    async findByConditions(conditions: Record<string, any>): Promise<Brand | null> {
+    async findByConditions(conditions: Record<string, any>, visibleColumns?: (keyof Brand)[]): Promise<Brand | null> {
         const where = this.buildWhereConditions(conditions);
-        return await this.repository.findOneBy(where);
+        return await this.repository.findOne({
+            where,
+            ...(visibleColumns && visibleColumns.length && { select: visibleColumns }),
+        });
     }
 
-    async findByIds(ids: UUID[]): Promise<Brand[]> {
-        return await this.repository.find({ where: { id: In(ids) }, select: ['id', 'name'] });
+    async findByIds(ids: UUID[], visibleColumns?: (keyof Brand)[]): Promise<Brand[]> {
+        const selectedColumns = visibleColumns || ['id', 'name'];
+        return await this.repository.find({ where: { id: In(ids) }, select: selectedColumns });
     }
 
     protected buildWhereConditions(query?: BrandSearchDto): FindOptionsWhere<BrandEntity> {

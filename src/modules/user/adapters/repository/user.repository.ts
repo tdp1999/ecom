@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { ObjectUtils } from '@shared/utils/object.util';
-import { IUserRepository } from '../../domain/ports/user-repository.interface';
-import { UserCreateDto, UserSearchDto, UserUpdateDto } from '../../domain/model/user.dto';
-import { FindOptionsWhere, ILike, IsNull, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserEntity } from './user.entity';
-import { UserProfileEntity } from './user-profile.entity';
-import { UUID } from '@shared/types/general.type';
-import { Pagination } from '@shared/types/pagination.type';
-import { User } from '../../domain/model/user.model';
 import { buildOrderConditions } from '@shared/builders/order.builder';
 import { Transactional, TransactionManager } from '@shared/decorators/transactional.decorator';
+import { UUID } from '@shared/types/general.type';
+import { Pagination } from '@shared/types/pagination.type';
+import { ObjectUtils } from '@shared/utils/object.util';
+import { FindOptionsWhere, ILike, IsNull, Repository } from 'typeorm';
+import { UserCreateDto, UserSearchDto, UserUpdateDto } from '../../domain/model/user.dto';
+import { User } from '../../domain/model/user.model';
+import { IUserRepository } from '../../domain/ports/user-repository.interface';
+import { UserProfileEntity } from './user-profile.entity';
+import { UserEntity } from './user.entity';
 
 @Injectable()
 export class UserRepository implements IUserRepository {
@@ -20,20 +20,22 @@ export class UserRepository implements IUserRepository {
         @InjectRepository(UserProfileEntity) protected profileRepository: Repository<UserProfileEntity>,
     ) {}
 
-    async list(query?: UserSearchDto): Promise<User[]> {
+    async list(query?: UserSearchDto, visibleColumns?: (keyof User)[]): Promise<User[]> {
         const { orderBy, orderType, ...filters } = query || {};
 
         return await this.repository.find({
+            ...(visibleColumns && visibleColumns.length && { select: visibleColumns }),
             where: this.buildWhereConditions(filters),
             relations: ['profile'],
             order: buildOrderConditions<User>(orderBy, orderType),
         });
     }
 
-    async paginatedList(query?: UserSearchDto): Promise<Pagination<User>> {
+    async paginatedList(query?: UserSearchDto, visibleColumns?: (keyof User)[]): Promise<Pagination<User>> {
         const { limit = 10, page = 1, orderBy, orderType } = query || {};
 
         const [items, total] = await this.repository.findAndCount({
+            ...(visibleColumns && visibleColumns.length && { select: visibleColumns }),
             where: this.buildWhereConditions(query),
             relations: ['profile'],
             take: limit,
@@ -54,8 +56,9 @@ export class UserRepository implements IUserRepository {
         };
     }
 
-    async findById(id: UUID): Promise<User | null> {
+    async findById(id: UUID, visibleColumns?: (keyof User)[]): Promise<User | null> {
         return await this.repository.findOne({
+            ...(visibleColumns && visibleColumns.length && { select: visibleColumns }),
             where: { id },
             relations: ['profile'],
         });
@@ -90,9 +93,12 @@ export class UserRepository implements IUserRepository {
         return !!result;
     }
 
-    async findByConditions(conditions: Record<string, any>): Promise<User | null> {
+    async findByConditions(conditions: Record<string, any>, visibleColumns?: (keyof User)[]): Promise<User | null> {
         const where = this.buildWhereConditions(conditions);
-        return await this.repository.findOneBy(where);
+        return await this.repository.findOne({
+            where,
+            ...(visibleColumns && visibleColumns.length && { select: visibleColumns }),
+        });
     }
 
     @Transactional()
@@ -141,10 +147,6 @@ export class UserRepository implements IUserRepository {
 
         if (filters.email) {
             where.email = ILike(`%${filters.email}%`); // Fuzzy search
-        }
-
-        if (filters.role) {
-            where.role = filters.role; // Fuzzy search
         }
 
         if (filters.status) {

@@ -26,6 +26,8 @@ import { IUserService } from '../ports/user-service.interface';
 
 @Injectable()
 export class UserService implements IUserService {
+    private readonly visibleColumns: (keyof User)[] = ['id', 'status', 'email'];
+
     constructor(
         @Inject(USER_CONFIG_TOKEN) private config: IUserConfig,
         @Inject(USER_REPOSITORY_TOKEN) protected readonly repository: IUserRepository,
@@ -39,7 +41,7 @@ export class UserService implements IUserService {
             throw BadRequestError(formatZodError(error));
         }
 
-        return this.repository.list(data);
+        return this.repository.list(data, this.visibleColumns);
     }
 
     public async paginatedList(query?: UserSearchDto): Promise<Pagination<User>> {
@@ -47,7 +49,7 @@ export class UserService implements IUserService {
 
         if (!success) throw this.handleValidationError(error);
 
-        return this.repository.paginatedList(data);
+        return this.repository.paginatedList(data, this.visibleColumns);
     }
 
     public async exist(id: UUID): Promise<boolean> {
@@ -60,7 +62,7 @@ export class UserService implements IUserService {
 
     public async findByEmail(email: Email): Promise<User | null> {
         if (!this.repository.findByConditions) throw new Error('Method repository.findByConditions not implemented.');
-        return await this.repository.findByConditions({ email });
+        return await this.repository.findByConditions({ email }, this.visibleColumns);
     }
 
     public async getPassword(userId: UUID): Promise<string> {
@@ -72,7 +74,7 @@ export class UserService implements IUserService {
     }
 
     public async getValidData(id: UUID): Promise<User> {
-        const data = await this.repository.findById(id);
+        const data = await this.repository.findById(id, this.visibleColumns);
 
         if (!data || !!data.deletedAt) {
             throw NotFoundError(`${this.moduleName} with id ${id} not found`);
@@ -89,7 +91,7 @@ export class UserService implements IUserService {
         return { isValid: true, status: USER_STATUS.ACTIVE };
     }
 
-    public async create(payload: UserCreateDto, user?: SharedUser, hashedPassword?: string): Promise<UUID> {
+    public async create(payload: UserCreateDto, user: SharedUser, hashedPassword?: string): Promise<UUID> {
         const { success, error, data } = UserCreateSchema.safeParse(payload);
 
         if (!success) {
@@ -114,9 +116,9 @@ export class UserService implements IUserService {
             password: hashedPassword,
             salt: '',
             createdAt: currentTimestamp,
-            createdById: user?.id ?? null,
+            createdById: user.id,
             updatedAt: currentTimestamp,
-            updatedById: user?.id ?? null,
+            updatedById: user.id,
         };
 
         await this.repository.create(entity);

@@ -1,5 +1,5 @@
 import { SearchSchema } from '@shared/dtos/seach.dto';
-import { USER_ROLE, USER_STATUS } from '@shared/enums/shared-user.enum';
+import { USER_STATUS } from '@shared/enums/shared-user.enum';
 import { ERR_COMMON_EMPTY_PAYLOAD } from '@shared/errors/common-errors';
 import { EmailSchema, UuidSchema } from '@shared/models/general-value-object.model';
 import { z } from 'zod';
@@ -18,7 +18,7 @@ export const UserProfileUpdateSchema = z.object({
 
 export const UserCreateSchema = z.object({
     email: EmailSchema,
-    role: z.nativeEnum(USER_ROLE).default(USER_ROLE.USER),
+    isSystem: z.boolean().optional().default(false),
     status: z.nativeEnum(USER_STATUS).default(USER_STATUS.PENDING),
     profile: UserProfileUpdateSchema.partial().nullable().optional(),
 });
@@ -37,7 +37,6 @@ export const UserSearchSchema = SearchSchema.merge(
     UserCreateSchema.pick({
         email: true,
         status: true,
-        role: true,
     }).merge(
         z.object({
             profile: UserProfileUpdateSchema.pick({

@@ -23,6 +23,8 @@ export class BrandService
     extends BaseCrudService<Brand, BrandCreateDto, BrandUpdateDto, BrandSearchDto>
     implements IBrandService
 {
+    override visibleColumns: (keyof Brand)[] = ['id', 'name', 'description'];
+
     constructor(
         @Optional() @Inject(MODULE_IDENTIFIER) protected readonly moduleName: string = '',
         @Inject(BRAND_REPOSITORY_TOKEN) protected readonly repository: IBrandRepository,
@@ -45,7 +47,7 @@ export class BrandService
             throw BadRequestError(formatZodError(error));
         }
 
-        return this.repository.findByConditions(data);
+        return this.repository.findByConditions(data, this.visibleColumns);
     }
 
     protected async validateCreate(data: BrandCreateDto): Promise<void> {

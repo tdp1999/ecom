@@ -15,3 +15,4 @@ export const PermissionSchema = z.object({
 });
 
 export type Permission = z.infer<typeof PermissionSchema>;
+export type PermissionItem = Pick<Permission, 'name' | 'description' | 'resource' | 'action'>;

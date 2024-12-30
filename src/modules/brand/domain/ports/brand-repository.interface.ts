@@ -6,7 +6,7 @@ import { UUID } from '@shared/types/general.type';
 export interface IBrandRepository
     extends IRepositoryQuery<Brand, BrandSearchDto>,
         IRepositoryCommand<BrandCreateDto, BrandUpdateDto> {
-    findByIds(ids: UUID[]): Promise<Brand[]>;
+    findByIds(ids: UUID[], visibleColumns?: (keyof Brand)[]): Promise<Brand[]>;
 }
 
 export const BRAND_REPOSITORY_TOKEN = Symbol('IBrandRepository');

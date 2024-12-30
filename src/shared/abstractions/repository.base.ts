@@ -11,18 +11,20 @@ export abstract class BaseCrudRepository<
 > {
     protected constructor(protected readonly repository: Repository<T>) {}
 
-    async list(query?: S): Promise<T[]> {
+    async list(query?: S, visibleColumns?: (keyof T)[]): Promise<T[]> {
         const { orderBy, orderType } = query || {};
         return await this.repository.find({
+            ...(visibleColumns && visibleColumns.length && { select: visibleColumns }),
             where: this.buildWhereConditions(query),
             order: this.buildOrderConditions(orderBy, orderType),
         });
     }
 
-    async paginatedList(query?: S): Promise<Pagination<T>> {
+    async paginatedList(query?: S, visibleColumns?: (keyof T)[]): Promise<Pagination<T>> {
         const { limit = 10, page = 1, orderBy, orderType } = query || {};
 
         const [items, total] = await this.repository.findAndCount({
+            ...(visibleColumns && visibleColumns.length && { select: visibleColumns }),
             where: this.buildWhereConditions(query),
             take: limit,
             skip: (page - 1) * limit,
@@ -63,8 +65,11 @@ export abstract class BaseCrudRepository<
         return !!result;
     }
 
-    async findById(id: string): Promise<T | null> {
-        return await this.repository.findOneBy({ id } as any);
+    async findById(id: string, visibleColumns?: (keyof T)[]): Promise<T | null> {
+        return await this.repository.findOne({
+            where: { id },
+            ...(visibleColumns && visibleColumns.length && { select: visibleColumns }),
+        } as any);
     }
 
     async create(data: C): Promise<boolean> {

@@ -8,9 +8,12 @@ export interface ICategoryRepositoryCommand extends IRepositoryCommand<CategoryC
 }
 
 export interface ICategoryRepositoryQuery extends IRepositoryQuery<Category, CategorySearchDto> {
-    findByIds(ids: UUID[]): Promise<Category[]>;
-    getFullTree(query?: CategorySearchDto): Promise<Category[]>;
-    getFullTreeOfAncestor(id: UUID): Promise<Category | null>;
+    findByIds(ids: UUID[], visibleColumns?: (keyof Category)[]): Promise<Category[]>;
+
+    getFullTree(visibleColumns?: (keyof Category)[]): Promise<Category[]>;
+
+    getFullTreeOfAncestor(id: UUID, visibleColumns?: (keyof Category)[]): Promise<Category | null>;
+
     hasChildren(category: Category): Promise<boolean>;
 }
 

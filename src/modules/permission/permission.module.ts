@@ -28,4 +28,4 @@ import { PERMISSION_REPOSITORY_TOKEN, PERMISSION_SERVICE_TOKEN } from './domain/
         },
     ],
 })
-export class ProductModule {}
+export class PermissionModule {}

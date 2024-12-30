@@ -19,8 +19,8 @@ export class CategoryController {
     }
 
     @Get('tree')
-    getFullTree(@Query() query?: CategorySearchDto) {
-        return this.service.getFullTree(query);
+    getFullTree() {
+        return this.service.getFullTree();
     }
 
     @Get(':id')

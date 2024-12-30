@@ -36,6 +36,15 @@ export class ProductService
     protected updateSchema = ProductUpdateSchema;
     protected searchSchema = ProductSearchSchema;
 
+    override visibleColumns: (keyof Omit<Product, 'brand' | 'categories'>)[] = [
+        'id',
+        'name',
+        'description',
+        'price',
+        'brandId',
+        'categoryIds',
+    ];
+
     constructor(
         @Optional() @Inject(MODULE_IDENTIFIER) protected readonly moduleName: string = '',
         @Inject(PRODUCT_REPOSITORY_TOKEN) protected readonly repository: IProductRepository,
@@ -50,7 +59,7 @@ export class ProductService
 
         if (!success) throw this.handleValidationError(error);
 
-        const products = await this.repository.list(data);
+        const products = await this.repository.list(data, this.visibleColumns);
 
         await this.loadProductRelations(products);
 
@@ -62,7 +71,7 @@ export class ProductService
 
         if (!success) throw this.handleValidationError(error);
 
-        const result = await this.repository.paginatedList(data);
+        const result = await this.repository.paginatedList(data, this.visibleColumns);
 
         await this.loadProductRelations(result.items);
 
