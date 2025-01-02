@@ -1,0 +1,2 @@
+export const ROLE_SERVICE_TOKEN = Symbol('ROLE_SERVICE_TOKEN');
+export const ROLE_REPOSITORY_TOKEN = Symbol('ROLE_REPOSITORY_TOKEN');

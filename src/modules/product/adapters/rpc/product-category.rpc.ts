@@ -1,12 +1,12 @@
-import { IProductCategoryRepository } from '@product/domain/ports/product-repository.interface';
-import { CLIENT_PROXY } from '@shared/modules/client/client.module';
-import { UUID } from '@shared/types/general.type';
 import { Inject } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { lastValueFrom } from 'rxjs';
-import { ProductCategoryAction } from '@shared/actions/product.action';
-import DataLoader from 'dataloader';
 import { ProductCategory } from '@product/domain/model/product.model';
+import { IProductCategoryRepository } from '@product/domain/ports/product-repository.interface';
+import { ProductCategoryAction } from '@shared/actions/product.action';
+import { CLIENT_PROXY } from '@shared/modules/client/client.module';
+import { UUID } from '@shared/types/general.type';
+import DataLoader from 'dataloader';
+import { lastValueFrom } from 'rxjs';
 
 export class ProductCategoryRpcRepository implements IProductCategoryRepository {
     public categoriesLoader: DataLoader<UUID, ProductCategory | null>;
@@ -44,6 +44,9 @@ export class ProductCategoryRpcRepository implements IProductCategoryRepository 
             this.client.send<ProductCategory[]>(ProductCategoryAction.GET_BY_IDS, ids),
         );
         const categoryMap = new Map(categories.map((category) => [category.id, category]));
+
+        // Ensure that the order of the ids is the same as the order of the categories.
+        // Read this: https://www.npmjs.com/package/dataloader
         return ids.map((id) => categoryMap.get(id) || null);
     }
 }

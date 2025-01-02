@@ -38,6 +38,9 @@
             ],
             "@permission/*": [
                 "src/modules/permission/*"
+            ],
+            "@role/*": [
+                "src/modules/role/*"
             ]
         }
     }

@@ -7,6 +7,7 @@ import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PermissionModule } from '@permission/permission.module';
 import { ProductModule } from '@product/product.module';
+import { RoleModule } from '@role/role.module';
 import { AuthGuard } from '@shared/auth/auth.guard';
 import databaseConfig from '@shared/configs/database.config';
 import generalConfig from '@shared/configs/general.config';
@@ -17,7 +18,15 @@ import { UserModule } from '@user/user.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
-const featureModules = [CategoryModule, BrandModule, ProductModule, UserModule, AuthModule, PermissionModule];
+const featureModules = [
+    CategoryModule,
+    BrandModule,
+    ProductModule,
+    UserModule,
+    AuthModule,
+    PermissionModule,
+    RoleModule,
+];
 
 @Module({
     imports: [

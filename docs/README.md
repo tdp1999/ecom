@@ -107,11 +107,13 @@ return true;
     - Sửa bug -> done
 - 25/12: Try to implement RBAC
     - Add a feature to inject remark to error -> done
-- 26/12: Try to implement RBAC
+- Try to implement RBAC
     - Add permission Module -> done
     - Add permission seeding -> done
     - Add DTO for list, detail (29/12) -> done
     - Add isSystem property to user table (29/12) -> done
+    - Add role table (30/12) -> done
+    - Aggregate role and permission. Find a way to aggregate everything quickly -> ?
     - Change fixed role to dynamic role
     - Add new role
     - Add role/group module
