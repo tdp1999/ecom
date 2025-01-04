@@ -7,7 +7,7 @@ export interface IService<T, Create, Update, Search> {
 
     paginatedList(query?: Search): Promise<Pagination<T>>;
 
-    get(id: UUID): Promise<T | null>;
+    get(id: UUID, visibleColumns?: (keyof T)[]): Promise<T | null>;
 
     exist(id: UUID): Promise<boolean>;
 

@@ -19,9 +19,9 @@ import {
 } from '../model/user.dto';
 import { ERR_USER_EMAIL_EXISTS } from '../model/user.error';
 import { User } from '../model/user.model';
-import { USER_CONFIG_TOKEN, USER_REPOSITORY_TOKEN } from '../model/user.token';
+import { USER_CONFIG_TOKEN, USER_REPOSITORY_TOKEN, USER_ROLE_REPOSITORY_TOKEN } from '../model/user.token';
 import { IUserConfig } from '../ports/user-config.interface';
-import { IUserRepository } from '../ports/user-repository.interface';
+import { IUserRepository, IUserRoleRepository } from '../ports/user-repository.interface';
 import { IUserService } from '../ports/user-service.interface';
 
 @Injectable()
@@ -32,6 +32,7 @@ export class UserService implements IUserService {
         @Inject(USER_CONFIG_TOKEN) private config: IUserConfig,
         @Inject(USER_REPOSITORY_TOKEN) protected readonly repository: IUserRepository,
         @Optional() @Inject(MODULE_IDENTIFIER) protected readonly moduleName: string = '',
+        @Inject(USER_ROLE_REPOSITORY_TOKEN) protected readonly roleRepository: IUserRoleRepository,
     ) {}
 
     public async list(query?: UserSearchDto): Promise<User[]> {
@@ -69,12 +70,21 @@ export class UserService implements IUserService {
         return await this.repository.getPassword(userId);
     }
 
-    public async get(id: string): Promise<User | null> {
-        return await this.getValidData(id);
+    public async get(id: string, visibleColumns?: (keyof User)[]): Promise<User | null> {
+        const user = await this.getValidData(id, visibleColumns);
+
+        if (user.roleId) {
+            const role = await this.roleRepository.getById(user.roleId);
+            if (role) user.role = role;
+        }
+
+        return user;
     }
 
-    public async getValidData(id: UUID): Promise<User> {
-        const data = await this.repository.findById(id, this.visibleColumns);
+    public async getValidData(id: UUID, visibleColumns?: (keyof User)[]): Promise<User> {
+        // Allow to pass [] to get all columns
+        const visibleColumnsToUse = visibleColumns ?? this.visibleColumns;
+        const data = await this.repository.findById(id, visibleColumnsToUse);
 
         if (!data || !!data.deletedAt) {
             throw NotFoundError(`${this.moduleName} with id ${id} not found`);

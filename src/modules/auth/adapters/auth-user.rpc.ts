@@ -19,7 +19,7 @@ export class AuthUserRpcRepository implements IAuthUserRepository {
     }
 
     async get(userId: UUID): Promise<AuthUser | null> {
-        return await lastValueFrom(this.client.send(AuthUserAction.GET, userId));
+        return await lastValueFrom(this.client.send(AuthUserAction.GET, { userId, visibleColumns: [] }));
     }
 
     async getByEmail(email: Email): Promise<AuthUser | null> {

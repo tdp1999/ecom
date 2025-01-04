@@ -4,6 +4,13 @@ import { EmailSchema, UuidSchema } from '@shared/models/general-value-object.mod
 import { z } from 'zod';
 import { USER_GENDER } from './user.type';
 
+// User Role
+export const UserRoleSchema = z.object({
+    id: UuidSchema,
+    name: z.string(),
+    permissions: z.object({ id: UuidSchema, slug: z.string() }),
+});
+
 // User Profile Schema (less frequently accessed, profile-related)
 export const UserProfileSchema = z.object({
     id: UuidSchema,
@@ -25,9 +32,11 @@ export const UserSchema = z.object({
 
     isSystem: z.boolean().optional().default(false),
     status: z.nativeEnum(USER_STATUS),
+    roleId: UuidSchema.optional().nullable(),
 
     ...AuditableSchema.shape,
 });
 
-export type User = z.infer<typeof UserSchema>;
+export type UserRole = z.infer<typeof UserRoleSchema>;
+export type User = z.infer<typeof UserSchema> & { role?: UserRole };
 export type UserProfile = z.infer<typeof UserProfileSchema>;

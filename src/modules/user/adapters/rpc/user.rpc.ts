@@ -25,8 +25,8 @@ export class UserRpcController {
     }
 
     @MessagePattern(AuthUserAction.GET)
-    async getUser(id: UUID) {
-        return await this.service.get(id);
+    async getUser(payload: { userId: UUID; visibleColumns: (keyof User)[] }) {
+        return await this.service.get(payload.userId, payload.visibleColumns);
     }
 
     @MessagePattern(AuthUserAction.GET_BY_EMAIL)

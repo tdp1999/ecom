@@ -21,6 +21,7 @@ export const UserCreateSchema = z.object({
     isSystem: z.boolean().optional().default(false),
     status: z.nativeEnum(USER_STATUS).default(USER_STATUS.PENDING),
     profile: UserProfileUpdateSchema.partial().nullable().optional(),
+    roleId: UuidSchema.nullable().optional(),
 });
 
 export const UserUpdateSchema = z

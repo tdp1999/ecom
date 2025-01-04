@@ -36,7 +36,9 @@ export class AuthGuard implements CanActivate {
 
         // Check if user is valid
         const userId = tokenData.sub;
-        const user = await lastValueFrom(this.client.send<Record<string, any>>(AuthUserAction.GET, userId));
+        const user = await lastValueFrom(
+            this.client.send<Record<string, any>>(AuthUserAction.GET, { userId, visibleColumns: [] }),
+        );
         if (!user) throw UnauthorizedError(ERR_COMMON_UNAUTHORIZED.message);
 
         // Attach user to request

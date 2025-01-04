@@ -20,7 +20,7 @@ export class UserRepository implements IUserRepository {
         @InjectRepository(UserProfileEntity) protected profileRepository: Repository<UserProfileEntity>,
     ) {}
 
-    async list(query?: UserSearchDto, visibleColumns?: (keyof User)[]): Promise<User[]> {
+    async list(query?: UserSearchDto, visibleColumns?: (keyof Omit<User, 'role'>)[]): Promise<User[]> {
         const { orderBy, orderType, ...filters } = query || {};
 
         return await this.repository.find({
@@ -31,7 +31,10 @@ export class UserRepository implements IUserRepository {
         });
     }
 
-    async paginatedList(query?: UserSearchDto, visibleColumns?: (keyof User)[]): Promise<Pagination<User>> {
+    async paginatedList(
+        query?: UserSearchDto,
+        visibleColumns?: (keyof Omit<User, 'role'>)[],
+    ): Promise<Pagination<User>> {
         const { limit = 10, page = 1, orderBy, orderType } = query || {};
 
         const [items, total] = await this.repository.findAndCount({
@@ -56,7 +59,7 @@ export class UserRepository implements IUserRepository {
         };
     }
 
-    async findById(id: UUID, visibleColumns?: (keyof User)[]): Promise<User | null> {
+    async findById(id: UUID, visibleColumns?: (keyof Omit<User, 'role'>)[]): Promise<User | null> {
         return await this.repository.findOne({
             ...(visibleColumns && visibleColumns.length && { select: visibleColumns }),
             where: { id },
@@ -64,7 +67,7 @@ export class UserRepository implements IUserRepository {
         });
     }
 
-    async findByIds(ids: UUID[], visibleColumns?: (keyof User)[]): Promise<User[]> {
+    async findByIds(ids: UUID[], visibleColumns?: (keyof Omit<User, 'role'>)[]): Promise<User[]> {
         return await this.repository.find({
             where: { id: In(ids) },
             ...(visibleColumns && visibleColumns.length && { select: visibleColumns }),
@@ -100,7 +103,10 @@ export class UserRepository implements IUserRepository {
         return !!result;
     }
 
-    async findByConditions(conditions: Record<string, any>, visibleColumns?: (keyof User)[]): Promise<User | null> {
+    async findByConditions(
+        conditions: Record<string, any>,
+        visibleColumns?: (keyof Omit<User, 'role'>)[],
+    ): Promise<User | null> {
         const where = this.buildWhereConditions(conditions);
         return await this.repository.findOne({
             where,

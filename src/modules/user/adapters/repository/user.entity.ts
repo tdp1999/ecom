@@ -26,6 +26,9 @@ export class UserEntity extends BaseEntity implements User {
     @Column({ type: 'enum', enum: USER_STATUS, default: USER_STATUS.ACTIVE })
     status: USER_STATUS;
 
+    @Column({ type: 'uuid', length: 36, nullable: true })
+    roleId?: string;
+
     @OneToOne(() => UserProfileEntity, (profile) => profile.user, {
         cascade: true,
         eager: false,
