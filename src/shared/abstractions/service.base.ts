@@ -36,8 +36,6 @@ export abstract class BaseCrudService<
             throw this.handleValidationError(error);
         }
 
-        console.log('this.visibleColumns', this.visibleColumns);
-
         return this.repository.list(data, this.visibleColumns);
     }
 

@@ -16,6 +16,10 @@ export class RedisCacheService<T extends Identifiable> extends BaseCacheService<
         throw new Error('Method not implemented.');
     }
 
+    getItem(id: UUID): Promise<T | null> {
+        throw new Error('Method not implemented.');
+    }
+
     getItems(ids: UUID[]): Promise<(T | null)[]> {
         throw new Error('Method not implemented.');
     }

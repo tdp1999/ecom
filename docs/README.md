@@ -116,6 +116,5 @@ return true;
     - Aggregate role and permission. Find a way to aggregate everything quickly -> ?
     - Try to implement a cache functions 2/1/2025 -> stuck at CacheRepository interface -> done 3/1/2025
     - In the middle of writing test for cache function -> done 3/1/2025
-    - Change fixed role to dynamic role
-    - Add new role
-    - Add role/group module
+    - Check CRUD role -> done 4/1/2025
+

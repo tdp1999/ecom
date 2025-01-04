@@ -24,6 +24,19 @@ export class MemoryCacheService<T extends Identifiable> extends BaseCacheService
         return Promise.resolve(this.cache.has(this.formatKey(id)));
     }
 
+    async getItem(id: UUID): Promise<T | null> {
+        const key = this.formatKey(id);
+        const entry = this.cache.get(key);
+
+        if (entry) {
+            return entry.value;
+        }
+
+        const item = await this.repository.findById(id);
+        this.cache.set(key, { value: item, timestamp: Date.now() });
+        return item;
+    }
+
     async getItems(ids: UUID[]): Promise<CacheResult<T>> {
         const uniqueIds = [...new Set(ids)];
         const now = Date.now();

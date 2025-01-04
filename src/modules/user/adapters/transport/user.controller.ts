@@ -19,12 +19,6 @@ export class UserController {
         return this.service.list(query);
     }
 
-    // @Get('name')
-    // getByConditions(@Query() conditions?: UserFindOneDto) {
-    //     console.log('Conditions: ', conditions);
-    //     return this.service.getByConditions(conditions);
-    // }
-
     @Get(':id')
     get(@Param('id') id: string) {
         return this.service.get(id);

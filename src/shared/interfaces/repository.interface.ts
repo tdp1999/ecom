@@ -16,6 +16,8 @@ export interface IRepositoryQuery<T, Search, Conditions = Record<string, any>> {
 
     findById(id: UUID, visibleColumns?: (keyof T)[]): Promise<T | null>;
 
+    findByIds(ids: UUID[], visibleColumns?: (keyof T)[]): Promise<T[]>;
+
     exist(id: UUID): Promise<boolean>;
 
     existAndNotDeleted(id: UUID): Promise<boolean>;

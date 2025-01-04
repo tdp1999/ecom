@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { BaseCrudRepository } from '@shared/abstractions/repository.base';
+import { FindOptionsWhere, ILike, IsNull, Repository } from 'typeorm';
 import { BrandCreateDto, BrandSearchDto, BrandUpdateDto } from '../../domain/model/brand.dto';
 import { Brand } from '../../domain/model/brand.model';
 import { IBrandRepository } from '../../domain/ports/brand-repository.interface';
 import { BrandEntity } from './brand.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, ILike, In, IsNull, Repository } from 'typeorm';
-import { BaseCrudRepository } from '@shared/abstractions/repository.base';
-import { UUID } from '@shared/types/general.type';
 
 @Injectable()
 export class BrandRepository
@@ -23,11 +22,6 @@ export class BrandRepository
             where,
             ...(visibleColumns && visibleColumns.length && { select: visibleColumns }),
         });
-    }
-
-    async findByIds(ids: UUID[], visibleColumns?: (keyof Brand)[]): Promise<Brand[]> {
-        const selectedColumns = visibleColumns || ['id', 'name'];
-        return await this.repository.find({ where: { id: In(ids) }, select: selectedColumns });
     }
 
     protected buildWhereConditions(query?: BrandSearchDto): FindOptionsWhere<BrandEntity> {

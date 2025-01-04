@@ -13,6 +13,7 @@ import {
     PermissionUpdateSchema,
 } from './permission.dto';
 import { PERMISSION_REPOSITORY_TOKEN } from './permission.token';
+import { UUID } from '@shared/types/general.type';
 
 @Injectable()
 export class PermissionService
@@ -28,6 +29,10 @@ export class PermissionService
         @Inject(PERMISSION_REPOSITORY_TOKEN) protected readonly repository: IPermissionRepository,
     ) {
         super(moduleName, repository);
+    }
+
+    getByIds(ids: UUID[]): Promise<Permission[]> {
+        return this.repository.findByIds(ids);
     }
 
     protected async validateCreate(): Promise<void> {

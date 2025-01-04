@@ -14,6 +14,8 @@ export abstract class BaseCacheService<T extends Identifiable> implements CacheS
 
     abstract hasItem(id: UUID): Promise<boolean>;
 
+    abstract getItem(id: UUID): Promise<T | null>;
+
     abstract getItems(ids: UUID[]): Promise<(T | null)[]>;
 
     abstract clearCache(): Promise<void>;

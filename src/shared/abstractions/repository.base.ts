@@ -1,7 +1,7 @@
 import { SearchDto } from '@shared/dtos/seach.dto';
-import { DeepPartial, FindOptionsOrder, FindOptionsWhere, ObjectLiteral, Repository } from 'typeorm';
-import { Pagination } from '@shared/types/pagination.type';
 import { ORDER_TYPE } from '@shared/enums/status.enum';
+import { Pagination } from '@shared/types/pagination.type';
+import { DeepPartial, FindOptionsOrder, FindOptionsWhere, In, ObjectLiteral, Repository } from 'typeorm';
 
 export abstract class BaseCrudRepository<
     T extends ObjectLiteral,
@@ -70,6 +70,13 @@ export abstract class BaseCrudRepository<
             where: { id },
             ...(visibleColumns && visibleColumns.length && { select: visibleColumns }),
         } as any);
+    }
+
+    async findByIds(ids: string[], visibleColumns?: (keyof T)[]): Promise<T[]> {
+        return await this.repository.find({
+            where: { id: In(ids) as any },
+            ...(visibleColumns && visibleColumns.length && { select: visibleColumns }),
+        });
     }
 
     async create(data: C): Promise<boolean> {

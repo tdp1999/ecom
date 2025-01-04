@@ -13,10 +13,14 @@ export interface CacheOptions {
 export type CacheResult<T> = (T | null)[];
 
 export interface CacheRepository<T extends Identifiable> {
+    findById(id: UUID): Promise<T | null>;
+
     findByIds(ids: UUID[]): Promise<T[]>;
 }
 
 export interface CacheService<T extends Identifiable> {
+    getItem(id: UUID): Promise<T | null>;
+
     getItems(ids: UUID[]): Promise<CacheResult<T>>;
 
     clearCache(): Promise<void>;

@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { PermissionRpcController } from '@permission/adapters/rpc/permission.rpc';
 import { TransactionManager } from '@shared/decorators/transactional.decorator';
 import { ClientModule } from '@shared/modules/client/client.module';
 import { MODULE_IDENTIFIER } from '@shared/tokens/common.token';
@@ -10,7 +11,7 @@ import { PermissionService } from './domain/permission.service';
 import { PERMISSION_REPOSITORY_TOKEN, PERMISSION_SERVICE_TOKEN } from './domain/permission.token';
 
 @Module({
-    controllers: [PermissionController],
+    controllers: [PermissionController, PermissionRpcController],
     imports: [TypeOrmModule.forFeature([PermissionEntity]), ClientModule.registerAsync()],
     providers: [
         TransactionManager,

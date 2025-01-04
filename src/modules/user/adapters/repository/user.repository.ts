@@ -5,7 +5,7 @@ import { Transactional, TransactionManager } from '@shared/decorators/transactio
 import { UUID } from '@shared/types/general.type';
 import { Pagination } from '@shared/types/pagination.type';
 import { ObjectUtils } from '@shared/utils/object.util';
-import { FindOptionsWhere, ILike, IsNull, Repository } from 'typeorm';
+import { FindOptionsWhere, ILike, In, IsNull, Repository } from 'typeorm';
 import { UserCreateDto, UserSearchDto, UserUpdateDto } from '../../domain/model/user.dto';
 import { User } from '../../domain/model/user.model';
 import { IUserRepository } from '../../domain/ports/user-repository.interface';
@@ -61,6 +61,13 @@ export class UserRepository implements IUserRepository {
             ...(visibleColumns && visibleColumns.length && { select: visibleColumns }),
             where: { id },
             relations: ['profile'],
+        });
+    }
+
+    async findByIds(ids: UUID[], visibleColumns?: (keyof User)[]): Promise<User[]> {
+        return await this.repository.find({
+            where: { id: In(ids) },
+            ...(visibleColumns && visibleColumns.length && { select: visibleColumns }),
         });
     }
 
