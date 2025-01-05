@@ -1,8 +1,8 @@
-export enum AuthAction {
+export enum AuthenticateAction {
     VERIFY = 'auth.verify',
 }
 
-export enum AuthUserAction {
+export enum AuthenticateUserAction {
     VALIDATE = 'auth_user.validate',
     CREATE = 'auth_user.create',
     GET = 'auth_user.get',

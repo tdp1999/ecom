@@ -4,7 +4,7 @@ import { buildOrderConditions } from '@shared/builders/order.builder';
 import { Transactional, TransactionManager } from '@shared/decorators/transactional.decorator';
 import { UUID } from '@shared/types/general.type';
 import { Pagination } from '@shared/types/pagination.type';
-import { ObjectUtils } from '@shared/utils/object.util';
+import { ObjectValue } from '@shared/vos/object.value';
 import { FindOptionsWhere, ILike, In, IsNull, Repository } from 'typeorm';
 import { UserCreateDto, UserSearchDto, UserUpdateDto } from '../../domain/model/user.dto';
 import { User } from '../../domain/model/user.model';
@@ -134,11 +134,11 @@ export class UserRepository implements IUserRepository {
         const profileId = user.profile.id;
         const { profile, ...userData } = data;
 
-        if (profile && !ObjectUtils.isEmpty(profile)) {
+        if (profile && !ObjectValue.isEmpty(profile)) {
             await this.profileRepository.update(profileId, profile ?? {});
         }
 
-        if (!ObjectUtils.isEmpty(userData)) {
+        if (!ObjectValue.isEmpty(userData)) {
             await this.repository.update(id, userData);
         }
 

@@ -1,4 +1,4 @@
-import { IJwtData, IJwtPayload } from '@shared/auth/auth.type';
+import { IJwtData, IJwtPayload } from '@shared/authenticate/authenticate.type';
 
 export interface IJwtService {
     generatePayload(iss: string, sub: string, email: string): IJwtPayload;

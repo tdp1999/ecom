@@ -8,7 +8,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { PermissionModule } from '@permission/permission.module';
 import { ProductModule } from '@product/product.module';
 import { RoleModule } from '@role/role.module';
-import { AuthGuard } from '@shared/auth/auth.guard';
+import { AuthenticateGuard } from '@shared/authenticate/authenticate.guard';
+import { AuthorizeGuard } from '@shared/authorize/authorize.guard';
 import databaseConfig from '@shared/configs/database.config';
 import generalConfig from '@shared/configs/general.config';
 import { GlobalExceptionFilter } from '@shared/filters/global-exception.filter';
@@ -57,21 +58,17 @@ const featureModules = [
     controllers: [AppController],
     providers: [
         AppService,
-        {
-            // For success response
-            provide: APP_INTERCEPTOR,
-            useClass: TransformInterceptor,
-        },
-        {
-            // For error response
-            provide: APP_FILTER,
-            useClass: GlobalExceptionFilter,
-        },
-        {
-            // For global authentication
-            provide: APP_GUARD,
-            useClass: AuthGuard,
-        },
+        // For success response
+        { provide: APP_INTERCEPTOR, useClass: TransformInterceptor },
+
+        // For error response
+        { provide: APP_FILTER, useClass: GlobalExceptionFilter },
+
+        // For global authentication
+        { provide: APP_GUARD, useClass: AuthenticateGuard },
+
+        // For global authorization
+        { provide: APP_GUARD, useClass: AuthorizeGuard },
     ],
 })
 export class AppModule {}

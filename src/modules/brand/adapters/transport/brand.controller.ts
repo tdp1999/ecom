@@ -1,9 +1,11 @@
+import { BRAND_SERVICE_TOKEN, IBrandService } from '@brand/domain/ports/brand-service.interface';
 import { Body, Controller, Delete, Get, Inject, Param, Patch, Post, Query } from '@nestjs/common';
+import { Authorization } from '@shared/decorators/authorization.decorator';
 import { User } from '@shared/decorators/user.decorator';
 import { SharedUser } from '@shared/types/user.shared.type';
 import { BrandCreateDto, BrandFindOneDto, BrandSearchDto, BrandUpdateDto } from '../../domain/model/brand.dto';
-import { BRAND_SERVICE_TOKEN, IBrandService } from '@brand/domain/ports/brand-service.interface';
 
+@Authorization('class')
 @Controller('brand')
 export class BrandController {
     constructor(@Inject(BRAND_SERVICE_TOKEN) private readonly service: IBrandService) {}
@@ -13,6 +15,7 @@ export class BrandController {
         return this.service.paginatedList(query);
     }
 
+    @Authorization('handler')
     @Get('list')
     list(@Query() query?: BrandSearchDto) {
         return this.service.list(query);

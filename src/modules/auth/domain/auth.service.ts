@@ -11,7 +11,7 @@ import { USER_STATUS } from '@shared/enums/shared-user.enum';
 import { ERR_COMMON_FORBIDDEN_ACCOUNT, ERR_COMMON_UNAUTHORIZED } from '@shared/errors/common-errors';
 import { BadRequestError, ForbiddenError, UnauthorizedError } from '@shared/errors/domain-error';
 import { formatZodError } from '@shared/errors/error-formatter';
-import { IJwtData } from '@shared/auth/auth.type';
+import { IJwtData } from '@shared/authenticate/authenticate.type';
 import { UUID } from '@shared/types/general.type';
 import { comparePasswordByBcrypt, hashPasswordByBcrypt } from '@shared/utils/hashing.util';
 import { IAuthService, ILoginResponse } from './auth-service.interface';

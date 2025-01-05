@@ -1,6 +1,6 @@
 import { Inject, Injectable, Optional } from '@nestjs/common';
 import { BaseCrudService } from '@shared/abstractions/service.base';
-import { Role } from '@shared/models/role.model';
+import { Role, RolePermissionSchema } from '@shared/models/role.model';
 import { MODULE_IDENTIFIER } from '@shared/tokens/common.token';
 import { Pagination } from '@shared/types/pagination.type';
 import { IRolePermissionRepository, IRoleRepository } from './role-repository.interface';
@@ -78,7 +78,19 @@ export class RoleService
             // In this case, just ignore the difference between permissionIds and permissions
 
             const permissions = await this.permissionRepository.loadByIds(role.permissionIds);
-            role.permissions = permissions.filter((permission) => permission !== null);
+
+            const parsedPermissions = permissions.map((permission) => {
+                const { data, error } = RolePermissionSchema.safeParse(permission);
+
+                if (error) {
+                    console.warn('Failed to parse permission:', error);
+                    return null;
+                }
+
+                return data;
+            });
+
+            role.permissions = parsedPermissions.filter((permission) => permission !== null);
         }
 
         return role;

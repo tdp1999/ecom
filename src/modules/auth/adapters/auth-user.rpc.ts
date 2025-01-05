@@ -2,7 +2,7 @@ import { IAuthUserRepository } from '@auth/domain/auth-repository.interface';
 import { AuthChangePasswordDto, AuthUser, AuthUserCreateDto } from '@auth/domain/auth.dto';
 import { Inject } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { AuthUserAction } from '@shared/auth/auth.action';
+import { AuthenticateUserAction } from '@shared/authenticate/authenticate.action';
 import { RpcClient } from '@shared/decorators/client.rpc.decorator';
 import { User } from '@shared/decorators/user.decorator';
 import { CLIENT_PROXY } from '@shared/modules/client/client.module';
@@ -15,27 +15,27 @@ export class AuthUserRpcRepository implements IAuthUserRepository {
 
     @RpcClient()
     async create(payload: AuthUserCreateDto, @User() user: SharedUser | undefined) {
-        return await lastValueFrom(this.client.send(AuthUserAction.CREATE, { ...payload, user }));
+        return await lastValueFrom(this.client.send(AuthenticateUserAction.CREATE, { ...payload, user }));
     }
 
     async get(userId: UUID): Promise<AuthUser | null> {
-        return await lastValueFrom(this.client.send(AuthUserAction.GET, { userId, visibleColumns: [] }));
+        return await lastValueFrom(this.client.send(AuthenticateUserAction.GET, { userId, visibleColumns: [] }));
     }
 
     async getByEmail(email: Email): Promise<AuthUser | null> {
-        return await lastValueFrom(this.client.send(AuthUserAction.GET_BY_EMAIL, email));
+        return await lastValueFrom(this.client.send(AuthenticateUserAction.GET_BY_EMAIL, email));
     }
 
     @RpcClient()
     async getUserValidity(user: AuthUser): Promise<UserValidityResult> {
-        return await lastValueFrom(this.client.send(AuthUserAction.VALIDATE, user));
+        return await lastValueFrom(this.client.send(AuthenticateUserAction.VALIDATE, user));
     }
 
     async getPassword(userId: UUID): Promise<string> {
-        return await lastValueFrom(this.client.send(AuthUserAction.GET_PASSWORD, userId));
+        return await lastValueFrom(this.client.send(AuthenticateUserAction.GET_PASSWORD, userId));
     }
 
     async changePassword(userId: UUID, payload: AuthChangePasswordDto): Promise<boolean> {
-        return await lastValueFrom(this.client.send(AuthUserAction.CHANGE_PASSWORD, { userId, payload }));
+        return await lastValueFrom(this.client.send(AuthenticateUserAction.CHANGE_PASSWORD, { userId, payload }));
     }
 }

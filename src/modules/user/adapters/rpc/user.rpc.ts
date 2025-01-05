@@ -1,6 +1,6 @@
 import { Controller, Inject, UseFilters } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
-import { AuthUserAction } from '@shared/auth/auth.action';
+import { AuthenticateUserAction } from '@shared/authenticate/authenticate.action';
 import { RpcExceptionFilter } from '@shared/filters/rpc-exception.filter';
 import { Email, UUID } from '@shared/types/general.type';
 import { SharedUser } from '@shared/types/user.shared.type';
@@ -14,32 +14,32 @@ import { IUserService } from '@user/domain/ports/user-service.interface';
 export class UserRpcController {
     constructor(@Inject(USER_SERVICE_TOKEN) private readonly service: IUserService) {}
 
-    @MessagePattern(AuthUserAction.VALIDATE)
+    @MessagePattern(AuthenticateUserAction.VALIDATE)
     async validateUser(user: User) {
         return await this.service.getUserValidity(user);
     }
 
-    @MessagePattern(AuthUserAction.CREATE)
+    @MessagePattern(AuthenticateUserAction.CREATE)
     async createUser(payload: UserCreateDto & { password?: string; user: User | SharedUser | undefined }) {
         return await this.service.create(payload, payload.user, payload.password);
     }
 
-    @MessagePattern(AuthUserAction.GET)
+    @MessagePattern(AuthenticateUserAction.GET)
     async getUser(payload: { userId: UUID; visibleColumns: (keyof User)[] }) {
         return await this.service.get(payload.userId, payload.visibleColumns);
     }
 
-    @MessagePattern(AuthUserAction.GET_BY_EMAIL)
+    @MessagePattern(AuthenticateUserAction.GET_BY_EMAIL)
     async getByEmail(email: Email) {
         return await this.service.findByEmail(email);
     }
 
-    @MessagePattern(AuthUserAction.GET_PASSWORD)
+    @MessagePattern(AuthenticateUserAction.GET_PASSWORD)
     async getPassword(id: UUID) {
         return await this.service.getPassword(id);
     }
 
-    @MessagePattern(AuthUserAction.CHANGE_PASSWORD)
+    @MessagePattern(AuthenticateUserAction.CHANGE_PASSWORD)
     async changeUserPassword(id: UUID) {
         throw new Error('Method not implemented.');
     }

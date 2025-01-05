@@ -1,4 +1,4 @@
-export class ObjectUtils {
+export class ObjectValue {
     /**
      * Checks if the given object is empty.
      * @param obj The object to check.

@@ -2,7 +2,7 @@ import { IJwtService } from '@auth/domain/auth-adapters.interface';
 import { Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { IJwtData, IJwtPayload } from '@shared/auth/auth.type';
+import { IJwtData, IJwtPayload } from '@shared/authenticate/authenticate.type';
 
 export class JwtAdapter implements IJwtService {
     constructor(
