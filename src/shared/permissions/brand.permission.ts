@@ -4,3 +4,6 @@ export const BRAND_PERMISSIONS = [
     { action: 'update', description: 'Update brand', name: 'Update', resource: 'brand' },
     { action: 'delete', description: 'Delete brand', name: 'Delete', resource: 'brand' },
 ] as const;
+
+export type BrandPermission =
+    `${(typeof BRAND_PERMISSIONS)[number]['resource']}:${(typeof BRAND_PERMISSIONS)[number]['action']}`;

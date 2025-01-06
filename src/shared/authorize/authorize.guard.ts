@@ -1,39 +1,74 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { METADATA_AUTHORIZATION, METADATA_NO_AUTHORIZATION } from '@shared/authorize/authorize.token';
-import { InternalServerError } from '@shared/errors/domain-error';
+import {
+    ERR_AUTHORIZE_USER_HAVE_NO_PERMISSION,
+    ERR_AUTHORIZE_USER_HAVE_NO_ROLE,
+    ERR_AUTHORIZE_USER_NOT_FOUND,
+} from '@shared/errors/common-errors';
+import { BadRequestError, ForbiddenError, InternalServerError } from '@shared/errors/domain-error';
+import { Permission } from '@shared/models/permission.model';
 
 @Injectable()
 export class AuthorizeGuard implements CanActivate {
     constructor(private reflector: Reflector) {}
 
     async canActivate(context: ExecutionContext) {
-        // Check for non-authorized routes. Metadata can be set on controller class or method
-        const isNonAuthorized = this.reflector.getAllAndOverride(METADATA_NO_AUTHORIZATION, [
-            context.getHandler(),
-            context.getClass(),
-        ]);
+        if (this.isNonAuthorizedRoute(context)) {
+            return true;
+        }
 
-        if (isNonAuthorized) return true;
+        const requiredPermissions = this.getRequiredPermissions(context);
+        if (!requiredPermissions.length) {
+            return true;
+        }
 
-        const req =
-            context.getType() === 'http' ? context.switchToHttp().getRequest() : context.switchToRpc().getContext();
-        const user = req.user;
+        const user = this.getRequestUser(context);
+        this.validateUser(user);
 
-        if (!user) throw InternalServerError('User not found during authorization process.');
+        const userPermissions = new Set<string>(user.role.permissions.map((permission: Permission) => permission.slug));
 
-        // Check for all permissions in metadata
-        const slugs = this.reflector.getAllAndMerge(METADATA_AUTHORIZATION, [context.getHandler(), context.getClass()]);
-        // const isDoublePermission = Array.isArray(slugs);
-
-        console.log('Slugs: ', slugs);
-
-        // Check if user has permission
-        // if (slugs) {
-        //     const hasPermission = slugs.some((slug) => user.permissions.includes(slug));
-        //     if (!hasPermission) throw InternalServerError('User does not have permission.');
-        // }
+        this.validateUserPermissions(requiredPermissions, userPermissions);
 
         return true;
+    }
+
+    private isNonAuthorizedRoute(context: ExecutionContext): boolean {
+        return (
+            this.reflector.getAllAndOverride(METADATA_NO_AUTHORIZATION, [context.getHandler(), context.getClass()]) ||
+            false
+        );
+    }
+
+    private getRequiredPermissions(context: ExecutionContext): string[] {
+        const slugs = this.reflector.getAllAndMerge(METADATA_AUTHORIZATION, [context.getHandler(), context.getClass()]);
+
+        if (!slugs || (Array.isArray(slugs) && slugs.length === 0)) {
+            return [];
+        }
+
+        return typeof slugs === 'string' ? [slugs] : slugs;
+    }
+
+    private getRequestUser(context: ExecutionContext): any {
+        const req =
+            context.getType() === 'http' ? context.switchToHttp().getRequest() : context.switchToRpc().getContext();
+        return req.user;
+    }
+
+    private validateUser(user: any): void {
+        if (!user) throw InternalServerError(ERR_AUTHORIZE_USER_NOT_FOUND.message);
+
+        if (!user.role) throw BadRequestError(ERR_AUTHORIZE_USER_HAVE_NO_ROLE.message);
+
+        if (!user.role.permissions?.length) throw ForbiddenError(ERR_AUTHORIZE_USER_HAVE_NO_PERMISSION.message);
+    }
+
+    private validateUserPermissions(requiredPermissions: string[], userPermissions: Set<string>): void {
+        for (const permission of requiredPermissions) {
+            if (!userPermissions.has(permission)) {
+                throw ForbiddenError(ERR_AUTHORIZE_USER_HAVE_NO_PERMISSION.message);
+            }
+        }
     }
 }
