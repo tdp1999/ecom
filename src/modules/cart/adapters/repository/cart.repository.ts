@@ -1,14 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { UUID } from '@shared/types/general.type';
 import { EntityManager, Repository } from 'typeorm';
-import {
-    CartClearDto,
-    CartGetItemDto,
-    CartListDto,
-    CartRemoveItemDto,
-    CartUpdateQuantityDto,
-} from '../../domain/cart.dto';
+import { CartClearDto, CartListDto, CartRemoveItemDto, CartUpdateQuantityDto } from '../../domain/cart.dto';
 import { CartItem } from '../../domain/cart.model';
 import { ICartRepository } from '../../domain/ports/cart-repository.interface';
 import { CartEntity } from './cart.entity';
@@ -34,18 +26,6 @@ export class CartRepository implements ICartRepository {
     }
 
     clear(payload: CartClearDto): Promise<boolean> {
-        throw new Error('Method not implemented.');
-    }
-
-    async findAndLockById(payload: CartGetItemDto): Promise<CartItem | null> {
-        return await this.repository
-            .createQueryBuilder()
-            .setLock('pessimistic_write')
-            .where({ ...payload })
-            .getOne();
-    }
-
-    save(cartItem: CartItem): Promise<void> {
         throw new Error('Method not implemented.');
     }
 }

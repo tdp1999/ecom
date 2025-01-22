@@ -9,10 +9,6 @@ import { UUID } from '@shared/types/general.type';
 export class CartProductRpcRepository implements ICartProductRepository {
     constructor(@Inject(CLIENT_PROXY) private readonly client: ClientProxy) {}
 
-    findAndLockById(productId: UUID): Promise<CartProduct | null> {
-        throw new Error('Method not implemented.');
-    }
-
     load(id: UUID): Promise<CartProduct | null> {
         throw new Error('Method not implemented.');
     }

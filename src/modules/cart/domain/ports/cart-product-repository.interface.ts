@@ -6,6 +6,4 @@ export interface ICartProductRepository {
     load(id: UUID): Promise<CartProduct | null>;
 
     loadByIds(ids: UUID[]): Promise<CacheResult<CartProduct>>;
-
-    findAndLockById(productId: UUID): Promise<CartProduct | null>;
 }

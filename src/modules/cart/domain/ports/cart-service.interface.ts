@@ -1,4 +1,4 @@
-import { CartClearDto, CartListDto, CartRemoveItemDto } from '../cart.dto';
+import { CartClearDto, CartListDto, CartRemoveItemDto, CartUpdateQuantityDto } from '../cart.dto';
 import { CartItem } from '../cart.model';
 
 export interface ICartService {
@@ -7,4 +7,6 @@ export interface ICartService {
     removeItem(payload: CartRemoveItemDto): Promise<boolean>;
 
     clear(payload: CartClearDto): Promise<boolean>;
+
+    updateQuantity(payload: CartUpdateQuantityDto): Promise<boolean>;
 }

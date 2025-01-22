@@ -1,16 +1,8 @@
-import { CartUpdateQuantityUow } from '@cart/adapters/cart-update-quantity.uow';
 import { CartRepository } from '@cart/adapters/repository/cart.repository';
 import { CartProductRpcRepository } from '@cart/adapters/rpc/cart-product.rpc';
 import { CartController } from '@cart/adapters/tranport/cart.controller';
 import { CartService } from '@cart/domain/cart.service';
-import {
-    CART_PRODUCT_REPOSITORY_TOKEN,
-    CART_REPOSITORY_TOKEN,
-    CART_SERVICE_TOKEN,
-    CART_UPDATE_QUANTITY_UOW,
-    CART_UPDATE_QUANTITY_USE_CASE,
-} from '@cart/domain/cart.token';
-import { CartUpdateQuantityUseCase } from '@cart/domain/use-case/update-quantity.use-case';
+import { CART_PRODUCT_REPOSITORY_TOKEN, CART_REPOSITORY_TOKEN, CART_SERVICE_TOKEN } from '@cart/domain/cart.token';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ClientModule } from '@shared/modules/client/client.module';
@@ -32,14 +24,6 @@ import { CartEntity } from './adapters/repository/cart.entity';
         {
             provide: CART_PRODUCT_REPOSITORY_TOKEN,
             useClass: CartProductRpcRepository,
-        },
-        {
-            provide: CART_UPDATE_QUANTITY_UOW,
-            useClass: CartUpdateQuantityUow,
-        },
-        {
-            provide: CART_UPDATE_QUANTITY_USE_CASE,
-            useClass: CartUpdateQuantityUseCase,
         },
         {
             provide: CART_SERVICE_TOKEN,
