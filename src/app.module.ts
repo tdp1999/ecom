@@ -1,5 +1,6 @@
 import { AuthModule } from '@auth/auth.module';
 import { BrandModule } from '@brand/brand.module';
+import { CartModule } from '@cart/cart.module';
 import { CategoryModule } from '@category/category.module';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -27,6 +28,7 @@ const featureModules = [
     AuthModule,
     PermissionModule,
     RoleModule,
+    CartModule,
 ];
 
 @Module({

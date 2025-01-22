@@ -119,4 +119,23 @@ return true;
     - Check CRUD role -> done 4/1/2025
     - Add Role to User entity, user get API -> done 4/1/2025
     - Assign permission to feature -> done 6/1/2025
-
+- 6/1/2025: Tiep tuc xem bai giang 13
+    - Add cart feature
+    - Create cart database with 3 key as primary index
+    - Cart has 5 apis:
+        - list all product inside cart
+        - add product to cart
+        - remove product from cart
+        - update quantity of product in cart
+        - clear cart
+    - Do the update quantity:
+      - Study about unit of work pattern: 7/1/2025
+      - Study about left join, right join in sql -> Không cần thiết sử dụng right join hay full join. Thuc te la mysql con k support full join
+      - Study about locking types in sql -> normal, transaction: 12/1/2025
+      - Implement unit of work pattern -> Think about re-organize the project theo huong domain, infras, application -> Think about domain service -> tach update cart thanh 1 use case (good)
+        - Implement repository and entity
+        - Study about transaction in nest, typeorm -> 20/1/2025
+        - Tìm hiểu về concurrency in database -> Biết về distributed transaction challenge của microservice 
+        - Để giải quyết vấn đề này, ta phải sử dụng 2pc, 3pc hoặc giải pháp mới hơn: SAGA 
+        - Nhận ra mình chưa thể implement saga ở hiện tại -> Quay lại viết code hướng cơ bản (không dùng uow, hay saga, chỉ đơn thuần check data)
+    - Add update quantity to product API

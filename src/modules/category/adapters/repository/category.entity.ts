@@ -1,14 +1,11 @@
 import { BaseEntity } from '@shared/abstractions/entity.base';
 import { STATUS } from '@shared/enums/status.enum';
-import { Column, Entity, PrimaryGeneratedColumn, Tree, TreeChildren, TreeParent } from 'typeorm';
+import { Column, Entity, Tree, TreeChildren, TreeParent } from 'typeorm';
 import { Category } from '../../domain/model/category.model';
 
 @Entity('categories')
 @Tree('closure-table')
 export class CategoryEntity extends BaseEntity implements Category {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
-
     @Column()
     name: string;
 

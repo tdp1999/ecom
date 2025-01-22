@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { IProductRepository } from '../../domain/ports/product-repository.interface';
-import { Product } from '../../domain/model/product.model';
-import { ProductCreateDto, ProductSearchDto, ProductUpdateDto } from '../../domain/model/product.dto';
-import { FindOptionsWhere, ILike, IsNull, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ProductEntity } from './product.entity';
 import { BaseCrudRepository } from '@shared/abstractions/repository.base';
+import { FindOptionsWhere, ILike, IsNull, Repository } from 'typeorm';
+import { ProductCreateDto, ProductSearchDto, ProductUpdateDto } from '../../domain/model/product.dto';
+import { Product } from '../../domain/model/product.model';
+import { IProductRepository } from '../../domain/ports/product-repository.interface';
+import { ProductEntity } from './product.entity';
 
 @Injectable()
 export class ProductRepository
@@ -34,4 +34,9 @@ export class ProductRepository
 
         return where;
     }
+
+    //
+    // public async findAndLockById(id: UUID): Promise<Product> {
+    //     const entity = await this.repository.createQueryBuilder().setLock('pessimistic_write')
+    // }
 }

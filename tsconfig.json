@@ -41,6 +41,9 @@
             ],
             "@role/*": [
                 "src/modules/role/*"
+            ],
+            "@cart/*": [
+                "src/modules/cart/*"
             ]
         }
     }
