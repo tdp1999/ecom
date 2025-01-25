@@ -139,3 +139,6 @@ return true;
         - Để giải quyết vấn đề này, ta phải sử dụng 2pc, 3pc hoặc giải pháp mới hơn: SAGA 
         - Nhận ra mình chưa thể implement saga ở hiện tại -> Quay lại viết code hướng cơ bản (không dùng uow, hay saga, chỉ đơn thuần check data)
     - Add update quantity to product API
+      - 22/1/2025: Reconstruct the whole flow
+      - 23/1/2025: Finish add item to cart, update cart quantity.
+      - 25/1/2025: Done all cart API. Try to register a new user -> Found a bug at register.

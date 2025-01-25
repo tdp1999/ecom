@@ -25,3 +25,4 @@ export const CartItemSchema = z.object({
 
 export type CartProduct = z.infer<typeof CartProductSchema>;
 export type CartItem = z.infer<typeof CartItemSchema> & { product?: CartProduct };
+export type CartItemIdentifier = z.infer<typeof CartItemIdentifierSchema>;

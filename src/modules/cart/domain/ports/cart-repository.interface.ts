@@ -1,12 +1,18 @@
-import { CartClearDto, CartListDto, CartRemoveItemDto, CartUpdateQuantityDto } from '../cart.dto';
-import { CartItem } from '../cart.model';
+import { UUID } from '@shared/types/general.type';
+import { CartItem, CartItemIdentifier } from '../cart.model';
 
 export interface ICartRepository {
-    list(payload: CartListDto): Promise<CartItem[]>;
+    listItem(userId: UUID): Promise<CartItem[]>;
 
-    updateQuantity(payload: CartUpdateQuantityDto): Promise<boolean>;
+    getItemByIdentifier(identifier: CartItemIdentifier, visibleColumns?: (keyof CartItem)[]): Promise<CartItem | null>;
 
-    removeItem(payload: CartRemoveItemDto): Promise<boolean>;
+    exist(id: UUID): Promise<boolean>;
 
-    clear(payload: CartClearDto): Promise<boolean>;
+    addItemToCart(item: CartItem): Promise<CartItem>;
+
+    removeItemFromCart(id: UUID): Promise<boolean>;
+
+    updateItemQuantity(id: UUID, quantity: number): Promise<CartItem>;
+
+    clearCart(userId: UUID): Promise<boolean>;
 }

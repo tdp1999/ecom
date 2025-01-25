@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductBrandRpcRepository } from '@product/adapters/rpc/product-brand.rpc';
 import { ProductCategoryRpcRepository } from '@product/adapters/rpc/product-category.rpc';
+import { ProductRpcController } from '@product/adapters/rpc/product.rpc';
 import { PRODUCT_BRAND_REPOSITORY_TOKEN, PRODUCT_CATEGORY_REPOSITORY_TOKEN } from '@product/domain/model/product.token';
 import { TransactionManager } from '@shared/decorators/transactional.decorator';
 import { ClientModule } from '@shared/modules/client/client.module';
@@ -14,7 +15,7 @@ import { PRODUCT_SERVICE_TOKEN } from './domain/ports/product-service.interface'
 import { ProductService } from './domain/service/product.service';
 
 @Module({
-    controllers: [ProductController],
+    controllers: [ProductController, ProductRpcController],
     imports: [TypeOrmModule.forFeature([ProductEntity]), ClientModule.registerAsync()],
     providers: [
         TransactionManager,

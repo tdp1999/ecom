@@ -11,8 +11,8 @@ export class CartEntity extends BaseEntity implements CartItem {
     @Column({ type: 'uuid', length: 36, nullable: true })
     productId: string;
 
-    @Column({ nullable: true, default: '' })
-    attribute: string;
+    @Column({ type: 'varchar', nullable: true, default: '' })
+    attribute: string | null;
 
     @Column({ type: 'int', nullable: false, default: 1 })
     quantity: number;
