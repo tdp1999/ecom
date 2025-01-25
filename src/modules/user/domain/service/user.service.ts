@@ -17,7 +17,7 @@ import {
     UserUpdateDto,
     UserUpdateSchema,
 } from '../model/user.dto';
-import { ERR_USER_EMAIL_EXISTS } from '../model/user.error';
+import { ERR_USER_ALREADY_ACTIVE, ERR_USER_EMAIL_EXISTS, ERR_USER_UNABLE_TO_ACTIVATE } from '../model/user.error';
 import { User } from '../model/user.model';
 import { USER_CONFIG_TOKEN, USER_REPOSITORY_TOKEN, USER_ROLE_REPOSITORY_TOKEN } from '../model/user.token';
 import { IUserConfig } from '../ports/user-config.interface';
@@ -26,7 +26,7 @@ import { IUserService } from '../ports/user-service.interface';
 
 @Injectable()
 export class UserService implements IUserService {
-    private readonly visibleColumns: (keyof User)[] = ['id', 'status', 'email'];
+    private readonly visibleColumns: (keyof User)[] = ['id', 'status', 'email', 'createdById'];
 
     constructor(
         @Inject(USER_CONFIG_TOKEN) private config: IUserConfig,
@@ -101,7 +101,14 @@ export class UserService implements IUserService {
         return { isValid: true, status: USER_STATUS.ACTIVE };
     }
 
-    public async create(payload: UserCreateDto, user: SharedUser, hashedPassword?: string): Promise<UUID> {
+    public async activate(userId: UUID): Promise<boolean> {
+        const user = await this.getValidData(userId);
+        if (user.status === 'active') throw BadRequestError(ERR_USER_ALREADY_ACTIVE.message);
+        if (user.status !== 'pending') throw BadRequestError(ERR_USER_UNABLE_TO_ACTIVATE.message);
+        return this.repository.update(userId, { status: USER_STATUS.ACTIVE });
+    }
+
+    public async create(payload: UserCreateDto, user?: SharedUser, hashedPassword?: string): Promise<UUID> {
         const { success, error, data } = UserCreateSchema.safeParse(payload);
 
         if (!success) {
@@ -119,6 +126,7 @@ export class UserService implements IUserService {
 
         const id = v7();
         const currentTimestamp = BigInt(Date.now());
+        const initUserId = user?.id ?? this.config.getSystemId();
 
         const entity: User = {
             id,
@@ -126,9 +134,9 @@ export class UserService implements IUserService {
             password: hashedPassword,
             salt: '',
             createdAt: currentTimestamp,
-            createdById: user.id,
+            createdById: initUserId,
             updatedAt: currentTimestamp,
-            updatedById: user.id,
+            updatedById: initUserId,
         };
 
         await this.repository.create(entity);

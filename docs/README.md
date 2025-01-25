@@ -141,4 +141,4 @@ return true;
     - Add update quantity to product API
       - 22/1/2025: Reconstruct the whole flow
       - 23/1/2025: Finish add item to cart, update cart quantity.
-      - 25/1/2025: Done all cart API. Try to register a new user -> Found a bug at register.
+      - 25/1/2025: Done all cart API. Try to register a new user -> Found a bug at register. -> Done -> Try to force logout before login

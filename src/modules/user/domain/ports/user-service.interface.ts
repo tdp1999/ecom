@@ -12,4 +12,6 @@ export interface IUserService extends Omit<IService<User, UserCreateDto, UserUpd
     getPassword(userId: UUID): Promise<string>;
 
     getUserValidity(user: User): Promise<UserValidityResult>;
+
+    activate(userId: UUID): Promise<boolean>;
 }

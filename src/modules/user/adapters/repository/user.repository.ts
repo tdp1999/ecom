@@ -119,7 +119,10 @@ export class UserRepository implements IUserRepository {
         const { profile: profileData, ...userData } = data;
         const profile = this.profileRepository.create(profileData ?? {});
         const user = this.repository.create({ ...userData, profile });
-        await user.save();
+
+        const afterSave = await user.save();
+
+        console.log('Repository', afterSave);
         return true;
     }
 

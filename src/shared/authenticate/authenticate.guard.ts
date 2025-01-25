@@ -2,12 +2,16 @@ import { CanActivate, ExecutionContext, Inject, Injectable } from '@nestjs/commo
 import { Reflector } from '@nestjs/core';
 import { ClientProxy } from '@nestjs/microservices';
 import { AuthenticateAction, AuthenticateUserAction } from '@shared/authenticate/authenticate.action';
-import { USER_STATUS } from '@shared/enums/shared-user.enum';
-import { ERR_COMMON_FORBIDDEN_ACCOUNT, ERR_COMMON_UNAUTHORIZED } from '@shared/errors/common-errors';
-import { ForbiddenError, UnauthorizedError } from '@shared/errors/domain-error';
-import { CLIENT_PROXY } from '@shared/modules/client/client.module';
-import { METADATA_PUBLIC } from '@shared/authenticate/authenticate.token';
+import { METADATA_PUBLIC, METADATA_REQUIRE_NO_AUTH } from '@shared/authenticate/authenticate.token';
 import { IJwtData } from '@shared/authenticate/authenticate.type';
+import { USER_STATUS } from '@shared/enums/shared-user.enum';
+import {
+    ERR_AUTHORIZE_REQUIRE_NO_AUTHORIZATION,
+    ERR_COMMON_FORBIDDEN_ACCOUNT,
+    ERR_COMMON_UNAUTHORIZED,
+} from '@shared/errors/common-errors';
+import { BadRequestError, ForbiddenError, UnauthorizedError } from '@shared/errors/domain-error';
+import { CLIENT_PROXY } from '@shared/modules/client/client.module';
 import { UserValidityResult } from '@shared/types/user.shared.type';
 import { catchError, lastValueFrom, of } from 'rxjs';
 
@@ -23,11 +27,19 @@ export class AuthenticateGuard implements CanActivate {
         const isPublic = this.reflector.getAllAndOverride(METADATA_PUBLIC, [context.getHandler(), context.getClass()]);
         if (isPublic) return true;
 
-        // Check if token is valid
         const req =
             context.getType() === 'http' ? context.switchToHttp().getRequest() : context.switchToRpc().getContext();
         const authorization =
             req.headers?.['authorization'] || req?.getHeaders?.()?.headers?.get('authorization')[0] || '';
+
+        // Check for required no auth routes, like login, register, etc.
+        const isRequiredNoAuth = this.reflector.getAllAndOverride(METADATA_REQUIRE_NO_AUTH, [
+            context.getHandler(),
+            context.getClass(),
+        ]);
+        if (isRequiredNoAuth && authorization) throw BadRequestError(ERR_AUTHORIZE_REQUIRE_NO_AUTHORIZATION.message);
+
+        // Check if token is valid
         const accessToken = authorization?.replace('Bearer ', '');
         const tokenData = await lastValueFrom(
             this.client.send<IJwtData>(AuthenticateAction.VERIFY, accessToken).pipe(catchError(() => of(null))),

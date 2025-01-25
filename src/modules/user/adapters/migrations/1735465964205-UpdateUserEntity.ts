@@ -31,8 +31,8 @@ export class UpdateUserEntity1735465964205 implements MigrationInterface {
         // First, ensure no NULL values exist (if needed)
         await queryRunner.query(`
             UPDATE users
-            SET created_by_id = COALESCE(created_by_id, 'system'),
-                updated_by_id = COALESCE(updated_by_id, 'system')
+            SET created_by_id = COALESCE(created_by_id, '00000000-0000-0000-0000-000000000000'),
+                updated_by_id = COALESCE(updated_by_id, '00000000-0000-0000-0000-000000000000')
             WHERE created_by_id IS NULL
                OR updated_by_id IS NULL
         `);

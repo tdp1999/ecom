@@ -10,6 +10,7 @@ export default registerAs('general', () => ({
     seedingEnabled: process.env.SEEDING_ENABLED,
     defaultAdminEmail: process.env.DEFAULT_ADMIN_EMAIL,
     defaultAdminPassword: process.env.DEFAULT_ADMIN_PASSWORD,
+    defaultSystemId: process.env.DEFAULT_SYSTEM_ID,
 
     transportHost: process.env.TRANSPORT_HOST,
     transportPort: process.env.TRANSPORT_PORT,

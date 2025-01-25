@@ -18,6 +18,8 @@ export class UserSeeder implements ISeed {
     async seed(): Promise<void> {
         const email = this.config.get('general.defaultAdminEmail');
         const password = this.config.get('general.defaultAdminPassword');
+        const systemId = this.config.get('general.defaultSystemId');
+
         const hashedPassword = await hashPasswordByBcrypt(password);
 
         const currentTimestamp = BigInt(Date.now());
@@ -34,9 +36,9 @@ export class UserSeeder implements ISeed {
                 lastName: 'User',
             },
             createdAt: currentTimestamp,
-            createdById: 'system',
+            createdById: systemId,
             updatedAt: currentTimestamp,
-            updatedById: 'system',
+            updatedById: systemId,
         });
         await this.userRepository.save(user);
     }

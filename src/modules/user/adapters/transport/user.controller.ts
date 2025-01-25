@@ -24,6 +24,11 @@ export class UserController {
         return this.service.get(id);
     }
 
+    @Post('activate/:id')
+    activate(@Param('id') id: string) {
+        return this.service.activate(id);
+    }
+
     @Post()
     create(@Body() payload: UserCreateDto, @User() user: SharedUser) {
         return this.service.create(payload, user);
