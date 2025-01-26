@@ -11,7 +11,7 @@ import { formatZodError } from '@shared/errors/error-formatter';
 import { UUID } from '@shared/types/general.type';
 import { v7 } from 'uuid';
 import { CartUpdateQuantityDto, CartUpdateQuantitySchema } from './cart.dto';
-import { CartItem } from './cart.model';
+import { CartItem, CartProductSchema } from './cart.model';
 import { CART_PRODUCT_REPOSITORY_TOKEN, CART_REPOSITORY_TOKEN } from './cart.token';
 import { ICartProductRepository } from './ports/cart-product-repository.interface';
 import { ICartRepository } from './ports/cart-repository.interface';
@@ -108,6 +108,24 @@ export class CartService implements ICartService {
     }
 
     private async loadCartItemRelations(cartItems: CartItem[]) {
-        // Do nothing
+        const productIds = cartItems.map((cartItem) => cartItem.productId);
+
+        if (!productIds.length) return;
+
+        const products = await this.productRepository.loadByIds(productIds);
+        const productMap = new Map(
+            products.map((product) => {
+                if (!product || !product.id) return [null, null];
+
+                const parsedProduct = CartProductSchema.safeParse(product);
+                if (!parsedProduct.success) return [product.id, null];
+
+                return [product.id, parsedProduct.data];
+            }),
+        );
+
+        cartItems.forEach((cartItem) => {
+            cartItem.product = productMap.get(cartItem.productId) ?? undefined;
+        });
     }
 }

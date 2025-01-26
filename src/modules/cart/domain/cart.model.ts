@@ -5,9 +5,9 @@ import { z } from 'zod';
 export const CartProductSchema = z.object({
     id: UuidSchema,
     name: z.string(),
-    price: z.number().positive(),
-    salePrice: z.number().nonnegative(),
-    quantity: z.number().int().nonnegative(),
+    price: z.coerce.number().positive(),
+    salePrice: z.coerce.number().nonnegative(),
+    quantity: z.coerce.number().int().nonnegative(),
 });
 
 export const CartItemIdentifierSchema = z.object({

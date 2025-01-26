@@ -129,16 +129,18 @@ return true;
         - update quantity of product in cart
         - clear cart
     - Do the update quantity:
-      - Study about unit of work pattern: 7/1/2025
-      - Study about left join, right join in sql -> Không cần thiết sử dụng right join hay full join. Thuc te la mysql con k support full join
-      - Study about locking types in sql -> normal, transaction: 12/1/2025
-      - Implement unit of work pattern -> Think about re-organize the project theo huong domain, infras, application -> Think about domain service -> tach update cart thanh 1 use case (good)
-        - Implement repository and entity
-        - Study about transaction in nest, typeorm -> 20/1/2025
-        - Tìm hiểu về concurrency in database -> Biết về distributed transaction challenge của microservice 
-        - Để giải quyết vấn đề này, ta phải sử dụng 2pc, 3pc hoặc giải pháp mới hơn: SAGA 
-        - Nhận ra mình chưa thể implement saga ở hiện tại -> Quay lại viết code hướng cơ bản (không dùng uow, hay saga, chỉ đơn thuần check data)
+        - Study about unit of work pattern: 7/1/2025
+        - Study about left join, right join in sql -> Không cần thiết sử dụng right join hay full join. Thuc te la mysql con k support full join
+        - Study about locking types in sql -> normal, transaction: 12/1/2025
+        - Implement unit of work pattern -> Think about re-organize the project theo huong domain, infras, application -> Think about domain service -> tach update cart thanh 1 use case (good)
+            - Implement repository and entity
+            - Study about transaction in nest, typeorm -> 20/1/2025
+            - Tìm hiểu về concurrency in database -> Biết về distributed transaction challenge của microservice
+            - Để giải quyết vấn đề này, ta phải sử dụng 2pc, 3pc hoặc giải pháp mới hơn: SAGA
+            - Nhận ra mình chưa thể implement saga ở hiện tại -> Quay lại viết code hướng cơ bản (không dùng uow, hay saga, chỉ đơn thuần check data)
     - Add update quantity to product API
-      - 22/1/2025: Reconstruct the whole flow
-      - 23/1/2025: Finish add item to cart, update cart quantity.
-      - 25/1/2025: Done all cart API. Try to register a new user -> Found a bug at register. -> Done -> Try to force logout before login
+        - 22/1/2025: Reconstruct the whole flow
+        - 23/1/2025: Finish add item to cart, update cart quantity.
+        - 25/1/2025: Done all cart API. Try to register a new user -> Found a bug at register. -> Done -> Try to force logout before login -> done
+        - 26/1/2025: List cart (missing) -> done
+- 26/1/2025: Add updatedAt auto update -> done 

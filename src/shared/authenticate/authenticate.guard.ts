@@ -31,27 +31,34 @@ export class AuthenticateGuard implements CanActivate {
             context.getType() === 'http' ? context.switchToHttp().getRequest() : context.switchToRpc().getContext();
         const authorization =
             req.headers?.['authorization'] || req?.getHeaders?.()?.headers?.get('authorization')[0] || '';
+        const accessToken = authorization?.replace('Bearer ', '');
 
         // Check for required no auth routes, like login, register, etc.
         const isRequiredNoAuth = this.reflector.getAllAndOverride(METADATA_REQUIRE_NO_AUTH, [
             context.getHandler(),
             context.getClass(),
         ]);
-        if (isRequiredNoAuth && authorization) throw BadRequestError(ERR_AUTHORIZE_REQUIRE_NO_AUTHORIZATION.message);
+
+        if (isRequiredNoAuth) {
+            if (!!accessToken)
+                throw BadRequestError(ERR_AUTHORIZE_REQUIRE_NO_AUTHORIZATION.message, { remarks: `Token found` });
+
+            return true;
+        }
 
         // Check if token is valid
-        const accessToken = authorization?.replace('Bearer ', '');
         const tokenData = await lastValueFrom(
             this.client.send<IJwtData>(AuthenticateAction.VERIFY, accessToken).pipe(catchError(() => of(null))),
         );
-        if (!tokenData) throw UnauthorizedError(ERR_COMMON_UNAUTHORIZED.message);
+        if (!tokenData)
+            throw UnauthorizedError(ERR_COMMON_UNAUTHORIZED.message, { remarks: 'Token not found or invalid' });
 
         // Check if user is valid
         const userId = tokenData.sub;
         const user = await lastValueFrom(
             this.client.send<Record<string, any>>(AuthenticateUserAction.GET, { userId, visibleColumns: [] }),
         );
-        if (!user) throw UnauthorizedError(ERR_COMMON_UNAUTHORIZED.message);
+        if (!user) throw UnauthorizedError(ERR_COMMON_UNAUTHORIZED.message, { remarks: 'User not found' });
 
         // Attach user to request
         req.user = user;
@@ -59,7 +66,10 @@ export class AuthenticateGuard implements CanActivate {
         // Check if user account is valid
         const result = await lastValueFrom(this.client.send<UserValidityResult>(AuthenticateUserAction.VALIDATE, user));
         if (result.isValid) return true;
-        if (result.status === USER_STATUS.DELETED) throw UnauthorizedError(ERR_COMMON_UNAUTHORIZED.message);
-        throw ForbiddenError(result.invalidMessage || ERR_COMMON_FORBIDDEN_ACCOUNT.message);
+        if (result.status === USER_STATUS.DELETED)
+            throw UnauthorizedError(ERR_COMMON_UNAUTHORIZED.message, { remarks: 'User deleted' });
+        throw ForbiddenError(result.invalidMessage || ERR_COMMON_FORBIDDEN_ACCOUNT.message, {
+            remarks: 'User not active',
+        });
     }
 }

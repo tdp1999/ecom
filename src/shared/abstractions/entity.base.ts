@@ -1,4 +1,4 @@
-import { BaseEntity as TypeOrmBaseEntity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity as TypeOrmBaseEntity, BeforeUpdate, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 export abstract class BaseEntity extends TypeOrmBaseEntity {
     @PrimaryGeneratedColumn('uuid')
@@ -21,6 +21,11 @@ export abstract class BaseEntity extends TypeOrmBaseEntity {
 
     @Column({ type: 'uuid', name: 'deleted_by_id', nullable: true })
     deletedById?: string | null;
+
+    @BeforeUpdate()
+    updateDates() {
+        this.updatedAt = BigInt(Date.now());
+    }
 }
 
 export interface BaseEntityInterface {

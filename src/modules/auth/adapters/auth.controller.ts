@@ -21,6 +21,11 @@ export class AuthController {
         return this.service.login(credentials);
     }
 
+    @Post('logout')
+    async logout() {
+        return true;
+    }
+
     @Get('me')
     me(@User() user: AuthUser) {
         return user;
