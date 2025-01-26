@@ -5,7 +5,7 @@ import { CartItem } from '../cart.model';
 export interface ICartService {
     list(userId: UUID): Promise<CartItem[]>;
 
-    removeItem(id: UUID): Promise<boolean>;
+    removeItem(id: UUID, userId: UUID): Promise<boolean>;
 
     clear(userId: UUID): Promise<boolean>;
 

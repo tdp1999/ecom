@@ -84,7 +84,7 @@ export class CartService implements ICartService {
 
         // Remove item
         if (cartItem.quantity + data.delta === 0) {
-            return this.removeItem(cartItem.id);
+            return this.removeItem(cartItem.id, data.userId);
         }
 
         // Increase quantity
@@ -97,9 +97,10 @@ export class CartService implements ICartService {
         return true;
     }
 
-    async removeItem(id: UUID): Promise<boolean> {
-        const isExisted = await this.repository.exist(id);
-        if (!isExisted) throw BadRequestError(ERR_CART_REDUCE_NONE_EXISTING_PRODUCT.message);
+    async removeItem(id: UUID, userId: UUID): Promise<boolean> {
+        const cartItem = await this.repository.getItemById(id);
+        if (!cartItem) throw BadRequestError(ERR_CART_REDUCE_NONE_EXISTING_PRODUCT.message);
+        if (cartItem.userId !== userId) throw BadRequestError(ERR_CART_REDUCE_NONE_EXISTING_PRODUCT.message);
         return this.repository.removeItemFromCart(id);
     }
 

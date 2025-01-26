@@ -25,6 +25,10 @@ export class CartRepository implements ICartRepository {
         } as any);
     }
 
+    async getItemById(id: UUID): Promise<CartItem | null> {
+        return await this.repository.findOneBy({ id });
+    }
+
     async exist(id: UUID): Promise<boolean> {
         return await this.repository.exists({ where: { id } });
     }

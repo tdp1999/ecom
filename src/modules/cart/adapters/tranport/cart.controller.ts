@@ -23,8 +23,8 @@ export class CartController {
     }
 
     @Delete(':id')
-    removeItem(@Param('id') id: UUID) {
-        return this.service.removeItem(id);
+    removeItem(@User() user: SharedUser, @Param('id') id: UUID) {
+        return this.service.removeItem(id, user.id);
     }
 
     @Delete()
