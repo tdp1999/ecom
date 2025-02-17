@@ -143,4 +143,23 @@ return true;
         - 23/1/2025: Finish add item to cart, update cart quantity.
         - 25/1/2025: Done all cart API. Try to register a new user -> Found a bug at register. -> Done -> Try to force logout before login -> done
         - 26/1/2025: List cart (missing) -> done
-- 26/1/2025: Add updatedAt auto update -> done 
+- 26/1/2025:
+    - Add updatedAt auto update -> done
+    - Add update many to cart -> not gonna do it. Move on to bigger things
+- 7/2/2025: Back from Tet holiday (study new Angular) - Order feature
+    - Add User address feature -> Billing address?
+    - Order bao gom bang order va order item
+    - Một vài điều nhận ra
+        - Ta có thể vừa sử dụng zod, vừa làm đúng với ddd, entity là một class. Ta chỉ cần dùng factory method là được.
+        - Để dùng một entity với class và zod có một cách, ta cần các hàm như toDomain ở persistance để chuyển data thành kiểu mong muốn. Lưu ý: chỉ chuyển khi cần data change, không chuyển khi get data for ui.
+        - Về folder structure, tham khảo ở file docs/folder-structure.md
+        - Aggregate có xuất hiện trong ddd và hexagonal, nhưng rule of thumb là các hàm bên trong aggregate phải được thực hiện bên trong 1 transaction (không thể làm saga hay 2PC) -> Có thể coi user và user item là 1 aggregate (user)
+        - Từ ý trên, ta nhận thấy dto sẽ có 4 loại chính,
+            - command.dto: dùng cho dto đưa data vào system, cần validate
+            - query.dto: dùng cho dto truy vấn data, cần validate
+            - outcome.dto: dùng để trả data cho những command, không cần validate / map
+            - view.dto: dùng để trả data cho những query, không cần validate / map
+        - Chấp nhận không thay đổi folder structure ở project này (mất thời gian), chỉ cần dùng chính xác ở những module sau
+- 15/2/2025:
+    - Viet address module với folder structure mới.
+    - Ôn lại decorator pattern và học builder pattern

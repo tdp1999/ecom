@@ -44,6 +44,9 @@
             ],
             "@cart/*": [
                 "src/modules/cart/*"
+            ],
+            "@address/*": [
+                "src/modules/address/*"
             ]
         }
     }

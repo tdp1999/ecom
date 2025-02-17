@@ -5,12 +5,8 @@ import { AuthenticateAction, AuthenticateUserAction } from '@shared/authenticate
 import { METADATA_PUBLIC, METADATA_REQUIRE_NO_AUTH } from '@shared/authenticate/authenticate.token';
 import { IJwtData } from '@shared/authenticate/authenticate.type';
 import { USER_STATUS } from '@shared/enums/shared-user.enum';
-import {
-    ERR_AUTHORIZE_REQUIRE_NO_AUTHORIZATION,
-    ERR_COMMON_FORBIDDEN_ACCOUNT,
-    ERR_COMMON_UNAUTHORIZED,
-} from '@shared/errors/common-errors';
-import { BadRequestError, ForbiddenError, UnauthorizedError } from '@shared/errors/domain-error';
+import { ERR_COMMON_FORBIDDEN_ACCOUNT, ERR_COMMON_UNAUTHORIZED } from '@shared/errors/common-errors';
+import { ForbiddenError, UnauthorizedError } from '@shared/errors/domain-error';
 import { CLIENT_PROXY } from '@shared/modules/client/client.module';
 import { UserValidityResult } from '@shared/types/user.shared.type';
 import { catchError, lastValueFrom, of } from 'rxjs';
@@ -40,8 +36,9 @@ export class AuthenticateGuard implements CanActivate {
         ]);
 
         if (isRequiredNoAuth) {
-            if (!!accessToken)
-                throw BadRequestError(ERR_AUTHORIZE_REQUIRE_NO_AUTHORIZATION.message, { remarks: `Token found` });
+            // This should be doing in the FE side!!
+            // if (!!accessToken)
+            //     throw BadRequestError(ERR_AUTHORIZE_REQUIRE_NO_AUTHORIZATION.message, { remarks: `Token found` });
 
             return true;
         }

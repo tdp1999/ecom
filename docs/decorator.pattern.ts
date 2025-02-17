@@ -19,6 +19,7 @@ interface IDataSource {
 /*
  * 2. Concrete Components (Base Component) is a class of objects being wrapped. It defines basic behavior,
  * which can be altered by decorators.
+ * Đây là những class entry, dùng để cho người dùng (main) init data, vì các decorator phải nhận vào 1 base class thế này.
  * */
 class FileDataSource implements IDataSource {
     constructor(private fileName: string) {
@@ -52,6 +53,7 @@ class DatabaseDataSource implements IDataSource {
  * 3. The Base Decorator class has a field for referencing a wrapped object.
  * The field's type should be declared as the component interface so it can contain both concrete components and decorators.
  * The base decorator delegates all operations to the wrapped object.
+ * Tất cả những decorator trong decorator pattern đều phải extends từ decorator gốc này.
  * */
 class DataSourceDecorator implements IDataSource {
     constructor(private dataSource: IDataSource) {
@@ -97,6 +99,8 @@ class CompressDataSource extends DataSourceDecorator {
 /*
  * 5. The client can wrap components in multiple layers of decorators,
  * as long as it works with all object via the common interface.
+ * Dưới đây là một ví dụ cho cách sử dụng decorator pattern SAI.
+ * Để sử dụng đúng decorator pattern, ta cần sử dụng chúng với 1 creational pattern (factory, dependency injection).
  * */
 function main() {
     const fileDataSource = new FileDataSource('example.txt');
@@ -108,6 +112,10 @@ function main() {
 
 /*
 * Summary: Decorator ở typescript nên được xem như là một giải pháp technical của typescript hơn là một implementation design pattern.
-* Thay vào đó, middleware của Nestjs có thể xem là một dạng implementation của decorator pattern
+* Thay vào đó, middleware của Nestjs có thể xem là một dạng implementation của decorator pattern.
+*
+* Khi nào thì sử dụng decorator pattern:
+* - Khi ta đã sử dụng factory pattern
+* - Khi ta cần extends logic của một class, mà không cần sử dụng inheritance.
 * */
 

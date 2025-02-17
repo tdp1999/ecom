@@ -1,5 +1,4 @@
 import { CartUpdateQuantityDto } from '@cart/domain/cart.dto';
-import { CartItemIdentifier } from '@cart/domain/cart.model';
 import { ICartService } from '@cart/domain/ports/cart-service.interface';
 import { Body, Controller, Delete, Get, Inject, Param, Post } from '@nestjs/common';
 import { User } from '@shared/decorators/user.decorator';

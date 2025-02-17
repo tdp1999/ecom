@@ -1,3 +1,4 @@
+import { AddressModule } from '@address/address.module';
 import { AuthModule } from '@auth/auth.module';
 import { BrandModule } from '@brand/brand.module';
 import { CartModule } from '@cart/cart.module';
@@ -29,6 +30,7 @@ const featureModules = [
     PermissionModule,
     RoleModule,
     CartModule,
+    AddressModule,
 ];
 
 @Module({
