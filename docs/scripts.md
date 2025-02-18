@@ -3,3 +3,4 @@ pnpm run migration:generate src/modules/cart/adapters/migrations/AddCartTable --
 
 Run migration
 pnpm run migrate
+ks

@@ -21,6 +21,8 @@ export const AddressSchema = z.object({
     addressType: z.nativeEnum(ADDRESS_TYPE).optional().default(ADDRESS_TYPE.OTHER),
     remarks: z.string().nullable().optional(),
 
+    // TODO: Add lat, long to address
+
     ...AuditableSchema.shape,
 });
 

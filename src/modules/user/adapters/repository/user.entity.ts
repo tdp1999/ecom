@@ -1,9 +1,10 @@
+/* eslint-disable import/no-cycle */
 import { BaseEntity } from '@shared/abstractions/entity.base';
 import { USER_STATUS } from '@shared/enums/shared-user.enum';
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, Relation } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, Relation } from 'typeorm';
 import { User } from '../../domain/model/user.model';
-// eslint-disable-next-line import/no-cycle
 import { UserProfileEntity } from './user-profile.entity';
+import { UserAddressEntity } from '@user/adapters/repository/user-address.entity';
 
 @Entity('users')
 export class UserEntity extends BaseEntity implements User {
@@ -36,4 +37,7 @@ export class UserEntity extends BaseEntity implements User {
     })
     @JoinColumn()
     profile: Relation<UserProfileEntity>;
+
+    @OneToMany(() => UserAddressEntity, (address) => address.user)
+    addresses: UserAddressEntity[];
 }
